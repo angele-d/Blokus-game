@@ -88,8 +88,7 @@ P15 = [[False,False,False,False,False],
       [False,True,False,False,False],
       [False,False,False,False,False]]
 
-
-P17 = [[False,False,False,False,False],
+P16 = [[False,False,False,False,False],
       [False,False,True,True,False],
       [False,True,True,False,False],
       [False,True,False,False,False],
