@@ -1,0 +1,27 @@
+TABLE GAME
+Id_Game : int
+Name_Game : char
+Pass_word_Game : char
+Nb_Moves : int
+Nb_joueurs : int
+
+TABLE COUPS
+Id_Game : int
+Id_Move : int
+Id_Piece : int
+Color : char
+Position_x : int
+Position_y : int
+Rotation : int
+Flip : Booléen
+
+
+
+
+HTML:
+home page: selectionner -> nouvelle ou reprendre ancienne partie
+-> reprendre anvienne BD avec name + password + couleur jouée par le joueur ou id du joueur
+-> créer nouvelle BD avec avec name + password + nb de joueurs totaux (et joueurs IA ou humains)
+
+Game page :
+interface graphique avec grille de jeu + liste des pieces disponibles + timer ? + nombres points de la partie en cours de chaque joueur
