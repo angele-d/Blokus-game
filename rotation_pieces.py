@@ -5,6 +5,7 @@ def rotationx1(piece):
     Effectue 1 rotation d'une piece
     :param piece: matrice 5x5 de la piece originale
     :return: matrice 5x5 du resultat de la rotation
+    SENS ANTIHORAIRE
     '''
     temp = [[-1,-1,-1,-1,-1],[-1,-1,-1,-1,-1],[-1,-1,-1,-1,-1],[-1,-1,-1,-1,-1],[-1,-1,-1,-1,-1]]
     k = -1
@@ -20,6 +21,7 @@ def rotation_piece_5x5(piece,rotation):
     :param piece: matrice 5x5 de la piece originale
     :param rotation: (int)
     :return: matrice 5x5 du resultat des rotations
+    SENS ANTIHORAIRE
     '''
     rotate = rotation%4
     result = piece
