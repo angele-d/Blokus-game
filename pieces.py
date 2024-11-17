@@ -106,12 +106,6 @@ P18 = [[False,False,False,False,False],
       [False,True,False,False,False],
       [False,False,False,False,False]]
 
-P18 = [[False,False,False,False,False],
-      [False,True,False,False,False],
-      [False,True,True,True,False],
-      [False,True,False,False,False],
-      [False,False,False,False,False]]
-
 P19 = [[False,False,False,False,False],
       [False,False,True,False,False],
       [False,False,True,True,False],
