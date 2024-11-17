@@ -1,5 +1,16 @@
 from pieces import P1,P2,P3,P4,P5,P6,P7,P8,P9,P10,P11,P12,P13,P14,P15,P16,P17,P18,P19,P20,P21 #pieces.py
 
+def transformation(piece, isflipped,rotation):
+    '''Le fait de retourner une pièce est de la tournée ne commute pas
+    il faut donc ce décider sur une convention qui est appliquée par cette fonction
+    ainsi, merci de n'utiliser que cette dernière pour que tout soit compatible'''
+    m =[]
+    if isflipped :
+        m= flip(piece)
+        m = rotation_piece_5x5(m,rotation)
+    else: 
+        return rotation_piece_5x5
+
 def rotationx1(piece):
     '''
     Effectue 1 rotation d'une piece
