@@ -50,6 +50,40 @@ def matrice_possible(m,pl):
                 
 
 
+def matrice_possible_start(pl):
+    '''Renvoie une matrice avec l'emplacement de départ pour le joueur correspondant,
+    à utiliser comme matrice pour les 4 premiers tours'''
+    m = []
+    for i in range(20):
+        m.append([])
+        for j in range(20):
+            m[i].append(['V'])
+    if pl == 'R':
+        m[0][0] = 'P'
+    if pl == 'Y':
+        m[0][20] = 'P'
+    if pl == 'B' :
+        m[20][20] = 'P'
+    if pl == 'G':
+        m[20][0] = 'P'
+    return m
+
+def coup_restant_force_brute(m,pi,Plist):
+    '''fonction EXTREMEMENT BOURRINE, pour calculer si il reste des coup possibles, a pas ou
+    peu utiliser'''
+    for i in range(2):
+        if i == 1:
+            isflipped = True
+        else:
+            isflipped = False
+        for pl in Plist:
+            for rot in range(1,5):
+                for x in range(20):
+                    for y in range(20):
+                        if m[x][y] == 'V':
+                            if coup_possible(m,pi,pl,x,y,rot,isflipped):
+                                return True
+    return False   
 
 def coup_possible(m,pi,pl,x,y,rot,isflipped):
     '''Renvoie si le coup sur la matrice m de la pièce pi, par le joueur
@@ -69,3 +103,13 @@ def coup_possible(m,pi,pl,x,y,rot,isflipped):
                     touche = True
     return touche
 
+def malus(Plist):
+    '''renvoie le malus infligé à un joueur si il ne termine pas
+    en fonction de la liste des pièces Plist qui lui reste'''
+    malus = 0
+    for i in Plist:
+        for j in range(len(i)):
+            for k in range(len(i)):
+                if i[j][k]:
+                    malus = malus -1
+    return malus
