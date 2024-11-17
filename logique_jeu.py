@@ -102,14 +102,3 @@ def coup_possible(m,pi,pl,x,y,rot,isflipped):
                 elif m[x+i-2][y+j-2] == 'P':
                     touche = True
     return touche
-
-def malus(Plist):
-    '''renvoie le malus infligé à un joueur si il ne termine pas
-    en fonction de la liste des pièces Plist qui lui reste'''
-    malus = 0
-    for i in Plist:
-        for j in range(len(i)):
-            for k in range(len(i)):
-                if i[j][k]:
-                    malus = malus -1
-    return malus
