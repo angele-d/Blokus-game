@@ -35,13 +35,10 @@ def flip(piece):
     Retourne la piece par symetrie selon la verticale (colonne 2)
     :param piece: matrice 5x5 de la piece originale
     :return: matrice 5x5 du resultat du retournement de pièce
-    '''
-    if piece in [P1,P2,P3,P5,P7,P8,P10,P14,P17,P18,P20]:
-        return piece
-    else:
-        result = [[-1,-1,-1,-1,-1],[-1,-1,-1,-1,-1],[-1,-1,-1,-1,-1],[-1,-1,-1,-1,-1],[-1,-1,-1,-1,-1]]
-        for i in range(5):
-            for j in range(5):
-                if piece[i][j] != -1:
-                    result[i][4-j] = piece[i][j]
-        return result
+    '''    
+    result = [[-1,-1,-1,-1,-1],[-1,-1,-1,-1,-1],[-1,-1,-1,-1,-1],[-1,-1,-1,-1,-1],[-1,-1,-1,-1,-1]]
+    for i in range(5):
+        for j in range(5):
+            if piece[i][j] != -1:
+                result[i][4-j] = piece[i][j]
+    return result
