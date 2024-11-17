@@ -4,10 +4,10 @@ def transformation(piece, isflipped,rotation):
     '''Le fait de retourner une pièce est de la tournée ne commute pas
     il faut donc ce décider sur une convention qui est appliquée par cette fonction
     ainsi, merci de n'utiliser que cette dernière pour que tout soit compatible'''
-    m =[]
     if isflipped :
         m= flip(piece)
         m = rotation_piece_5x5(m,rotation)
+        return m
     else: 
         return rotation_piece_5x5
 
