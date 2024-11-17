@@ -16,9 +16,11 @@ def inside(i,j):
 
 def matrice_possible(m,pl):
     '''Fonction auxiliaire à coup possible, annote les case sur lequel la pièce doit passer et ne pas passer'''
+    vu = False
     for i in range(len(m)):
         for j in range(len(m)):
             if m[i][j] == pl:
+                vu = True
                 if inside(i+1,j+1):
                     if m[i+1][j+1] == 'V':
                         m[i+1][j+1] = 'P'
@@ -46,6 +48,8 @@ def matrice_possible(m,pl):
                 if inside(i,j-1):
                     if m[i][j-1] in ['V','P']:
                         m[i][j-1] = 'I'
+    if not vu:
+        return(matrice_possible_start(pl))
     return m
                 
 
