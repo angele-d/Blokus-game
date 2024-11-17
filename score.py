@@ -12,6 +12,7 @@ def get_db(): # cette fonction permet de créer une connexion à la base
     return db
 
 def score(Game):
+    ''' Renvoie un tableau avec le score de chaque joueur de la partie Game'''
     c = get_db().cursor()
     query = "SELECT Id_Piece, Id_coup, Color FROM COUPS WHERE Id_game = ?"
     c.execute(query, (Game,))  
