@@ -11,16 +11,27 @@ def print_jeu(m):
         print('\n') 
 
 def inside(i,j):
-    '''renvoie le booléen suivant, check si le point(i,j) est dans la grille'''
+    '''
+    Verifie que i et j correspondent bien aux coordonnees dans la grille 20x20
+    :param i,j: (int)
+    :return: (bool)
+    '''
     return (0 <= i < 20 and 0 <= j < 20)
 
 def matrice_possible(m,pl):
-    '''Fonction auxiliaire à coup possible, annote les case sur lequel la pièce doit passer et ne pas passer'''
+    '''
+    Fonction auxiliaire à coup possible, annote les cases sur lequel la pièce suivante peut
+    etre posee (P) et ne peut pas etre posee (I)
+    :param m: matrice 20x20
+    :param pl: (string) R,B,Y ou G = joueur
+    :return: matrice 20x20 avec des P et I selon ou on peut poser la piece suivante
+    '''
     vu = False
     for i in range(len(m)):
         for j in range(len(m)):
-            if m[i][j] == pl:
+            if m[i][j] == pl: #correspond au bon joueur
                 vu = True
+                #verifie les coins: si vide -> mettre un P = on peut placer une piece
                 if inside(i+1,j+1):
                     if m[i+1][j+1] == 'V':
                         m[i+1][j+1] = 'P'
@@ -35,7 +46,8 @@ def matrice_possible(m,pl):
                         m[i-1][j-1] = 'P'
     for i in range(len(m)):
         for j in range(len(m)):
-            if m[i][j] == pl:
+            if m[i][j] == pl: #correspond au bon joueur
+                #verifie les contours: si vide ou P -> mettre un I = on peut pas placer une piece
                 if inside(i+1,j):
                     if m[i+1][j] in ['V','P']:
                         m[i+1][j] = 'I'
@@ -48,15 +60,18 @@ def matrice_possible(m,pl):
                 if inside(i,j-1):
                     if m[i][j-1] in ['V','P']:
                         m[i][j-1] = 'I'
-    if not vu:
+    if not vu: #Si on est au tout debut / joueur a pas encore joue
         return(matrice_possible_start(pl))
     return m
                 
 
-
 def matrice_possible_start(pl):
-    '''Renvoie une matrice avec l'emplacement de départ pour le joueur correspondant,
-    à utiliser comme matrice pour les 4 premiers tours'''
+    '''
+    Renvoie une matrice avec l'emplacement de départ pour le joueur correspondant,
+    à utiliser comme matrice pour les 4 premiers tours
+    :param pl: (string) R,B,Y ou G = joueur
+    :return: matrice 20x20 avec P a l'endroit ou le joueur peut commencer a jouer
+    '''
     m = []
     for i in range(20):
         m.append([])
@@ -73,8 +88,14 @@ def matrice_possible_start(pl):
     return m
 
 def coup_restant_force_brute(m,pi,Plist):
-    '''fonction EXTREMEMENT BOURRINE, pour calculer si il reste des coup possibles, a pas ou
-    peu utiliser'''
+    '''
+    fonction EXTREMEMENT BOURRINE, pour calculer si il reste des coup possibles, a pas ou
+    peu utiliser
+    :param m: matrice 20x20
+    :param pi: matrice 5x5 de la piece
+    :param Plist: liste de pieces
+    :return: (bool)
+    '''
     for i in range(2):
         if i == 1:
             isflipped = True
@@ -90,19 +111,26 @@ def coup_restant_force_brute(m,pi,Plist):
     return False   
 
 def coup_possible(m,pi,pl,x,y,rot,isflipped):
-    '''Renvoie si le coup sur la matrice m de la pièce pi, par le joueur
-    pl, aux coordonnées x,y de rotation rot et retourner suivant isflipped
-    est'''
-    if isflipped:
-        pi = flip(pi)
-    pi = rotation_piece_5x5(pi,rot)
+    '''
+    Renvoie si le coup sur la matrice m de la pièce pi, par le joueur
+    pl, aux coordonnées x,y de rotation rot et retourne suivant isflipped
+    est possible
+    :param m: matrice 20x20
+    :param pi: matrice 5x5 de la piece
+    :param pl: (str) R,B,Y ou G = joueur
+    :param x,y: (int) coordonnees
+    :param rot: (int) nombre de rotations
+    :param isflipped: (bool) true = piece retournee
+    :return: (bool) selon si coup possible ou pas
+    '''
+    pi = transformation(pi,isflipped,rot)
     mat_pos = matrice_possible(m,pl)
     touche = False
     for i in range(len(pi)):
         for j in range (len(pi)):
             if pi[i][j]:
-                if m[x+i-2][y+j-2] not in ['V','P']:
+                if mat_pos[x+i-2][y+j-2] not in ['V','P']:
                     return False
-                elif m[x+i-2][y+j-2] == 'P':
+                elif mat_pos[x+i-2][y+j-2] == 'P':
                     touche = True
     return touche

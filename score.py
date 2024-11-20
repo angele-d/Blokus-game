@@ -1,8 +1,7 @@
 from pieces import *
 
 import sqlite3
-DATABASE = 'database.db' # Merci de mettre a jour cette ligne quand la database sera rajouté au 
-#dépot github
+DATABASE = 'database.db' # Merci de mettre a jour cette ligne quand la database sera rajouté au dépot github
 
 def get_db(): # cette fonction permet de créer une connexion à la base 
               # ou de récupérer la connexion existante 
@@ -12,46 +11,61 @@ def get_db(): # cette fonction permet de créer une connexion à la base
     return db
 
 def score(Game):
-    ''' Renvoie un tableau avec le score de chaque joueur de la partie Game'''
+    ''' 
+    Calcule le score de chaque joueur dans un jeu donne
+    :param Game: id_game de la base de données
+    :return: Tableau [*,*,*,*] avec le score de chaque joueur [R,B,Y,G] de la partie Game
+    :MaxIdcoup: [[id_coup,piece_correspondante_id_coup],..] 
+                Utile uniquement pour verifier si P1 placee en dernier ou pas, selon joueur: [R,B,Y,G]
+    '''
     c = get_db().cursor()
-    query = "SELECT Id_Piece, Id_coup, Color FROM COUPS WHERE Id_game = ?"
+    query = "SELECT id_Piece, id_coup, color FROM coups WHERE id_game = ?"
     c.execute(query, (Game,))  
     P0=[]
-    Piece_restante_R = piece_restante.copy()
-    Piece_restante_B = piece_restante.copy()
-    Piece_restante_Y = piece_restante.copy()
-    Piece_restante_G = piece_restante.copy()
-    Score =[0,0,0,0] #Dans l'ordre du dessus le score attribué a chaque couleur
-    MaxIdcoup = [[0,P0],[0,P0],[0,P0],[0,P0]]
-    for tpl in c.fetchall():
+    Piece_restante_R = Tabpiece.copy()
+    Piece_restante_B = Tabpiece.copy()
+    Piece_restante_Y = Tabpiece.copy()
+    Piece_restante_G = Tabpiece.copy()
+    score =[0,0,0,0] #Dans l'ordre du dessus le score attribué a chaque couleur
+    MaxIdcoup = [[0,P0],[0,P0],[0,P0],[0,P0]] #Valeurs de base, qui n'arrivent jamais
+    for tpl in c.fetchall(): #chaque tuple de la requete
         if tpl[2] == 'R':
-            MaxIdcoup[0][0] = max(MaxIdcoup[0],tpl[1])
-            MaxIdcoup[0][1] = tpl[0]
-            Piece_restante_R = [i for i in Piece_restante_R if i != tpl[0]]
+            if MaxIdcoup[0][0] < tpl[1]: #verifie qu'on a toujours le dernier coup de R dans MaxIdcoup
+                MaxIdcoup[0][0] = tpl[1]
+                MaxIdcoup[0][1] = tpl[0]
+            Piece_restante_R = [i for i in Piece_restante_R if i != tpl[0]] #Garde pieces =/ coup etudie
         if tpl[2] == 'B':
-            MaxIdcoup[1][0] = max(MaxIdcoup[1],tpl[1])
-            MaxIdcoup[1][1] = tpl[0]
-            Piece_restante_B = [i for i in Piece_restante_R if i != tpl[0]]
+            if MaxIdcoup[1][0] < tpl[1]: #verifie qu'on a toujours le dernier coup de B dans MaxIdcoup
+                MaxIdcoup[1][0] = tpl[1]
+                MaxIdcoup[1][1] = tpl[0]
+            Piece_restante_B = [i for i in Piece_restante_B if i != tpl[0]] #Garde pieces =/ coup etudie
         if tpl[2] == 'Y':
-            MaxIdcoup[0] = max(MaxIdcoup[2],tpl[1])
-            MaxIdcoup[2][1] = tpl[0]
-            Piece_restante_Y = [i for i in Piece_restante_R if i != tpl[0]]
+            if MaxIdcoup[2][0] < tpl[1]: #verifie qu'on a toujours le dernier coup de Y dans MaxIdcoup
+                MaxIdcoup[2][0] = tpl[1]
+                MaxIdcoup[2][1] = tpl[0]
+            Piece_restante_Y = [i for i in Piece_restante_Y if i != tpl[0]] #Garde pieces =/ coup etudie
         if tpl[2] == 'G':
-            MaxIdcoup[0] = max(MaxIdcoup[3],tpl[1])
-            MaxIdcoup[3][1] = tpl[0]
-            Piece_restante_G = [i for i in Piece_restante_R if i != tpl[0]]
+            if MaxIdcoup[3][0] < tpl[1]: #verifie qu'on a toujours le dernier coup de G dans MaxIdcoup
+                MaxIdcoup[3][0] = tpl[1]
+                MaxIdcoup[3][1] = tpl[0]
+            Piece_restante_G = [i for i in Piece_restante_G if i != tpl[0]] #Garde pieces =/ coup etudie
+    #Calcul des scores suivant le nombre de pieces qu'il reste pour chaque joueur
     score[0] = malus(Piece_restante_R)        
     score[1] = malus(Piece_restante_B)
     score[2] = malus(Piece_restante_Y)
     score[3] = malus(Piece_restante_G)
-    for i in range(len(score)):
-        if score[i] == 0:
+    for i in range(len(score)): #Points bonus
+        if score[i] == 0: #Cad que le joueur a place toutes ses pieces
             score[i] = 15
-            if MaxIdcoup[1] == P1:
+            if MaxIdcoup[1] == P1: #Cad que le dernier coup joue est le carre solitaire
                 score[i] = 20
     return score
     
 def malus(Pliste):
+    '''
+    Calcule le score (negatif) correspondant a une liste de pieces donnee
+    :param Pliste: (tab) contient les id des pieces
+    '''
     malus = 0
     for i in Plist:
         for j in range(len(i)):
@@ -60,5 +74,3 @@ def malus(Pliste):
                     malus = malus -1
     return malus
 
-def piece_restante(joueur,game):
-    reste = Tabpiece.copy()
