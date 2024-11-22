@@ -1,10 +1,10 @@
 from pieces import P1,P2,P3,P4,P5,P6,P7,P8,P9,P10,P11,P12,P13,P14,P15,P16,P17,P18,P19,P20,P21 #pieces.py
 from rotation_pieces import transformation
-
-
+from flask import g,Flask
 import sqlite3
-DATABASE = 'database.db' # Merci de mettre a jour cette ligne quand la database sera rajouté au 
-#dépot github
+
+DATABASE = 'BaseTest' # Merci de mettre a jour cette ligne quand la database sera rajouté au dépot github
+app = Flask(__name__)
 
 def get_db(): # cette fonction permet de créer une connexion à la base 
               # ou de récupérer la connexion existante 
@@ -30,7 +30,7 @@ def placer_piece_grille20x20(grille,num_piece,x,y,couleur,rotation,isflipped):
     '''
     pi = transformation(num_piece,isflipped,rotation)
     for i in range(len(pi)):
-        for j in range(len(pi)):
+        for j in range(len(pi[i])):
             if pi[i][j]:
                 grille[x+i-2][y+j-2] = couleur # -2: car centre la piece est en (2,2) sur matrice 5x5
     return grille
@@ -49,8 +49,13 @@ def transcription_pieces_SQL_grille(Game):
     for i in range(20):
         m.append([])
         for j in range(20):
-            m[i].append(['V'])
+            m[i].append('V')
     for tpl in c.fetchall():
+        print(tpl)
         m = placer_piece_grille20x20(m,*tpl)
     return m
 
+
+if __name__ == "__main__":
+    with app.app_context():
+        print(transcription_pieces_SQL_grille(1))

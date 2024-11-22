@@ -1,7 +1,9 @@
 from pieces import *
-
+from flask import g,Flask
 import sqlite3
-DATABASE = 'database.db' # Merci de mettre a jour cette ligne quand la database sera rajouté au dépot github
+
+DATABASE = 'BaseTest' # Merci de mettre a jour cette ligne quand la database sera rajouté au dépot github
+app = Flask(__name__)
 
 def get_db(): # cette fonction permet de créer une connexion à la base 
               # ou de récupérer la connexion existante 
@@ -9,6 +11,21 @@ def get_db(): # cette fonction permet de créer une connexion à la base
     if db is None:
         db = g._database = sqlite3.connect(DATABASE)
     return db
+
+def malus(Pliste):
+    '''
+    Calcule le score (negatif) correspondant a une liste de pieces donnee
+    :param Pliste: (tab) contient les id des pieces
+    '''
+    malus = 0
+    for i in Pliste:
+        for j in range(len(i)):
+            for k in range(len(i)):
+                if i[j][k]:
+                    malus = malus -1
+    return malus
+
+
 
 def score(Game):
     ''' 
@@ -19,7 +36,8 @@ def score(Game):
                 Utile uniquement pour verifier si P1 placee en dernier ou pas, selon joueur: [R,B,Y,G]
     '''
     c = get_db().cursor()
-    query = "SELECT id_Piece, id_coup, color FROM coups WHERE id_game = ?"
+    query = "SELECT id_piece, id_move, color FROM coups WHERE id_game = ?"
+    print(query)
     c.execute(query, (Game,))  
     P0=[]
     Piece_restante_R = Tabpiece.copy()
@@ -60,17 +78,8 @@ def score(Game):
             if MaxIdcoup[1] == P1: #Cad que le dernier coup joue est le carre solitaire
                 score[i] = 20
     return score
-    
-def malus(Pliste):
-    '''
-    Calcule le score (negatif) correspondant a une liste de pieces donnee
-    :param Pliste: (tab) contient les id des pieces
-    '''
-    malus = 0
-    for i in Plist:
-        for j in range(len(i)):
-            for k in range(len(i)):
-                if i[j][k]:
-                    malus = malus -1
-    return malus
+
+if __name__ == "__main__":
+    with app.app_context():
+        print(score(1))
 
