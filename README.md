@@ -18,10 +18,10 @@ Bienvenue dans le projet **PPII - Semestre S5**. Ce projet est réalisé dans le
 ## Membres du groupe
 Veuillez compléter cette section avec les noms des membres du groupe :
 
-- **Nom Prénom 1** - [email@example.com](mailto:email@example.com)
-- **Nom Prénom 2** - [email@example.com](mailto:email@example.com)
-- **Nom Prénom 3** - [email@example.com](mailto:email@example.com)
-- **Nom Prénom 4** - [email@example.com](mailto:email@example.com)
+- **Girres Elisa** - [elisa.girres@telecomnancy.eu](mailto:email@example.com)
+- **Briand Thibault** - [thibault.briand@telecomnancy.eu](mailto:email@example.com)
+- **Denys Angèle 3** - [angele.denys@telecomnancy.eu](mailto:email@example.com)
+- **Regennass Anne** - [anne_regennass@telecomnancy.eu](mailto:email@example.com)
 - ...
 
 
@@ -29,7 +29,7 @@ Veuillez compléter cette section avec les noms des membres du groupe :
 
 Ajoutez ici une description du projet, ses objectifs, et toute autre information pertinente :
 
-- **Sujet :** 
+- **Sujet :** Développement d'une application web pour un jeu de société avec intelligence artificielle
 - **Objectifs :**
 - **Technologies utilisées :**
 
@@ -51,8 +51,8 @@ Expliquez comment installer le projet sur une machine locale.
 
 1. Clonez ce dépôt :
    ```bash
-   git clone https://gibson.telecomnancy.univ-lorraine.fr/projets/2425/ppii-s5/grpXX
-   cd grpXX
+   git clone https://gibson.telecomnancy.univ-lorraine.fr/projets/2425/ppii-s5/grp6
+   cd grp6
    ```
 
 2. Installez les dépendances (si applicable) :
