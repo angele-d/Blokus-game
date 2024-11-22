@@ -18,11 +18,10 @@ Bienvenue dans le projet **PPII - Semestre S5**. Ce projet est réalisé dans le
 ## Membres du groupe
 Veuillez compléter cette section avec les noms des membres du groupe :
 
-- **Girres Elisa** - [elisa.girres@telecomnancy.eu](mailto:email@example.com)
-- **Briand Thibault** - [thibault.briand@telecomnancy.eu](mailto:email@example.com)
-- **Denys Angèle 3** - [angele.denys@telecomnancy.eu](mailto:email@example.com)
-- **Regennass Anne** - [anne_regennass@telecomnancy.eu](mailto:email@example.com)
-- ...
+- **Girres Elisa** - [elisa.girres@telecomnancy.eu](mailto:elisa.girres@telecomnancy.eu)
+- **Briand Thibault** - [thibault.briand@telecomnancy.eu](mailto:thibault.briand@telecomnancy.eu)
+- **Denys Angèle** - [angele.denys@telecomnancy.eu](mailto:angele.denys@telecomnancy.eu)
+- **Regennass Anne** - [anne_regennass@telecomnancy.eu](mailto:anne_regennass@telecomnancy.eu)
 
 
 ## Description du projet
