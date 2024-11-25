@@ -3,7 +3,7 @@ from rotation_pieces import transformation
 from flask import g,Flask
 import sqlite3
 
-DATABASE = 'BaseTest' # Merci de mettre a jour cette ligne quand la database sera rajouté au dépot github
+DATABASE = 'Base'
 app = Flask(__name__)
 
 def get_db(): # cette fonction permet de créer une connexion à la base 
@@ -28,7 +28,8 @@ def placer_piece_grille20x20(grille,num_piece,x,y,couleur,rotation,isflipped):
     :param isflipped: (bool) true = piece retournee 
     :return: grille 20x20 avec pieces posees
     '''
-    pi = transformation(num_piece,isflipped,rotation)
+    pi = globals()[num_piece]
+    pi = transformation(pi,isflipped,rotation)
     for i in range(len(pi)):
         for j in range(len(pi[i])):
             if pi[i][j]:
@@ -54,6 +55,7 @@ def transcription_pieces_SQL_grille(Game):
         print(tpl)
         m = placer_piece_grille20x20(m,*tpl)
     return m
+
 
 
 if __name__ == "__main__":

@@ -116,13 +116,14 @@ def coup_possible(m,pi,pl,x,y,rot,isflipped):
     pl, aux coordonnées x,y de rotation rot et retourne suivant isflipped
     est possible
     :param m: matrice 20x20
-    :param pi: matrice 5x5 de la piece
+    :param pi: STRING DE LA VARIABLE DE LA matrice 5x5 de la piece
     :param pl: (str) R,B,Y ou G = joueur
     :param x,y: (int) coordonnees
     :param rot: (int) nombre de rotations
     :param isflipped: (bool) true = piece retournee
     :return: (bool) selon si coup possible ou pas
     '''
+    pi = globals()[pi]
     pi = transformation(pi,isflipped,rot)
     mat_pos = matrice_possible(m,pl)
     touche = False
