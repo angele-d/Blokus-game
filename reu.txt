@@ -6,5 +6,6 @@ tour pièce -> retourne,tourne
 html, IA
 
 Réunion 22 nov :
+connecter html à logique du jeu, min_max fonctionnel, deplacer pion dans grille, flask
 
 Réunion 2 déc :
