@@ -1,0 +1,41 @@
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Generator</title>
+    <script>
+        async function submitForm(event) {
+            event.preventDefault();
+            const number = document.getElementById("number").value;
+
+            const response = await fetch("/generate", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ number: number }),
+            });
+
+            const result = await response.json();
+
+            if (response.ok) {
+                // Met a jour l'image
+                document.getElementById("output-image").src = result.image_url + '?' + new Date().getTime();
+            } else {
+                alert(result.error || "Une erreur a eu lieu");
+            }
+        }
+    </script>
+</head>
+<body>
+    <h1>Genere la grille</h1>
+    <form onsubmit="submitForm(event)">
+        <label for="number">Entre le numéro de la partie:</label>
+        <input type="number" id="number" name="number" required>
+        <button type="submit">Generée l'image</button>
+    </form>
+    <div>
+        <h2>Image generée:</h2>
+        <img id="output-image" src="" alt="Image" style="max-width: 100%; height: auto; border: 1px solid #ccc;">
+    </div>
+</body>
+</html>
