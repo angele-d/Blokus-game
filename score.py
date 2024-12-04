@@ -37,7 +37,6 @@ def score(Game):
     '''
     c = get_db().cursor()
     query = "SELECT id_piece, id_move, color FROM coups WHERE id_game = ?"
-    print(query)
     c.execute(query, (Game,))  
     P0=[]
     Piece_restante_R = Tabpiece.copy()

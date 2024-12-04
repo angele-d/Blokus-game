@@ -1,6 +1,7 @@
 from pieces import P1,P2,P3,P4,P5,P6,P7,P8,P9,P10,P11,P12,P13,P14,P15,P16,P17,P18,P19,P20,P21 #pieces.py
 from rotation_pieces import transformation
 from flask import g,Flask
+from PIL import Image
 import sqlite3
 
 DATABASE = 'Base'
@@ -56,8 +57,52 @@ def transcription_pieces_SQL_grille(Game):
         m = placer_piece_grille20x20(m,*tpl)
     return m
 
+def generation_matrice_image(m):
+    le = 3200
+    result_image = Image.new("RGB", (le,le), (240,240,240))
+    for i_index, i in enumerate(m):
+        for j_index, tile in enumerate(i):
+            x = 160 * i_index
+            y = 160 * j_index
+            if tile == 'R':
+                path = './static/tiles/red.png'
+            elif tile == 'G':
+                path = './static/tiles/green.png'
+            elif tile == 'Y':
+                path = './static/tiles/yellow.png'
+            elif tile == 'B':
+                path = './static/tiles/blue.png'
+            elif tile == 'V':
+                path = './static/tiles/Empty.png'
+            tile_image=Image.open(path)
+            result_image.paste(tile_image,(x,y))
+    result_image.save("./static/grille.png")
 
+matrice_test = [['R','R','R','V','V','V','V','V','V','V','V','V','V','V','V','V','V','V','V','V'],
+['R','R','R','V','V','V','V','V','V','V','V','V','V','V','V','V','V','V','V','V'],
+['R','R','R','V','V','V','V','V','V','V','V','V','V','V','V','V','V','V','V','V'],
+['R','R','R','V','V','V','V','V','V','V','V','V','V','V','V','V','V','V','V','V'],
+['R','R','R','V','V','V','V','V','V','V','V','V','G','V','V','V','V','V','V','V'],
+['R','R','R','V','V','V','V','V','V','V','V','G','G','G','V','V','V','V','V','V'],
+['R','R','R','V','V','V','V','V','V','V','V','V','G','V','V','V','V','V','V','V'],
+['R','R','R','V','V','V','V','V','V','V','Y','V','G','V','V','V','V','V','V','V'],
+['R','R','R','V','V','V','V','V','V','V','Y','V','G','V','V','V','V','V','V','V'],
+['R','R','R','V','V','V','V','V','V','V','Y','V','G','V','V','V','V','V','V','V'],
+['R','R','R','V','V','V','V','V','V','V','Y','V','G','V','V','V','V','V','V','V'],
+['R','R','R','V','V','V','V','V','V','V','Y','V','V','V','V','V','V','V','V','V'],
+['R','R','R','V','V','V','V','V','V','V','Y','V','V','V','V','V','V','V','V','V'],
+['R','R','R','V','V','V','V','V','V','V','V','V','V','V','V','V','V','V','V','V'],
+['R','R','R','V','V','V','V','V','V','V','V','V','V','V','V','B','V','V','V','V'],
+['R','R','R','V','V','V','V','V','V','V','V','V','V','V','V','B','V','V','V','V'],
+['R','R','R','V','V','V','V','V','V','V','V','V','V','V','V','B','V','V','V','V'],
+['R','R','R','V','V','V','V','V','V','V','V','V','V','V','B','B','B','V','V','V'],
+['R','R','R','V','V','V','V','V','V','V','V','V','V','V','V','B','V','V','V','V'],
+['R','R','R','V','V','V','V','V','V','V','V','V','V','V','V','V','V','V','V','V'],
+]
+generation_matrice_image(matrice_test)
 
+''' Supprime par thibault dans son truc de merge --> je laisse si jamais
 if __name__ == "__main__":
     with app.app_context():
         print(transcription_pieces_SQL_grille(1))
+'''

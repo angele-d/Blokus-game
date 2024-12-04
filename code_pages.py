@@ -1,7 +1,7 @@
-from flask import Flask, request, redirect, url_for, render_template
+from flask import Flask, request, redirect, url_for, render_template, jsonify
 from logique_jeu import *
 from score import score
-from placage_pieces import transcription_pieces_SQL_grille
+from placage_pieces import transcription_pieces_SQL_grille, generation_matrice_image
 import sqlite3
 
 
@@ -63,6 +63,22 @@ def submit_form():
             return "Le coup n'est pas valide", 500
     except Exception as e:
         return f"An error occured: {e}", 500
+
+@app.route('/generate', methods=['POST'])
+def generate():
+    data = request.get_json()  
+    
+    num_game = int(data.get('number')) 
+
+    matrix = transcription_pieces_SQL_grille(num_game)
+    
+    generation_matrice_image(matrix)
+
+    return jsonify({'image_url': "/static/grille.png"})
+
+@app.route('/grille')
+def grille():
+    return render_template('grille.html')
 
 #OUTIL DE DEBUG, A SUPPRIMER PLUS TARD
 @app.route('/view_data')
