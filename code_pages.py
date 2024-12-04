@@ -17,6 +17,20 @@ def insert_move(id_game, id_move, id_piece, color, position_x, position_y, rotat
     conn.commit()
     conn.close()
 
+def who_is_playing(id_move):
+    color = id_move%4
+    match color:
+        case 0:
+            return "B"
+        case 1:
+            return "Y"
+        case 2:
+            return "R"
+        case 3:
+            return "G"
+        case _:
+            print("Probleme sur color dans la BD")
+
 @app.route('/')
 def accueil():
     return render_template('home_page.html')
@@ -36,11 +50,15 @@ def submit_form():
     position_y = request.form['position_y']
     rotation = request.form['rotation']
     flip = request.form['flip']
+    player = who_is_playing(id_move)
     try:
         m = transcription_pieces_SQL_grille(id_game)
         if coup_possible(m,id_piece,color,int(position_x),int(position_y),int(rotation),bool(int(flip))):
-            insert_move(id_game, id_move, id_piece, color, position_x, position_y, rotation, flip)
-            return "Move added successfully!", 200
+            if color == player: #verif que c'est le bon joueur qui joue
+                insert_move(id_game, id_move, id_piece, color, position_x, position_y, rotation, flip)
+                return "Move added successfully!", 200
+            else: 
+                return "Le joueur n'est pas le bon", 500
         else: 
             return "Le coup n'est pas valide", 500
     except Exception as e:

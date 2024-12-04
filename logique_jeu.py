@@ -69,7 +69,7 @@ def matrice_possible_start(pl):
     '''
     Renvoie une matrice avec l'emplacement de départ pour le joueur correspondant,
     à utiliser comme matrice pour les 4 premiers tours
-    :param pl: (string) R,B,Y ou G = joueur
+    :param pl: (string) B,Y,R,G = joueur
     :return: matrice 20x20 avec P a l'endroit ou le joueur peut commencer a jouer
     '''
     m = []
@@ -77,11 +77,11 @@ def matrice_possible_start(pl):
         m.append([])
         for j in range(20):
             m[i].append(['V'])
-    if pl == 'R':
+    if pl == 'B':
         m[0][0] = 'P'
     if pl == 'Y':
         m[0][20] = 'P'
-    if pl == 'B' :
+    if pl == 'R' :
         m[20][20] = 'P'
     if pl == 'G':
         m[20][0] = 'P'
