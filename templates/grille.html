@@ -35,7 +35,83 @@
     </form>
     <div>
         <h2>Image generée:</h2>
-        <img id="output-image" src="" alt="Image" style="max-width: 100%; height: auto; border: 1px solid #ccc;">
+        <style>
+            body {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                height: 100vh;
+                margin: 0;
+            }
+        </style>
+        <img id="output-image" src="" alt="Image" style="max-width: 100%; height: auto; border: 1px solid #ccc;" height=800 width=800>
     </div>
 </body>
+
+<!DOCTYPE html>
+<style>
+#pos {
+  position: absolute;
+  z-index: 9;
+  background-color: #f1f1f1;
+  text-align: center;
+  border: 1px solid #d3d3d3;
+}
+
+#posi {
+  padding: 10px;
+  cursor: move;
+  z-index: 10;
+  background-color: #2196F3;
+  color: #fff;
+}
+</style>
+<body>
+
+<p>Déplacez la pièce choisie à l'endroit souhaité</p>
+
+<div id="pos">
+   <div id="posi"><img src = BlokusTiles.svg></img></div>
+</div>
+
+<script>
+glisseElement(document.getElementById("pos"));
+
+function glisseElement(element) {
+  var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+  if (document.getElementById(element.id + "header")) {
+    document.getElementById(element.id + "header").onmousedown = glisseMouseDown;
+  } else {
+    element.onmousedown = glisseMouseDown;
+  }
+
+  function glisseMouseDown(e) {
+    e = e || window.event;
+    e.preventDefault();
+    pos3 = e.clientX;
+    pos4 = e.clientY;
+    document.onmouseup = closeGlisseElement;
+    document.onmousemove = elementGlisse;
+  }
+
+  function elementGlisse(e) {
+    e = e || window.event;
+    e.preventDefault();
+    pos1 = pos3 - e.clientX;
+    pos2 = pos4 - e.clientY;
+    pos3 = e.clientX;
+    pos4 = e.clientY;
+    element.style.top = (element.offsetTop - pos2) + "px";
+    element.style.left = (element.offsetLeft - pos1) + "px";
+  }
+
+  function closeGlisseElement() {
+    document.onmouseup = null;
+    document.onmousemove = null;
+  }
+}
+</script>
+
+</body>
+
 </html>
