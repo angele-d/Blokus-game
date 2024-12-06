@@ -47,71 +47,91 @@
         <img id="output-image" src="" alt="Image" style="max-width: 100%; height: auto; border: 1px solid #ccc;" height=800 width=800>
     </div>
 </body>
+</html>
 
 <!DOCTYPE html>
-<style>
-#pos {
-  position: absolute;
-  z-index: 9;
-  background-color: #f1f1f1;
-  text-align: center;
-  border: 1px solid #d3d3d3;
-}
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Déplacer une image</title>
+    <style>
+        /* Conteneur de l'image */
+        #pos {
+            position: absolute;
+            z-index: 9;
+            background-color: transparent;
+            text-align: center;
+            border: none;  /* Assurez-vous qu'il n'y a pas de bordure */
+        }
 
-#posi {
-  padding: 10px;
-  cursor: move;
-  z-index: 10;
-  background-color: #2196F3;
-  color: #fff;
-}
-</style>
+        /* Zone de déplacement */
+        #posi {
+            padding: 10px;
+            cursor: move;
+            z-index: 10;
+            background-color: transparent;
+            color: transparent;
+        }
+
+        /* Supprimer la bordure de l'image */
+        #posi img {
+            border: none;  /* Supprimer toute bordure autour de l'image */
+            display: block; /* Pour éviter l'espacement au-dessous de l'image */
+            max-width: 100%; /* Optionnel, ajuste la taille de l'image pour qu'elle soit responsive */
+        }
+    </style>
+</head>
 <body>
 
 <p>Déplacez la pièce choisie à l'endroit souhaité</p>
 
 <div id="pos">
-   <div id="posi"><img src = BlokusTiles.svg></img></div>
+   <div id="posi"><img src="../static/piece/R/1.png" alt="Piece" height=200 width=200></div>
 </div>
 
 <script>
-glisseElement(document.getElementById("pos"));
+    glisseElement(document.getElementById("pos"));
 
-function glisseElement(element) {
-  var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
-  if (document.getElementById(element.id + "header")) {
-    document.getElementById(element.id + "header").onmousedown = glisseMouseDown;
-  } else {
-    element.onmousedown = glisseMouseDown;
-  }
+    function glisseElement(element) {
+        var pos1 = -15, pos2 = -50, pos3 = 0, pos4 = 0;
 
-  function glisseMouseDown(e) {
-    e = e || window.event;
-    e.preventDefault();
-    pos3 = e.clientX;
-    pos4 = e.clientY;
-    document.onmouseup = closeGlisseElement;
-    document.onmousemove = elementGlisse;
-  }
+        // Assigner l'événement mousedown à l'élément ou à son header
+        element.querySelector("#posi").onmousedown = glisseMouseDown;
 
-  function elementGlisse(e) {
-    e = e || window.event;
-    e.preventDefault();
-    pos1 = pos3 - e.clientX;
-    pos2 = pos4 - e.clientY;
-    pos3 = e.clientX;
-    pos4 = e.clientY;
-    element.style.top = (element.offsetTop - pos2) + "px";
-    element.style.left = (element.offsetLeft - pos1) + "px";
-  }
+        function glisseMouseDown(e) {
+            e = e || window.event;  // Compatibilité avec les anciens navigateurs
+            e.preventDefault();  // Empêche le comportement par défaut du navigateur
+            // Capturer la position de la souris au moment du clic
+            pos3 = e.clientX;
+            pos4 = e.clientY;
 
-  function closeGlisseElement() {
-    document.onmouseup = null;
-    document.onmousemove = null;
-  }
-}
+            // Attacher les événements pour déplacer l'élément
+            document.onmouseup = closeGlisseElement;
+            document.onmousemove = elementGlisse;
+        }
+
+        function elementGlisse(e) {
+            e = e || window.event;
+            e.preventDefault();
+            // Calculer la nouvelle position de l'élément
+            pos1 = pos3 - e.clientX;
+            pos2 = pos4 - e.clientY;
+            pos3 = e.clientX;
+            pos4 = e.clientY;
+            
+            // Déplacer l'élément
+            element.style.top = (element.offsetTop - pos2) + "px";
+            element.style.left = (element.offsetLeft - pos1) + "px";
+        }
+
+        function closeGlisseElement() {
+            // Arrêter le déplacement lorsque la souris est relâchée
+            document.onmouseup = null;
+            document.onmousemove = null;
+        }
+    }
 </script>
 
 </body>
-
 </html>
