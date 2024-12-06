@@ -1,0 +1,37 @@
+body {
+    background-color: lightblue; /* Sets a solid background color */
+}
+
+.container {
+    display: flex; 
+    justify-content: center; 
+    align-items: center; 
+    height: 100vh; 
+}
+
+.custom-button {
+    display: inline-block; 
+    padding: 10px 20px; 
+    font-size: 16px; 
+    color: black; 
+    background-color: hsl(61, 100%, 50%); 
+    border: none; 
+    border-radius: 5px; 
+    cursor: pointer; 
+    text-align: center; 
+    text-decoration: none; 
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2); 
+    transition: background-color 0.3s ease, transform 0.2s ease; 
+    margin: 40px
+}
+
+.custom-button:hover {
+    background-color: #b39200; 
+    transform: scale(1.05);
+    color:white;
+}
+
+.custom-button:focus {
+    outline: none; 
+    box-shadow: 0 0 5px #0056b3; 
+}

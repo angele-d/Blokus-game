@@ -33,6 +33,10 @@ def who_is_playing(id_move):
 
 @app.route('/')
 def accueil():
+    return render_template('main_page.html')
+
+@app.route('/join')
+def rejoin():
     return render_template('home_page.html')
 
 @app.route('/game')
