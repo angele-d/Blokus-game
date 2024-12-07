@@ -27,7 +27,6 @@
     </script>
 </head>
 <body>
-    <h1>Genere la grille</h1>
     <form onsubmit="submitForm(event)">
         <label for="number">Entre le numéro de la partie:</label>
         <input type="number" id="number" name="number" required>
@@ -43,9 +42,14 @@
                 height: 100vh;
                 margin: 0;
             }
-            
+            #output-image {
+                position: fixed;
+                top: 100px;     /* Positionner à 100px du haut du conteneur */
+                left: 100px;
+            }
         </style>
-        <img id="output-image" src="" alt="Image" style="max-width: 100%; height: auto; border: 1px solid #ccc;" height=800 width=800>
+        <img id="output-image" src="" alt="Image" height=800 width=800>
+        <!-- la position de la grille est : X = 10 et Y = 10 et 760 de hauteur avec 20 cases-->
     </div>
 </body>
 </html>
@@ -64,15 +68,17 @@
             background-color: transparent;
             text-align: center;
             border: none;  /* Assurez-vous qu'il n'y a pas de bordure */
+            top: 20px;     /* Positionner à 100px du haut du conteneur */
+            left: 1000px;
         }
 
         /* Zone de déplacement */
         #posi {
-            padding: 10px;
             cursor: move;
             z-index: 10;
             background-color: transparent;
             color: transparent;
+            
         }
 
         /* Supprimer la bordure de l'image */
@@ -85,54 +91,61 @@
 </head>
 <body>
 
+<!-- Conteneur = pos et sous-conteneur = posi -->
 <div id="pos">
    <div id="posi"><img src="../static/piece/R/1.png" alt="Piece" height=200 width=200></div>
 </div>
+
+<!-- Donne les coordonnées de la pièce choisie juste avant -->
 <p>Position de l'image : <span id="coords">X: 0, Y: 0</span></p>
+
 <script>
+    // Lance la fonction getElementById avec l'image
     glisseElement(document.getElementById("pos"));
 
     function glisseElement(element) {
         var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
 
-        // Assigner l'événement mousedown à l'élément ou à son header
-        element.querySelector("#posi").onmousedown = glisseMouseDown;
+        // Quand la souris sélectionne l'image, on lance une nouvelle fonction
+        element.querySelector("#posi").onmousedown = glisseSourisAppuie;
 
-        function glisseMouseDown(e) {
-            e = e || window.event;  // Compatibilité avec les anciens navigateurs
-            e.preventDefault();  // Empêche le comportement par défaut du navigateur
+        function glisseSourisAppuie(e) {
+            // Empêche le comportement par défaut du navigateur
+            e.preventDefault();
             // Capturer la position de la souris au moment du clic
             pos3 = e.clientX;
             pos4 = e.clientY;
-
             // Attacher les événements pour déplacer l'élément
-            document.onmouseup = closeGlisseElement;
+            document.onmouseup = arreteGlisseElement;
             document.onmousemove = elementGlisse;
         }
 
         function elementGlisse(e) {
-            e = e || window.event;
             e.preventDefault();
             // Calculer la nouvelle position de l'élément
             pos1 = pos3 - e.clientX;
             pos2 = pos4 - e.clientY;
             pos3 = e.clientX;
             pos4 = e.clientY;
-            // Déplacer l'élément
+            // Déplacer l'élément, element.offset... donne la position entre le parent et l'élément, ... = met à jour les données
             element.style.top = (element.offsetTop - pos2) + "px";
             element.style.left = (element.offsetLeft - pos1) + "px";
+            // Met à jour les coordonnées
             updateCoords();
         }
 
-        function closeGlisseElement() {
-            // Arrêter le déplacement lorsque la souris est relâchée
+        function arreteGlisseElement() {
+            // Arrête le déplacement lorsque la souris est relâchée
             document.onmouseup = null;
             document.onmousemove = null;
         }
-        // Fonction pour afficher les coordonnées actuelles
+        // Affiche les coordonnées actuelles
         function updateCoords() {
+            // Récupère la position de l'élément
             var pos = element.getBoundingClientRect();
+            // Chaîne de texte
             var coordsText = "X: " + Math.round(pos.left) + ", Y: " + Math.round(pos.top);
+            // Met à jour
             document.getElementById("coords").textContent = coordsText;
         }
     }
