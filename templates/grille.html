@@ -43,6 +43,7 @@
                 height: 100vh;
                 margin: 0;
             }
+            
         </style>
         <img id="output-image" src="" alt="Image" style="max-width: 100%; height: auto; border: 1px solid #ccc;" height=800 width=800>
     </div>
@@ -84,17 +85,15 @@
 </head>
 <body>
 
-<p>Déplacez la pièce choisie à l'endroit souhaité</p>
-
 <div id="pos">
    <div id="posi"><img src="../static/piece/R/1.png" alt="Piece" height=200 width=200></div>
 </div>
-
+<p>Position de l'image : <span id="coords">X: 0, Y: 0</span></p>
 <script>
     glisseElement(document.getElementById("pos"));
 
     function glisseElement(element) {
-        var pos1 = -15, pos2 = -50, pos3 = 0, pos4 = 0;
+        var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
 
         // Assigner l'événement mousedown à l'élément ou à son header
         element.querySelector("#posi").onmousedown = glisseMouseDown;
@@ -119,10 +118,10 @@
             pos2 = pos4 - e.clientY;
             pos3 = e.clientX;
             pos4 = e.clientY;
-            
             // Déplacer l'élément
             element.style.top = (element.offsetTop - pos2) + "px";
             element.style.left = (element.offsetLeft - pos1) + "px";
+            updateCoords();
         }
 
         function closeGlisseElement() {
@@ -130,8 +129,15 @@
             document.onmouseup = null;
             document.onmousemove = null;
         }
+        // Fonction pour afficher les coordonnées actuelles
+        function updateCoords() {
+            var pos = element.getBoundingClientRect();
+            var coordsText = "X: " + Math.round(pos.left) + ", Y: " + Math.round(pos.top);
+            document.getElementById("coords").textContent = coordsText;
+        }
     }
 </script>
 
 </body>
 </html>
+
