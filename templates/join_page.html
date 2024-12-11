@@ -3,18 +3,18 @@
 <p>Nouvelle partie</p>
 <p>Charger une partie en rentrant vos coordonnées</p>
 
-<form>
+<form action="/join" method="POST">
     <p>
     <label for="name">Nom</label>
     <input type="text" id="name" name="name" placeholder="Votre nom" required>
 </p>
 <p>
     <label for="game">Game</label>
-    <input type="game" id="game" name="game" placeholder="Votre nom de partie" required>
+    <input type="text" id="game" name="game" placeholder="Votre nom de partie" required>
 </p>
 <p>
     <label for="password">Password</label>
-    <input type="password" id="password" name="password" placeholder="Votre password" required>
+    <input type="text" id="password" name="password" placeholder="Votre password" required>
 </p>
 <p>
     <input type="submit" value="Envoyer">
