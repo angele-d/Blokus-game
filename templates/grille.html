@@ -33,7 +33,6 @@
         <button type="submit">Generée l'image</button>
     </form>
     <div>
-        <h2>Image generée:</h2>
         <style>
             body {
                 display: flex;
@@ -49,11 +48,10 @@
             }
         </style>
         <img id="output-image" src="" alt="Image" height=800 width=800>
-        <!-- la position de la grille est : X = 10 et Y = 10 et 760 de hauteur avec 20 cases-->
+        <!-- la position de la grille est : X = 120 et Y = 160 et 760 de hauteur avec 20 cases-->
     </div>
 </body>
 </html>
-
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -63,94 +61,115 @@
     <style>
         /* Conteneur de l'image */
         #pos {
-            position: absolute;
+            position: relative;  /* Assurez-vous que le parent est positionné */
             z-index: 9;
             background-color: transparent;
             text-align: center;
             border: none;  /* Assurez-vous qu'il n'y a pas de bordure */
-            top: 20px;     /* Positionner à 100px du haut du conteneur */
-            left: 1000px;
         }
 
         /* Zone de déplacement */
-        #posi {
+        .posi {
             cursor: move;
             z-index: 10;
             background-color: transparent;
             color: transparent;
-            
+            position: absolute; /* Position absolue pour les éléments à déplacer */
         }
 
         /* Supprimer la bordure de l'image */
-        #posi img {
+        .posi img {
             border: none;  /* Supprimer toute bordure autour de l'image */
             display: block; /* Pour éviter l'espacement au-dessous de l'image */
             max-width: 100%; /* Optionnel, ajuste la taille de l'image pour qu'elle soit responsive */
         }
     </style>
 </head>
+
 <body>
+    <!-- Conteneur = pos et sous-conteneur = posi -->
+    {% for coord in coords %}
+        <div class="posi" style="left: {{ coord[0] }}px; top: {{ coord[1] }}px;">
+            <!-- Utiliser loop.index pour changer le nom de l'image dynamiquement -->
+            <img id = "Image{{ loop.index }}" src="../static/piece/R/{{ loop.index }}.png" alt="Piece" height="200" width="200">
+        </div>
+    {% endfor %}
 
-<!-- Conteneur = pos et sous-conteneur = posi -->
-<div id="pos">
-   <div id="posi"><img src="../static/piece/R/1.png" alt="Piece" height=200 width=200></div>
-</div>
+    <!-- Donne les coordonnées de la pièce choisie juste avant -->
+    <p>Position de l'image : <span id="coords">X: 0, Y: 0</span></p>
+    <p><br>Position carré : <span id="carre">X: 0, Y: 0</span></p>
 
-<!-- Donne les coordonnées de la pièce choisie juste avant -->
-<p>Position de l'image : <span id="coords">X: 0, Y: 0</span></p>
+    <script>
+        // Sélectionne toutes les images et applique la fonction glisseElement à chacune
+        let elements = document.querySelectorAll('.posi');
+        elements.forEach(element => {
+            glisseElement(element);
+        });
 
-<script>
-    // Lance la fonction getElementById avec l'image
-    glisseElement(document.getElementById("pos"));
+        function glisseElement(element) {
+            let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
 
-    function glisseElement(element) {
-        var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+            // Quand la souris sélectionne l'image, on lance une nouvelle fonction
+            element.querySelector("img").onmousedown = glisseSourisAppuie;
 
-        // Quand la souris sélectionne l'image, on lance une nouvelle fonction
-        element.querySelector("#posi").onmousedown = glisseSourisAppuie;
+            function glisseSourisAppuie(e) {
+                // Empêche le comportement par défaut du navigateur
+                e.preventDefault();
+                // Capturer la position de la souris au moment du clic
+                pos3 = e.clientX;
+                pos4 = e.clientY;
+                // Attacher les événements pour déplacer l'élément
+                document.onmouseup = arreteGlisseElement;
+                document.onmousemove = elementGlisse;
+            }
 
-        function glisseSourisAppuie(e) {
-            // Empêche le comportement par défaut du navigateur
-            e.preventDefault();
-            // Capturer la position de la souris au moment du clic
-            pos3 = e.clientX;
-            pos4 = e.clientY;
-            // Attacher les événements pour déplacer l'élément
-            document.onmouseup = arreteGlisseElement;
-            document.onmousemove = elementGlisse;
+            function elementGlisse(e) {
+                e.preventDefault();
+                // Calculer la nouvelle position de l'élément
+                pos1 = pos3 - e.clientX;
+                pos2 = pos4 - e.clientY;
+                pos3 = e.clientX;
+                pos4 = e.clientY;
+                // Déplacer l'élément, element.offset... donne la position entre le parent et l'élément
+                element.style.top = (element.offsetTop - pos2) + "px";
+                element.style.left = (element.offsetLeft - pos1) + "px";
+            }
+
+            function arreteGlisseElement() {
+                // Arrête le déplacement lorsque la souris est relâchée
+                document.onmouseup = null;
+                document.onmousemove = null;
+                // Met à jour les coordonnées à la fin du déplacement
+                updateCoords(element);
+                // Supprime la pièce
+                element.remove();
+            }
+
+            // Affiche les coordonnées actuelles
+            function updateCoords(element) {
+                // Récupère la position de l'élément
+                var pos = element.getBoundingClientRect();
+                // Pour le centre de l'image
+                var centerX = Math.round(pos.left + pos.width / 2);
+                var centerY = Math.round(pos.top + pos.height / 2);
+                placementGrille(centerX,centerY,element)
+                var coordsText = "X: " + centerX + ", Y: " + centerY;
+                // Met à jour
+                document.getElementById("coords").textContent = coordsText;
+            }
+            
+            function placementGrille(x,y,element) {
+                var imageId = element.id; // récupère l'id
+                // Le numéro de la case
+                var carreX = Math.round(((x-120)/760)*20)
+                var carreY = Math.round(((y-120)/760)*20)
+                var carreText = "X: " + carreX + ", Y: " + carreY;
+                document.getElementById("carre").textContent = carreText;
+            }
         }
-
-        function elementGlisse(e) {
-            e.preventDefault();
-            // Calculer la nouvelle position de l'élément
-            pos1 = pos3 - e.clientX;
-            pos2 = pos4 - e.clientY;
-            pos3 = e.clientX;
-            pos4 = e.clientY;
-            // Déplacer l'élément, element.offset... donne la position entre le parent et l'élément, ... = met à jour les données
-            element.style.top = (element.offsetTop - pos2) + "px";
-            element.style.left = (element.offsetLeft - pos1) + "px";
-            // Met à jour les coordonnées
-            updateCoords();
-        }
-
-        function arreteGlisseElement() {
-            // Arrête le déplacement lorsque la souris est relâchée
-            document.onmouseup = null;
-            document.onmousemove = null;
-        }
-        // Affiche les coordonnées actuelles
-        function updateCoords() {
-            // Récupère la position de l'élément
-            var pos = element.getBoundingClientRect();
-            // Chaîne de texte
-            var coordsText = "X: " + Math.round(pos.left) + ", Y: " + Math.round(pos.top);
-            // Met à jour
-            document.getElementById("coords").textContent = coordsText;
-        }
-    }
-</script>
-
+    </script>
 </body>
+
 </html>
+
 
