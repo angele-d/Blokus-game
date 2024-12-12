@@ -91,7 +91,7 @@
     {% for coord in coords %}
         <div class="posi" style="left: {{ coord[0] }}px; top: {{ coord[1] }}px;">
             <!-- Utiliser loop.index pour changer le nom de l'image dynamiquement -->
-            <img id = "Image{{ loop.index }}" src="../static/piece/R/{{ loop.index }}.png" alt="Piece" height="200" width="200">
+            <img id = "Image{{ loop.index }}" src="../static/piece/{{ color }}/{{ loop.index }}.png" alt="Piece" height="200" width="200">
         </div>
     {% endfor %}
 
@@ -108,9 +108,25 @@
 
         function glisseElement(element) {
             let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
-
             // Quand la souris sélectionne l'image, on lance une nouvelle fonction
-            element.querySelector("img").onmousedown = glisseSourisAppuie;
+            element.querySelector("img").onmousedown = function(event){
+                event.preventDefault(); 
+                if (event.button === 2) {
+                    tourne(element);
+                    return;
+                }
+                // Sinon, on commence à glisser l'élément
+                glisseSourisAppuie(event);
+            }
+            
+
+            function tourne(e) {
+                // Donne valeur numérique de la rotation
+                let rotation = e.style.transform.replace(/[^\d.]/g, '') || 0;
+                // Rotation de 90 degrés à partir de l'image actuelle
+                rotation = (parseInt(rotation) + 90) % 360;
+                e.style.transform = `rotate(-${rotation}deg)`;
+            }
 
             function glisseSourisAppuie(e) {
                 // Empêche le comportement par défaut du navigateur
@@ -142,7 +158,7 @@
                 // Met à jour les coordonnées à la fin du déplacement
                 updateCoords(element);
                 // Supprime la pièce
-                element.remove();
+                // element.remove();
             }
 
             // Affiche les coordonnées actuelles
