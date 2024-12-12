@@ -206,7 +206,15 @@ def generate():
 
 @app.route('/grille')
 def grille():
-    return render_template('grille.html')
+    color = 'B'
+    coords = []
+    for i in range(7):
+        coords.append((1000,-10+130*i))
+    for i in range(7):
+        coords.append((1300,-10+130*i))
+    for i in range(7):
+        coords.append((1600,-10+130*i))
+    return render_template('grille.html',coords = coords, color = color)
 
 #OUTIL DE DEBUG, A SUPPRIMER PLUS TARD
 @app.route('/view_data')
