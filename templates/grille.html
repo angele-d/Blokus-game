@@ -89,10 +89,12 @@
 <body>
     <!-- Conteneur = pos et sous-conteneur = posi -->
     {% for coord in coords %}
-        <div class="posi" style="left: {{ coord[0] }}px; top: {{ coord[1] }}px;">
-            <!-- Utiliser loop.index pour changer le nom de l'image dynamiquement -->
-            <img id = "Image{{ loop.index }}" src="../static/piece/{{ color }}/{{ loop.index }}.png" alt="Piece" height="200" width="200">
-        </div>
+        {% if coord is iterable %}
+            <div class="posi" style="left: {{ coord[0] }}px; top: {{ coord[1] }}px;">
+                <!-- Utiliser loop.index pour changer le nom de l'image dynamiquement -->
+                <img id = "Image{{ loop.index }}" src="../static/piece/{{ color }}/{{ loop.index }}.png" alt="Piece" height="200" width="200">
+            </div>
+        {% endif %}
     {% endfor %}
 
     <!-- Donne les coordonnées de la pièce choisie juste avant -->
