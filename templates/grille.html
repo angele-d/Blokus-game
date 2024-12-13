@@ -109,6 +109,9 @@
         function glisseElement(element) {
             let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
             // Quand la souris sélectionne l'image, on lance une nouvelle fonction
+            element.addEventListener('dblclick',function (){
+                flip(element)
+            })
             element.querySelector("img").onmousedown = function(event){
                 event.preventDefault(); 
                 if (event.button === 2) {
@@ -119,6 +122,17 @@
                 glisseSourisAppuie(event);
             }
             
+            function flip(e) {
+                var scaleX_valeur = window.getComputedStyle(e).transform;
+                if (scaleX_valeur === 'none' || scaleX_valeur === 'matrix(1, 0, 0, 1, 0, 0)') {
+                    const retourne = -1
+                    e.style.transform = `scaleX(-1)`;
+                }
+                else {
+                    const retourne = 1
+                    e.style.transform = `scaleX(1)`;
+                }
+            }
 
             function tourne(e) {
                 // Donne valeur numérique de la rotation
