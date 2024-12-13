@@ -206,6 +206,7 @@ def generate():
 
 @app.route('/grille')
 def grille():
+    liste_piece = [1,2,3,4,5,6,7,8,9,10,12,14,15,16,18,19,20]
     color = 'B'
     coords = []
     for i in range(7):
@@ -214,6 +215,9 @@ def grille():
         coords.append((1300,-10+130*i))
     for i in range(7):
         coords.append((1600,-10+130*i))
+    for i in range(len(coords)):
+        if not i+1 in liste_piece:
+            coords[i] = None
     return render_template('grille.html',coords = coords, color = color)
 
 #OUTIL DE DEBUG, A SUPPRIMER PLUS TARD
