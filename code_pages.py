@@ -175,17 +175,31 @@ def game(idgame):
 
 
 @app.route('/submit22', methods=['POST'])
+#A SUPPRIMER PLUS TARD
 def submit():
-    # Récupère les données envoyées (sans les utiliser ici)
-    data = request.get_json()
-    carrX = data.get('carrX')
-    carrY = data.get('carrY')
+    try:
+        # Récupère les données envoyées
+        data = request.get_json()
+        if not data:
+            return jsonify({"error": "No data received"}), 400  # Erreur si aucune donnée n'est reçue
 
-    # Logique pour traiter les données (par exemple, les enregistrer)
-    print(f"Coordonnées reçues: X={carrX}, Y={carrY}")
+        # Récupérer les coordonnées
+        carrX = data.get('carrX')
+        carrY = data.get('carrY')
 
-    # Retourne une réponse vide avec un code HTTP 200
-    return '', 200
+        if carrX is None or carrY is None:
+            return jsonify({"error": "Missing coordinates"}), 400  # Erreur si coordonnées manquantes
+
+        # Logique pour traiter les données
+        print(f"Coordonnées reçues: X={carrX}, Y={carrY}")
+
+        # Retourne une réponse avec un statut et les coordonnées
+        return jsonify({"status": "success", "carrX": carrX, "carrY": carrY}), 200
+
+    except Exception as e:
+        # Gestion des erreurs et envoi d'une réponse appropriée
+        return jsonify({"error": str(e)}), 500  # Erreur interne du serveur
+
 
 
 
