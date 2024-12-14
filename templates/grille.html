@@ -91,7 +91,7 @@
     {% for coord in coords %}
         {% if coord is iterable %}
             <div class="posi" style="left: {{ coord[0] }}px; top: {{ coord[1] }}px;">
-                <!-- Utiliser loop.index pour changer le nom de l'image dynamiquement -->
+                <!-- Utilise loop.index pour changer le nom de l'image dynamiquement -->
                 <img id = "Image{{ loop.index }}" src="../static/piece/{{ color }}/{{ loop.index }}.png" alt="Piece" height="200" width="200">
             </div>
         {% endif %}
@@ -126,7 +126,7 @@
             
             function flip(e) {
                 var scaleX_valeur = window.getComputedStyle(e).transform;
-                if (scaleX_valeur === 'none' || scaleX_valeur === 'matrix(1, 0, 0, 1, 0, 0)') {
+                if (scaleX_valeur === 'none' || scaleX_valeur === 'matrix(1, 0, 0, 1, 0, 0)' || scaleX_valeur === 'matrix(0, -1, 1, 0, 0, 0)' || scaleX_valeur === 'matrix(0, 1, -1, 0, 0, 0)' || scaleX_valeur === 'matrix(-1, 0, 0, -1, 0, 0)') {
                     const retourne = -1
                     e.style.transform = `scaleX(-1)`;
                 }
@@ -195,6 +195,7 @@
                 // Le numéro de la case
                 var carreX = Math.round(((x-120)/760)*20)
                 var carreY = Math.round(((y-120)/760)*20)
+                // Affiche le carré où va la pièce
                 var carreText = "X: " + carreX + ", Y: " + carreY;
                 document.getElementById("carre").textContent = carreText;
             }
