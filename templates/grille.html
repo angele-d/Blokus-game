@@ -108,36 +108,55 @@
             glisseElement(element);
         });
 
+        async function envoieValeur(carrX, carrY) {
+            const response = await fetch("/submit22", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ carrX: carrX, carrY: carrY }),
+            });
+        
+            if (response.ok) {
+                const result = await response.json();
+                console.log('Réponse du serveur:', result);
+            } else {
+                console.error('Erreur dans la réponse:', response.status);
+            }
+        }
+
         function glisseElement(element) {
             let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
             console.log("présence capturé");
             // Quand la souris sélectionne l'image, on lance une nouvelle fonction
             element.addEventListener('dblclick',function (){
-                flip(element)
+                flip(element.querySelector("img"))
             })
             element.querySelector("img").onmousedown = function(event){
                 event.preventDefault(); 
                 if (event.button === 2) {
-                    tourne(element);
+                    tourne(element.querySelector("img"));
                     return;
                 }
-                // Sinon, on commence à glisser l'élément
-                glisseSourisAppuie(event,element);
+                else if (event.button === 0){
+                    // Sinon, on commence à glisser l'élément
+                    glisseSourisAppuie(event,element);
+                }
             }
         }
             
             function flip(e) {
                 var scaleX_valeur = window.getComputedStyle(e).transform;
                 if (scaleX_valeur === 'none' || scaleX_valeur === 'matrix(1, 0, 0, 1, 0, 0)' || scaleX_valeur === 'matrix(0, -1, 1, 0, 0, 0)' || scaleX_valeur === 'matrix(0, 1, -1, 0, 0, 0)' || scaleX_valeur === 'matrix(-1, 0, 0, -1, 0, 0)') {
-                    const retourne = -1
+                    var retourne = -1
                     e.style.transform = `scaleX(-1)`;
                 }
                 else {
-                    const retourne = 1
+                    var retourne = 1
                     e.style.transform = `scaleX(1)`;
                 }
                 console.log("flip capturé");
-                // envoieValeur(retourne,e)
+                envoieValeur(retourne,e.id)
             }
 
             function tourne(e) {
@@ -146,7 +165,7 @@
                 // Rotation de 90 degrés à partir de l'image actuelle
                 rotation = (parseInt(rotation) + 90) % 360;
                 e.style.transform = `rotate(-${rotation}deg)`;
-                // envoieValeur(rotation,e)
+                envoieValeur(rotation,e.id)
                 console.log("tourne capturé");
             }
 
@@ -205,24 +224,7 @@
                 // Affiche le carré où va la pièce
                 var carreText = "X: " + carreX + ", Y: " + carreY;
                 document.getElementById("carre").textContent = carreText;
-                //envoieValeur(carreX,carreY);
-
-            async function envoieValeur(carrX, carrY) {
-                const response = await fetch("/submit22", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify({ carrX: carrX, carrY: carrY }),
-                });
-            
-                if (response.ok) {
-                    const result = await response.json();
-                    console.log('Réponse du serveur:', result);
-                } else {
-                    console.error('Erreur dans la réponse:', response.status);
-                }
-            }
+                envoieValeur(carreX,carreY);
             }
     </script>
 </body>
