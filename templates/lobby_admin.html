@@ -29,12 +29,19 @@
         function launch(){
             fetch(`/getdatalaunch/${idgame}`)
                 .then(response =>response.json())
-                .then(data => {if (data !== -1) {
-                        // Redirige si il y a pas un -1 on redirige
-                        window.location.href = '/grille'; 
-                    }})
-            .catch(error => console.error('Erreur sur les données :', error));
-                
+                .then(data =>{
+            if (typeof data === 'undefined' || data === null) {
+                return; // ON FAIT EXPLOSER
+            }
+            if (data !== -1) {
+                // si c'est different de -1
+                window.location.href = '/grille';
+            }}
+        )
+        .catch(error => {
+            return;
+        });
+
         }
         setInterval(launch,3000);
         setInterval(fetchData, 3000);
@@ -49,8 +56,6 @@
             fetch(`/launchgame/${idgame}`, {
                 method: 'POST'
             })
-            .then(response => response.json()) // Le message json est juste pour les admins,
-            .then(data => alert(data.message)) // On l'affiche dans la console
-            .catch(error => console.error('Error:', error)); // On affiche les erreurs si il y en a
+            return false;  
         }
     </script>

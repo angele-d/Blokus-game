@@ -123,16 +123,15 @@ def getdatagame(idgame):
     cursor.execute(query,(idgame,))
     rows = cursor.fetchall()
     conn.close()
-    print(rows)
     return jsonify(rows)
     
-@app.route('/launchgame/<idgame>')
+@app.route('/launchgame/<idgame>',methods =['POST'])
 def launchgame(idgame):
     #On modifie la base de donnée game, cela sera ensuite entendu par le script javascript qui redirigera
     #les joueurs
     conn = sqlite3.connect('Base')
     cursor = conn.cursor()
-    query = "UPDATE game SET nb_move = 0 WHERE id = ?"
+    query = "UPDATE game SET nb_move = 0 WHERE id_game = ?"
     cursor.execute(query,(idgame,))
     conn.commit()
     conn.close()
@@ -145,9 +144,15 @@ def getdatalaunch(idgame):
     cursor = conn.cursor()
     query = "SELECT nb_move from game WHERE id_game = ?"
     cursor.execute(query,(idgame,))
-    rows = cursor.fetchall()
+    row = cursor.fetchone()
     conn.close()
-    return jsonify(rows)
+    if row:
+        print(f"Résultat de la requete {idgame}: {row[0]}")
+        return jsonify(row[0])  
+    else:
+        print(f"Pas de data pour la game {idgame}")
+        return jsonify(-1)  
+    return jsonify(row[0][0])
 
 @app.route('/game/<idgame>')
 def game(idgame):
@@ -200,9 +205,9 @@ def generate():
 
     matrix = transcription_pieces_SQL_grille(num_game)
     
-    generation_matrice_image(matrix)
+    generation_matrice_image(matrix,num_game)
 
-    return jsonify({'image_url': "/static/grille.png"})
+    return jsonify({'image_url': f"/static/grille{num_game}.png"})
 
 @app.route('/grille')
 def grille():
