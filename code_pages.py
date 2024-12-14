@@ -172,6 +172,23 @@ def game(idgame):
         else:
             return render_template('lobby.html',idgame=idgame)
 
+
+
+@app.route('/submit22', methods=['POST'])
+def submit():
+    # Récupère les données envoyées (sans les utiliser ici)
+    data = request.get_json()
+    carrX = data.get('carrX')
+    carrY = data.get('carrY')
+
+    # Logique pour traiter les données (par exemple, les enregistrer)
+    print(f"Coordonnées reçues: X={carrX}, Y={carrY}")
+
+    # Retourne une réponse vide avec un code HTTP 200
+    return '', 200
+
+
+
 #IL FAUT RENTRER LES CHOSES DE LA MANIERE SUIVANTE : ex : 5 	1 	P1 	R 	0 	0 	3 	0 (N'ECRIVEZ PAS FALSE)
 @app.route('/submit', methods=['POST'])
 def submit_form():
