@@ -67,7 +67,7 @@ def rejoin():
         query = "SELECT id_game FROM game where password_game = ? and name_game = ?"
         cursor.execute(query,(mot_de_passe,nom_de_partie))
         rows = cursor.fetchall()  
-        quest = "SELECT COUNT(*) FROM nom_joueur JOIN game ON game.id_game = nom_joueur.id_game WHERE nom = ? AND name_game = ?"
+        quest = "SELECT COUNT(*) FROM nom_joueur JOIN game ON game.id_game = nom_joueur.id_game WHERE nom = ? AND name_game = ? AND nb_move = -1"
         cursor.execute(quest, (nom_utilisateur, nom_de_partie))
         count = cursor.fetchone()[0]  # Récupère le nombre de joueurs dans la partie
         conn.close()
