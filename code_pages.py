@@ -7,6 +7,7 @@ import sqlite3
 app = Flask(__name__)
 app.secret_key = "swV#]S)p;ArRak`*chzd3FC6BZG$j<95HU:/ga3{26mLf:r'eFHMSU5$!E]X&TAp=<kg;%Run`Q}CdvZS93gp6;eKjxH'$?}cFfuJ<D2`Nsh)(7_4~nXX-g2qb!7rGZ4BPAw]u6`/;a,=CmF3M.pVz#*_<DwtN3zuS;!J4F:.7Rqj?5Zgp}L)v^9G<y&AaB`d"
 
+# Envoie le coup dans la base de données pour l'enregistrer
 def insert_move(id_game, id_move, id_piece, color, position_x, position_y, rotation, flip):
     conn = sqlite3.connect('Base')
     cursor = conn.cursor()
@@ -17,6 +18,7 @@ def insert_move(id_game, id_move, id_piece, color, position_x, position_y, rotat
     conn.commit()
     conn.close()
 
+# Enregistre la partie
 def insert_game(id_game, name_game, password_game, nb_move):
     conn = sqlite3.connect('Base')
     cursor = conn.cursor()
@@ -27,6 +29,7 @@ def insert_game(id_game, name_game, password_game, nb_move):
     conn.commit()
     conn.close()
 
+# Enregistre les joueurs qui sont dans la partie
 def insert_name(id_game,name):
     conn = sqlite3.connect('Base')
     cursor = conn.cursor()
@@ -37,7 +40,7 @@ def insert_name(id_game,name):
     conn.commit()
     conn.close()
 
-
+# Désigne le prochain joueur par sa couleur
 def who_is_playing(id_move):
     color = id_move%4
     match color:
@@ -64,12 +67,14 @@ def rejoin():
         nom_utilisateur = request.form['name']
         conn = sqlite3.connect('Base')
         cursor = conn.cursor()
+        # Va chercher l'id de la partie pour orienter le joueur vers la bonne partie
         query = "SELECT id_game FROM game where password_game = ? and name_game = ?"
         cursor.execute(query,(mot_de_passe,nom_de_partie))
-        rows = cursor.fetchall()  
+        rows = cursor.fetchall()
+        # Pour chaque joueur est un nom différent dans une même partie
         quest = "SELECT COUNT(*) FROM nom_joueur JOIN game ON game.id_game = nom_joueur.id_game WHERE nom = ? AND name_game = ? AND nb_move = -1"
         cursor.execute(quest, (nom_utilisateur, nom_de_partie))
-        count = cursor.fetchone()[0]  # Récupère le nombre de joueurs dans la partie
+        count = cursor.fetchone()[0]
         conn.close()
         if count > 0:
             return "Ce nom est déjà pris"
