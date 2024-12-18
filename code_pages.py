@@ -67,7 +67,12 @@ def rejoin():
         query = "SELECT id_game FROM game where password_game = ? and name_game = ?"
         cursor.execute(query,(mot_de_passe,nom_de_partie))
         rows = cursor.fetchall()  
+        quest = "SELECT COUNT(*) FROM nom_joueur JOIN game ON game.id_game = nom_joueur.id_game WHERE nom = ? AND name_game = ?"
+        cursor.execute(quest, (nom_utilisateur, nom_de_partie))
+        count = cursor.fetchone()[0]  # Récupère le nombre de joueurs dans la partie
         conn.close()
+        if count > 0:
+            return "Ce nom est déjà pris"
         if len(rows) != 1:
             return "Mauvais mot de passe",500
         session[f'access_{rows[0][0]}'] = True
@@ -176,25 +181,28 @@ def game(idgame):
 
 @app.route('/submit22', methods=['POST'])
 #A SUPPRIMER PLUS TARD
-def submit():
+def submit22():
     try:
         # Récupère les données envoyées
         data = request.get_json()
         if not data:
-            return jsonify({"error": "No data received"}), 400  # Erreur si aucune donnée n'est reçue
+            return jsonify({"error": "No data"}), 400  # Erreur si aucune donnée n'est reçue
 
         # Récupérer les coordonnées
         carrX = data.get('carrX')
         carrY = data.get('carrY')
+        retourne = data.get('retourne')
+        rotation = data.get('rotation')
+        element = data.get('element')
 
-        if carrX is None or carrY is None:
+        if carrX is None or carrY is None or retourne is None or rotation is None or element is None:
             return jsonify({"error": "Missing coordinates"}), 400  # Erreur si coordonnées manquantes
 
         # Logique pour traiter les données
-        print(f"Coordonnées reçues: X={carrX}, Y={carrY}")
+        print(f"Coordonnées reçues: X={carrX}, Y={carrY}, Re={retourne}, Ro={rotation}, E={element}")
 
         # Retourne une réponse avec un statut et les coordonnées
-        return jsonify({"status": "success", "carrX": carrX, "carrY": carrY}), 200
+        return jsonify({"status": "success", "carrX": carrX, "carrY": carrY, "retourne" : retourne , "rotation" : rotation , "element" : element}), 200
 
     except Exception as e:
         # Gestion des erreurs et envoi d'une réponse appropriée
