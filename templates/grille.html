@@ -100,7 +100,7 @@
     <!-- Donne les coordonnées de la pièce choisie juste avant -->
     <p>Position de l'image : <span id="coords">X: 0, Y: 0</span></p>
     <p><br>Position carré : <span id="carre">X: 0, Y: 0</span></p>
-
+    <button id="myButton">Valider le coup</button>
     <script>
         // Sélectionne toutes les images et applique la fonction glisseElement à chacune
         let elements = document.querySelectorAll('.posi');
@@ -108,13 +108,20 @@
             glisseElement(element);
         });
 
-        async function envoieValeur(carrX, carrY) {
+        var elementReel = ""
+        var retourne = 1
+        var rotation = 0
+        var carreX = 0
+        var carreY = 0
+        let envoie = null
+
+        async function envoieValeur(carrX, carrY, retourne, rotation , element) {
             const response = await fetch("/submit22", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
                 },
-                body: JSON.stringify({ carrX: carrX, carrY: carrY }),
+                body: JSON.stringify({ carrX: carrX, carrY: carrY , retourne : retourne , rotation : rotation , element : element}),
             });
         
             if (response.ok) {
@@ -127,14 +134,19 @@
 
         function glisseElement(element) {
             let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
-            console.log("présence capturé");
+            let doubleClic = false;
             // Quand la souris sélectionne l'image, on lance une nouvelle fonction
             element.addEventListener('dblclick',function (){
                 flip(element.querySelector("img"))
+                doubleClic = true;
             })
             element.querySelector("img").onmousedown = function(event){
-                event.preventDefault(); 
-                if (event.button === 2) {
+                event.preventDefault();
+                if (doubleClic) {
+                    doubleClic = false;
+                    return;
+                }
+                else if (event.button === 2) {
                     tourne(element.querySelector("img"));
                     return;
                 }
@@ -148,25 +160,21 @@
             function flip(e) {
                 var scaleX_valeur = window.getComputedStyle(e).transform;
                 if (scaleX_valeur === 'none' || scaleX_valeur === 'matrix(1, 0, 0, 1, 0, 0)' || scaleX_valeur === 'matrix(0, -1, 1, 0, 0, 0)' || scaleX_valeur === 'matrix(0, 1, -1, 0, 0, 0)' || scaleX_valeur === 'matrix(-1, 0, 0, -1, 0, 0)') {
-                    var retourne = -1
+                    retourne = -1
                     e.style.transform = `scaleX(-1)`;
                 }
                 else {
-                    var retourne = 1
+                    retourne = 1
                     e.style.transform = `scaleX(1)`;
                 }
-                console.log("flip capturé");
-                envoieValeur(retourne,e.id)
             }
 
             function tourne(e) {
                 // Donne valeur numérique de la rotation
-                let rotation = e.style.transform.replace(/[^\d.]/g, '') || 0;
+                rotation = e.style.transform.replace(/[^\d.]/g, '') || 0;
                 // Rotation de 90 degrés à partir de l'image actuelle
                 rotation = (parseInt(rotation) + 90) % 360;
                 e.style.transform = `rotate(-${rotation}deg)`;
-                envoieValeur(rotation,e.id)
-                console.log("tourne capturé");
             }
 
             function glisseSourisAppuie(e,element) {
@@ -178,7 +186,6 @@
                 // Attacher les événements pour déplacer l'élément
                 document.onmouseup = function() { arreteGlisseElement(element); };
                 document.onmousemove = function(event) { elementGlisse(event, element); };
-                console.log("glisse capturé");
             }
 
             function elementGlisse(e,element) {
@@ -199,8 +206,6 @@
                 document.onmousemove = null;
                 // Met à jour les coordonnées à la fin du déplacement
                 updateCoords(element);
-                // Supprime la pièce
-                // element.remove();
             }
 
             // Affiche les coordonnées actuelles
@@ -217,14 +222,30 @@
             }
             
             function placementGrille(x,y,element) {
-                var imageId = element.id; // récupère l'id
+                var element = element.querySelector("img")
                 // Le numéro de la case
-                var carreX = Math.round(((x-120)/760)*20)
-                var carreY = Math.round(((y-120)/760)*20)
+                carreX = Math.round(((x-120)/760)*20)
+                carreY = Math.round(((y-120)/760)*20)
                 // Affiche le carré où va la pièce
                 var carreText = "X: " + carreX + ", Y: " + carreY;
                 document.getElementById("carre").textContent = carreText;
-                envoieValeur(carreX,carreY);
+                elementReel = element.id;
+                // Pour ne pas appeler valider le nombre de fois où l'on a cliqué sur le bouton Valider 
+                console.log(envoie)
+                if (envoie != null) {
+                    document.getElementById("myButton").removeEventListener("click",envoie);
+                }
+                envoie =  function() {
+                    valider(elementReel);
+                }
+                document.getElementById("myButton").addEventListener("click",envoie);
+            }
+
+            function valider(element) {
+                envoieValeur(carreX,carreY, retourne, -rotation , element);
+                var nonid = document.getElementById(element)
+                // Supprime la pièce
+                nonid.remove();
             }
     </script>
 </body>
