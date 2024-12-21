@@ -27,7 +27,8 @@ def malus(Pliste):
 
 
 
-def score(Game):
+def score(Game): #IL EST POSSIBLE QU'IL FASSE CHANGER CE CODE, CE QUI EST ICI N'A PAS L'AIR HYPER SEIN
+    # ON FERME JAMAIS LA CONNECTION PAR EXEMPLE...
     ''' 
     Calcule le score de chaque joueur dans un jeu donne
     :param Game: id_game de la base de données

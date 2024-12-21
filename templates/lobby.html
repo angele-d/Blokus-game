@@ -31,7 +31,7 @@
                 .then(response =>response.json())
                 .then(data => {if (data !== -1) {
                         // Redirige si il y a pas un -1 on redirige
-                        window.location.href = '/grille'; 
+                        window.location.href = `/grille/${idgame}`; 
                     }})
             .catch(error => console.error('Erreur sur les données :', error));
                 

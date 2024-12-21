@@ -3,6 +3,7 @@ from logique_jeu import *
 from score import score
 from placage_pieces import transcription_pieces_SQL_grille, generation_matrice_image
 import sqlite3
+import re
 
 app = Flask(__name__)
 app.secret_key = "swV#]S)p;ArRak`*chzd3FC6BZG$j<95HU:/ga3{26mLf:r'eFHMSU5$!E]X&TAp=<kg;%Run`Q}CdvZS93gp6;eKjxH'$?}cFfuJ<D2`Nsh)(7_4~nXX-g2qb!7rGZ4BPAw]u6`/;a,=CmF3M.pVz#*_<DwtN3zuS;!J4F:.7Rqj?5Zgp}L)v^9G<y&AaB`d"
@@ -31,6 +32,7 @@ def insert_game(id_game, name_game, password_game, nb_move):
 
 # Enregistre les joueurs qui sont dans la partie
 def insert_name(id_game,name):
+    #A RAJOUTER : PAS DEUX FOIS LE MEME NOM DANS LA MEME PARTIE, SINON PROBLEME DE CLEF PRIMAIRE
     conn = sqlite3.connect('Base')
     cursor = conn.cursor()
     cursor.execute('''
@@ -40,7 +42,51 @@ def insert_name(id_game,name):
     conn.commit()
     conn.close()
 
+<<<<<<< Updated upstream
 # Désigne le prochain joueur par sa couleur
+=======
+#Détermine la couleur du joueur "name" dans la partie id_game
+def name_to_order(name,id_game):
+    conn = sqlite3.connect('Base')
+    cursor = conn.cursor()
+    cursor.execute('''
+        SELECT nom FROM nom_joueur WHERE id_game = ? ''',(id_game,))
+    rows = cursor.fetchall()
+    conn.close()
+    ind = -1
+    for i in range(len(rows)):
+        if rows[i][0] == name:
+            ind = i
+    print("Le joueur:",name,"a la couleur",ind)
+    if ind == 0:
+        return 'B'
+    elif ind == 1:
+        return 'Y'
+    elif ind == 2:
+        return 'R'
+    elif ind == 3:
+        return 'G'  
+    
+##Piece restante donne les pièces qui restent a un joueur:
+def piece_restante(id_game,player):
+    conn = sqlite3.connect('Base')
+    cursor = conn.cursor()
+    cursor.execute('''
+        SELECT id_piece FROM coups WHERE id_game = ? and color = ? ''',(id_game,player))
+    rows = cursor.fetchall()
+    conn.close()
+    piece_jouee = []
+    for i in range(len(rows)):
+        piece = int(re.findall(r'P(\d+)', rows[i][0])[0])
+        piece_jouee.append(piece)
+    piece_restante = []
+    for i in range(1,22):
+        if not i in piece_jouee:
+            piece_restante.append(i)
+    return piece_restante
+
+
+>>>>>>> Stashed changes
 def who_is_playing(id_move):
     color = id_move%4
     match color:
@@ -81,6 +127,7 @@ def rejoin():
         if len(rows) != 1:
             return "Mauvais mot de passe",500
         session[f'access_{rows[0][0]}'] = True
+        ## LE NOM DE LA PERSONNE SERT PLUS TARD A CHOISIR L'ORDRE
         session['name'] = nom_utilisateur
         insert_name(rows[0][0],nom_utilisateur)
         return redirect(f"/game/{rows[0][0]}")
@@ -157,10 +204,8 @@ def getdatalaunch(idgame):
     row = cursor.fetchone()
     conn.close()
     if row:
-        print(f"Résultat de la requete {idgame}: {row[0]}")
         return jsonify(row[0])  
     else:
-        print(f"Pas de data pour la game {idgame}")
         return jsonify(-1)  
     return jsonify(row[0][0])
 
@@ -227,6 +272,7 @@ def submit_form():
     position_y = request.form['position_y']
     rotation = request.form['rotation']
     flip = request.form['flip']
+    ##Il va falloir refaire la fonction....
     player = who_is_playing(id_move)
     try:
         m = transcription_pieces_SQL_grille(id_game)
@@ -253,10 +299,11 @@ def generate():
 
     return jsonify({'image_url': f"/static/grille{num_game}.png"})
 
-@app.route('/grille')
-def grille():
-    liste_piece = [1,2,3,4,5,6,7,8,9,10,12,14,15,16,18,19,20]
-    color = 'B'
+@app.route('/grille/<id_game>')
+def grille(id_game):
+    color = name_to_order(session['name'],id_game)
+    print("J'adore,la couleur",color)
+    liste_piece = piece_restante(id_game,color)
     coords = []
     for i in range(7):
         coords.append((1000,-10+130*i))
@@ -267,6 +314,7 @@ def grille():
     for i in range(len(coords)):
         if not i+1 in liste_piece:
             coords[i] = None
+    print("J'adore,la couleur",color)
     return render_template('grille.html',coords = coords, color = color)
 
 #OUTIL DE DEBUG, A SUPPRIMER PLUS TARD
