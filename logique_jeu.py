@@ -79,9 +79,9 @@ def matrice_possible_start(pl):
             m[i].append(['V'])
     if pl == 'B':
         m[0][0] = 'P'
-    if pl == 'Y':
+    if pl == 'R':
         m[0][20] = 'P'
-    if pl == 'R' :
+    if pl == 'Y' :
         m[20][20] = 'P'
     if pl == 'G':
         m[20][0] = 'P'
