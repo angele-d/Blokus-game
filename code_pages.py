@@ -42,9 +42,7 @@ def insert_name(id_game,name):
     conn.commit()
     conn.close()
 
-<<<<<<< Updated upstream
 # Désigne le prochain joueur par sa couleur
-=======
 #Détermine la couleur du joueur "name" dans la partie id_game
 def name_to_order(name,id_game):
     conn = sqlite3.connect('Base')
@@ -86,7 +84,6 @@ def piece_restante(id_game,player):
     return piece_restante
 
 
->>>>>>> Stashed changes
 def who_is_playing(id_move):
     color = id_move%4
     match color:
@@ -181,7 +178,29 @@ def getdatagame(idgame):
     rows = cursor.fetchall()
     conn.close()
     return jsonify(rows)
-    
+
+@app.route('/addIA/<idgame>')
+def addIA(idgame):
+    #On compte le nombre d'IA qu'il y a dans la partie, puis on rajoute une IA si possible
+    conn = sqlite3.connect('Base')
+    cursor = conn.cursor()
+    query = "SELECT COUNT(*) from nom_joueur WHERE id_game = ? AND nom GLOB 'IA[0-9]*'"
+    cursor.execute(query,(idgame,))
+    nb_IA = cursor.fetchone()[0]
+    conn.close()
+    conn = sqlite3.connect('Base')
+    cursor = conn.cursor()
+    query = "SELECT COUNT(*) from nom_joueur WHERE id_game = ?"
+    cursor.execute(query,(idgame,))
+    nb_joueur = cursor.fetchone()[0]
+    conn.close()
+    if nb_joueur < 4:
+        insert_name(idgame,f"IA{nb_IA + 1}")
+        return "IA ADDED",200
+    return "TOO MUCH PLAYER", 200
+ 
+
+
 @app.route('/launchgame/<idgame>',methods =['POST'])
 def launchgame(idgame):
     #On modifie la base de donnée game, cela sera ensuite entendu par le script javascript qui redirigera
@@ -201,13 +220,13 @@ def getdatalaunch(idgame):
     cursor = conn.cursor()
     query = "SELECT nb_move from game WHERE id_game = ?"
     cursor.execute(query,(idgame,))
-    row = cursor.fetchone()
+    nb_move = cursor.fetchone()
     conn.close()
-    if row:
-        return jsonify(row[0])  
+    if nb_move:
+        return jsonify(nb_move[0])  
     else:
         return jsonify(-1)  
-    return jsonify(row[0][0])
+
 
 @app.route('/game/<idgame>')
 def game(idgame):

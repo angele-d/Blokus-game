@@ -48,8 +48,17 @@
 
         fetchData();
     </script>
-    <button id="myButton" onclick="sendRequest()">LANCER LA PARTIE!</button>
-
+    <button id="IA" onclick="addIA()">RAJOUTER IA</button>
+    <button id="Launch" onclick="sendRequest()">LANCER LA PARTIE!</button>
+    <script>
+        function addIA(){
+            //envoie une requête pour rajouter une IA à la partie
+            fetch(`/addIA/${idgame}`,{
+                methode : 'POST'
+            })
+            return false;
+        }
+    </script>
     <script>
         function sendRequest() {
             // Envoie la requête qui va modifier la base de donnée pour lancer la partie
