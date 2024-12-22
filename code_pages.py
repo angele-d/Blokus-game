@@ -263,18 +263,33 @@ def submit22():
         retourne = data.get('retourne')
         rotation = data.get('rotation')
         element = data.get('element')
+        color = data.get('color')
+        id_game= data.get('id_game')
 
         if carrX is None or carrY is None or retourne is None or rotation is None or element is None:
-            return jsonify({"error": "Missing coordinates"}), 400  # Erreur si coordonnées manquantes
+            return jsonify({"error": "Info manquante"}), 400  # Erreur si coordonnées manquantes
 
-        # Logique pour traiter les données
-        print(f"Coordonnées reçues: X={carrX}, Y={carrY}, Re={retourne}, Ro={rotation}, E={element}")
-
-        # Retourne une réponse avec un statut et les coordonnées
-        return jsonify({"status": "success", "carrX": carrX, "carrY": carrY, "retourne" : retourne , "rotation" : rotation , "element" : element}), 200
-
+        # Traitements des données pour qu'ils soit transmis a la logique de jeu
+        print(f"Coordonnées reçues: X={carrX}, Y={carrY}, Re={retourne}, Ro={rotation}, E={element},color={color},id_game={id_game}")
+        flip = retourne == -1
+        numpiece= int(re.findall('\d+',element)[0])
+        id_piece=f"P{numpiece}"
+        id_move = 666 #GROS PLACEHOLDER LA TEAM IL FAUDRA METTRE EN PLACE LA LOGIQUE SUIVANTE POUR VOIR SI C'EST A SON TOUR
+        player = color
+        
+        m = transcription_pieces_SQL_grille(id_game)
+        if coup_possible(m,id_piece,color,int(carrX),int(carrY),int(rotation),flip):
+             if color == player: #verif que c'est le bon joueur qui joue
+                 insert_move(id_game, id_move, id_piece, color, int(carrX), int(carrY), int(rotation), flip)
+                 # Retourne une réponse avec un statut et les coordonnées
+                 return jsonify({"status": "coup valide"}), 200
+             else: 
+                 return jsonify({"status" : "pas le bon tour"}), 502
+        else: 
+             return jsonify({"status" : "coup_interdit"}), 501
     except Exception as e:
         # Gestion des erreurs et envoi d'une réponse appropriée
+        print("erreur",e)
         return jsonify({"error": str(e)}), 500  # Erreur interne du serveur
 
 
@@ -320,7 +335,7 @@ def generate():
 
 @app.route('/grille/<id_game>')
 def grille(id_game):
-    color = name_to_order(session['name'],id_game)
+    color = name_to_order(session['name'],id_game) #ATTENTION A NOTER : LES SESSIONS SONT RESET A CHAQUE LANCEMENT DU SERVEUR
     print("J'adore,la couleur",color)
     liste_piece = piece_restante(id_game,color)
     coords = []
@@ -334,7 +349,7 @@ def grille(id_game):
         if not i+1 in liste_piece:
             coords[i] = None
     print("J'adore,la couleur",color)
-    return render_template('grille.html',coords = coords, color = color)
+    return render_template('grille.html',coords = coords, color = color,id_game = id_game)
 
 #OUTIL DE DEBUG, A SUPPRIMER PLUS TARD
 @app.route('/view_data')

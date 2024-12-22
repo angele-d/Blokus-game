@@ -57,7 +57,7 @@ def transcription_pieces_SQL_grille(Game):
         m = placer_piece_grille20x20(m,*tpl)
     return m
 
-def generation_matrice_image(m):
+def generation_matrice_image(m,num_game):
     le = 3200
     result_image = Image.new("RGB", (le,le), (240,240,240))
     for i_index, i in enumerate(m):
@@ -76,33 +76,4 @@ def generation_matrice_image(m):
                 path = './static/tiles/Empty.png'
             tile_image=Image.open(path)
             result_image.paste(tile_image,(x,y))
-    result_image.save("./static/grille.png")
-
-matrice_test = [['R','R','R','V','V','V','V','V','V','V','V','V','V','V','V','V','V','V','V','V'],
-['R','R','R','V','V','V','V','V','V','V','V','V','V','V','V','V','V','V','V','V'],
-['R','R','R','V','V','V','V','V','V','V','V','V','V','V','V','V','V','V','V','V'],
-['R','R','R','V','V','V','V','V','V','V','V','V','V','V','V','V','V','V','V','V'],
-['R','R','R','V','V','V','V','V','V','V','V','V','G','V','V','V','V','V','V','V'],
-['R','R','R','V','V','V','V','V','V','V','V','G','G','G','V','V','V','V','V','V'],
-['R','R','R','V','V','V','V','V','V','V','V','V','G','V','V','V','V','V','V','V'],
-['R','R','R','V','V','V','V','V','V','V','Y','V','G','V','V','V','V','V','V','V'],
-['R','R','R','V','V','V','V','V','V','V','Y','V','G','V','V','V','V','V','V','V'],
-['R','R','R','V','V','V','V','V','V','V','Y','V','G','V','V','V','V','V','V','V'],
-['R','R','R','V','V','V','V','V','V','V','Y','V','G','V','V','V','V','V','V','V'],
-['R','R','R','V','V','V','V','V','V','V','Y','V','V','V','V','V','V','V','V','V'],
-['R','R','R','V','V','V','V','V','V','V','Y','V','V','V','V','V','V','V','V','V'],
-['R','R','R','V','V','V','V','V','V','V','V','V','V','V','V','V','V','V','V','V'],
-['R','R','R','V','V','V','V','V','V','V','V','V','V','V','V','B','V','V','V','V'],
-['R','R','R','V','V','V','V','V','V','V','V','V','V','V','V','B','V','V','V','V'],
-['R','R','R','V','V','V','V','V','V','V','V','V','V','V','V','B','V','V','V','V'],
-['R','R','R','V','V','V','V','V','V','V','V','V','V','V','B','B','B','V','V','V'],
-['R','R','R','V','V','V','V','V','V','V','V','V','V','V','V','B','V','V','V','V'],
-['R','R','R','V','V','V','V','V','V','V','V','V','V','V','V','V','V','V','V','V'],
-]
-generation_matrice_image(matrice_test)
-
-''' Supprime par thibault dans son truc de merge --> je laisse si jamais
-if __name__ == "__main__":
-    with app.app_context():
-        print(transcription_pieces_SQL_grille(1))
-'''
+    result_image.save(f"./static/grille{num_game}.png")

@@ -2,29 +2,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Image Generator</title>
-    <script>
-        async function submitForm(event) {
-            event.preventDefault();
-            const number = document.getElementById("number").value;
-
-            const response = await fetch("/generate", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({ number: number }),
-            });
-
-            const result = await response.json();
-
-            if (response.ok) {
-                // Met a jour l'image
-                document.getElementById("output-image").src = result.image_url + '?' + new Date().getTime();
-            } else {
-                alert(result.error || "Une erreur a eu lieu");
-            }
-        }
-    </script>
 </head>
 <body>
     <form onsubmit="submitForm(event)">
@@ -102,6 +79,29 @@
     <p><br>Position carré : <span id="carre">X: 0, Y: 0</span></p>
     <button id="myButton">Valider le coup</button>
     <script>
+        //fonction de génération de l'image de grille : 
+        async function genere_grille(id_game) {
+
+            const response = await fetch("/generate", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ number: id_game }),
+            });
+
+            const result = await response.json();
+
+            if (response.ok) {
+                // Met a jour l'image
+                document.getElementById("output-image").src = result.image_url + '?' + new Date().getTime();
+            } else {
+                alert(result.error || "Une erreur a eu lieu");
+            }
+        }
+
+        
+        
         // Sélectionne toutes les images et applique la fonction glisseElement à chacune
         let elements = document.querySelectorAll('.posi');
         elements.forEach(element => {
@@ -116,17 +116,28 @@
         let envoie = null
 
         async function envoieValeur(carrX, carrY, retourne, rotation , element) {
-            const response = await fetch("/submit22", {
+            var id_game = "{{id_game}}" ;
+            var color = "{{color}}";
+            const response = await fetch("/submit22", { //il faut envoyer idgame et la couleur du joueur d'une manière ou d'une autre
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
                 },
-                body: JSON.stringify({ carrX: carrX, carrY: carrY , retourne : retourne , rotation : rotation , element : element}),
+                body: JSON.stringify({ carrX: carrX, carrY: carrY , retourne : retourne , rotation : rotation , element : element , color : color , id_game :id_game}),
             });
         
             if (response.ok) {
+                console.log("reponseok")
                 const result = await response.json();
-                console.log('Réponse du serveur:', result);
+                if (result.status == "coup valide"){
+                    console.log("coup valide")
+                    var id_game = "{{id_game}}";
+                    genere_grille(id_game)
+                //delete element
+                console.log('Réponse du serveur:', result);}
+                else{
+                    //envoyer message d'erreur
+                }
             } else {
                 console.error('Erreur dans la réponse:', response.status);
             }
