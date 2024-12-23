@@ -277,11 +277,10 @@ def submit22():
         id_piece=f"P{numpiece}"
         id_move = 666 #GROS PLACEHOLDER LA TEAM IL FAUDRA METTRE EN PLACE LA LOGIQUE SUIVANTE POUR VOIR SI C'EST A SON TOUR
         player = color
-        
         m = transcription_pieces_SQL_grille(id_game)
-        if coup_possible(m,id_piece,color,int(carrX),int(carrY),int(rotation),flip):
+        if coup_possible(m,id_piece,color,int(carrY),int(carrX),int(rotation),flip):
              if color == player: #verif que c'est le bon joueur qui joue
-                 insert_move(id_game, id_move, id_piece, color, int(carrX), int(carrY), int(rotation), flip)
+                 insert_move(id_game, id_move, id_piece, color, int(carrY), int(carrX), int(rotation), flip)
                  # Retourne une réponse avec un statut et les coordonnées
                  return jsonify({"status": "coup valide"}), 200
              else: 

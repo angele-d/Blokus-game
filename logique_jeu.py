@@ -76,7 +76,7 @@ def matrice_possible_start(pl):
     for i in range(20):
         m.append([])
         for j in range(20):
-            m[i].append(['V'])
+            m[i].append('V')
     if pl == 'B':
         m[0][0] = 'P'
     if pl == 'R':
@@ -109,6 +109,7 @@ def coup_restant_force_brute(m,pi,Plist):
                             if coup_possible(m,pi,pl,x,y,rot,isflipped):
                                 return True
     return False   
+
 
 def coup_possible(m,pi,pl,x,y,rot,isflipped):
     '''
