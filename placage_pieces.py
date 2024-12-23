@@ -75,5 +75,5 @@ def generation_matrice_image(m,num_game):
             elif tile == 'V':
                 path = './static/tiles/Empty.png'
             tile_image=Image.open(path)
-            result_image.paste(tile_image,(x,y))
+            result_image.paste(tile_image,(y,x))
     result_image.save(f"./static/grille{num_game}.png")
