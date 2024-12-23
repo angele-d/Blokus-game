@@ -88,6 +88,8 @@
     <div id="contenu"></div>
     <button id="myButton">Valider le coup</button>
     <script>
+        id_game = "{{id_game}}"
+        window.onload = genere_grille(id_game);
         //fonction de génération de l'image de grille : 
         async function genere_grille(id_game) {
 
