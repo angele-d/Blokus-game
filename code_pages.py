@@ -271,7 +271,8 @@ def submit22():
 
         # Traitements des données pour qu'ils soit transmis a la logique de jeu
         print(f"Coordonnées reçues: X={carrX}, Y={carrY}, Re={retourne}, Ro={rotation}, E={element},color={color},id_game={id_game}")
-        flip = retourne == -1
+        flip = (retourne == -1)
+        rotation = rotation//30
         numpiece= int(re.findall('\d+',element)[0])
         id_piece=f"P{numpiece}"
         id_move = 666 #GROS PLACEHOLDER LA TEAM IL FAUDRA METTRE EN PLACE LA LOGIQUE SUIVANTE POUR VOIR SI C'EST A SON TOUR
