@@ -62,9 +62,15 @@
         }
 
         #temporaire {
-            animation-duration: 5s;
+            animation: fadeInOut 5s ease forwards; /* Animation personnalisée */
             width: 300px;
             height: 40px;
+            margin: 10px auto;
+            text-align: center;
+            background-color: rgba(255, 0, 0, 0.7); /* Fond rouge avec transparence */
+            color: white;
+            font-weight: bold;
+            border-radius: 5px;
         }
     </style>
 </head>
@@ -83,6 +89,7 @@
     <!-- Donne les coordonnées de la pièce choisie juste avant -->
     <p>Position de l'image : <span id="coords">X: 0, Y: 0</span></p>
     <p><br>Position carré : <span id="carre">X: 0, Y: 0</span></p>
+    <div id="contenu"></div>
     <button id="myButton">Valider le coup</button>
     <script>
         //fonction de génération de l'image de grille : 
@@ -143,7 +150,7 @@
                     nonid.remove()
                 console.log('Réponse du serveur:', result);}
                 else{
-                    //<p id='temporaire'>Vous ne pouvez pas faire ce coup</p>
+                    document.getElementById('contenu').innerHTML = "<p id='temporaire'>Vous ne pouvez pas faire ce coup</p>"
                 }
             } else {
                 console.error('Erreur dans la réponse:', response.status);
