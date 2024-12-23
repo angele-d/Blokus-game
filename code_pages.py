@@ -270,7 +270,6 @@ def submit22():
             return jsonify({"error": "Info manquante"}), 400  # Erreur si coordonnées manquantes
 
         # Traitements des données pour qu'ils soit transmis a la logique de jeu
-        print(f"Coordonnées reçues: X={carrX}, Y={carrY}, Re={retourne}, Ro={rotation}, E={element},color={color},id_game={id_game}")
         flip = (retourne == -1)
         rotation = rotation//30
         numpiece= int(re.findall('\d+',element)[0])
@@ -284,12 +283,11 @@ def submit22():
                  # Retourne une réponse avec un statut et les coordonnées
                  return jsonify({"status": "coup valide"}), 200
              else: 
-                 return jsonify({"status" : "pas le bon tour"}), 502
+                 return jsonify({"status" : "pas le bon tour"}), 200
         else: 
-             return jsonify({"status" : "coup_interdit"}), 501
+             return jsonify({"status" : "coup interdit"}), 200
     except Exception as e:
         # Gestion des erreurs et envoi d'une réponse appropriée
-        print("erreur",e)
         return jsonify({"error": str(e)}), 500  # Erreur interne du serveur
 
 

@@ -30,10 +30,6 @@
 </body>
 </html>
 <!DOCTYPE html>
-<html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Déplacer une image</title>
     <style>
         /* Conteneur de l'image */
@@ -149,8 +145,9 @@
                     var nonid = document.getElementById(element)
                     nonid.remove()
                 console.log('Réponse du serveur:', result);}
-                else{
-                    document.getElementById('contenu').innerHTML = "<p id='temporaire'>Vous ne pouvez pas faire ce coup</p>"
+
+                else if (result.status == "coup interdit"){
+                    document.getElementById('contenu').innerHTML = "<p id='temporaire'>Vous ne pouvez pas faire ce coup</p>";
                 }
             } else {
                 console.error('Erreur dans la réponse:', response.status);
