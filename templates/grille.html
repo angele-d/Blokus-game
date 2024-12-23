@@ -1,7 +1,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Image Generator</title>
+    <title>GRILLE</title>
 </head>
 <body>
     <form onsubmit="submitForm(event)">
@@ -59,6 +59,12 @@
             border: none;  /* Supprimer toute bordure autour de l'image */
             display: block; /* Pour éviter l'espacement au-dessous de l'image */
             max-width: 100%; /* Optionnel, ajuste la taille de l'image pour qu'elle soit responsive */
+        }
+
+        #temporaire {
+            animation-duration: 5s;
+            width: 300px;
+            height: 40px;
         }
     </style>
 </head>
@@ -133,10 +139,11 @@
                     console.log("coup valide")
                     var id_game = "{{id_game}}";
                     genere_grille(id_game)
-                //delete element
+                    var nonid = document.getElementById(element)
+                    nonid.remove()
                 console.log('Réponse du serveur:', result);}
                 else{
-                    //envoyer message d'erreur
+                    //<p id='temporaire'>Vous ne pouvez pas faire ce coup</p>
                 }
             } else {
                 console.error('Erreur dans la réponse:', response.status);
@@ -254,9 +261,6 @@
 
             function valider(element) {
                 envoieValeur(carreX,carreY, retourne, -rotation , element);
-                var nonid = document.getElementById(element)
-                // Supprime la pièce
-                nonid.remove();
             }
     </script>
 </body>
