@@ -277,6 +277,7 @@ def submit22():
         id_move = 666 #GROS PLACEHOLDER LA TEAM IL FAUDRA METTRE EN PLACE LA LOGIQUE SUIVANTE POUR VOIR SI C'EST A SON TOUR
         player = color
         m = transcription_pieces_SQL_grille(id_game)
+        print("Info envoyée : Coord =",carrX,carrY,"pièce=",id_piece,"id_game =", id_game,"flip =", flip, "retourne=",retourne )
         if coup_possible(m,id_piece,color,int(carrY),int(carrX),int(rotation),flip):
              if color == player: #verif que c'est le bon joueur qui joue
                  insert_move(id_game, id_move, id_piece, color, int(carrY), int(carrX), int(rotation), flip)

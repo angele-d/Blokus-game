@@ -131,6 +131,8 @@ def coup_possible(m,pi,pl,x,y,rot,isflipped):
     for i in range(len(pi)):
         for j in range (len(pi)):
             if pi[i][j]:
+                if x+i-2<0 or y+j-2<0:
+                    return False
                 if mat_pos[x+i-2][y+j-2] not in ['V','P']:
                     return False
                 elif mat_pos[x+i-2][y+j-2] == 'P':

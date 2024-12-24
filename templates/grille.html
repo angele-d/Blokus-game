@@ -4,11 +4,6 @@
     <title>GRILLE</title>
 </head>
 <body>
-    <form onsubmit="submitForm(event)">
-        <label for="number">Entre le numéro de la partie:</label>
-        <input type="number" id="number" name="number" required>
-        <button type="submit">Generée l'image</button>
-    </form>
     <div>
         <style>
             body {
@@ -68,6 +63,13 @@
             font-weight: bold;
             border-radius: 5px;
         }
+        #haut_droite {
+        position: fixed; /* Stays in the same position even when scrolling */
+        top: 10px;       /* Adjust the distance from the top */
+        right: 10px;     /* Adjust the distance from the right */
+        text-align: right; /* Ensures text aligns to the right */
+    }
+
     </style>
 </head>
 
@@ -83,10 +85,12 @@
     {% endfor %}
 
     <!-- Donne les coordonnées de la pièce choisie juste avant -->
+    <div id="haut_droite">
     <p>Position de l'image : <span id="coords">X: 0, Y: 0</span></p>
     <p><br>Position carré : <span id="carre">X: 0, Y: 0</span></p>
     <div id="contenu"></div>
     <button id="myButton">Valider le coup</button>
+    </div>
     <script>
         id_game = "{{id_game}}"
         window.onload = genere_grille(id_game);
@@ -110,7 +114,7 @@
                 alert(result.error || "Une erreur a eu lieu");
             }
         }
-
+        setInterval(genere_grille(2000))
         
         
         // Sélectionne toutes les images et applique la fonction glisseElement à chacune
@@ -129,6 +133,7 @@
         async function envoieValeur(carrX, carrY, retourne, rotation , element) {
             var id_game = "{{id_game}}" ;
             var color = "{{color}}";
+            console.log("retourne et rotation :", retourne, rotation)
             const response = await fetch("/submit22", { //il faut envoyer idgame et la couleur du joueur d'une manière ou d'une autre
                 method: "POST",
                 headers: {
@@ -159,6 +164,8 @@
         function glisseElement(element) {
             let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
             let doubleClic = false;
+            element.dataset.flip = "1";
+            element.dataset.rotation = "0";
             // Quand la souris sélectionne l'image, on lance une nouvelle fonction
             element.addEventListener('dblclick',function (){
                 flip(element.querySelector("img"))
@@ -184,11 +191,11 @@
             function flip(e) {
                 var scaleX_valeur = window.getComputedStyle(e).transform;
                 if (scaleX_valeur === 'none' || scaleX_valeur === 'matrix(1, 0, 0, 1, 0, 0)' || scaleX_valeur === 'matrix(0, -1, 1, 0, 0, 0)' || scaleX_valeur === 'matrix(0, 1, -1, 0, 0, 0)' || scaleX_valeur === 'matrix(-1, 0, 0, -1, 0, 0)') {
-                    retourne = -1
+                    e.dataset.flip = "-1";
                     e.style.transform = `scaleX(-1)`;
                 }
                 else {
-                    retourne = 1
+                    e.dataset.flip = "1";
                     e.style.transform = `scaleX(1)`;
                 }
             }
@@ -198,6 +205,7 @@
                 rotation = e.style.transform.replace(/[^\d.]/g, '') || 0;
                 // Rotation de 90 degrés à partir de l'image actuelle
                 rotation = (parseInt(rotation) + 90) % 360;
+                e.dataset.rotation = `${rotation}`;
                 e.style.transform = `rotate(-${rotation}deg)`;
             }
 
@@ -266,6 +274,9 @@
             }
 
             function valider(element) {
+                const imgElement = document.getElementById(element);
+                const retourne = parseInt(imgElement.dataset.flip) ||1;
+                const rotation = parseInt(imgElement.dataset.rotation)||0;
                 envoieValeur(carreX,carreY, retourne, -rotation , element);
             }
     </script>
