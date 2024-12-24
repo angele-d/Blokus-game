@@ -28,7 +28,7 @@ Bienvenue dans le projet **PPII - Semestre S5**. Ce projet est réalisé dans le
 Ajoutez ici une description du projet, ses objectifs, et toute autre information pertinente :
 
 - **Sujet :** Développement d'une application web pour un jeu de société avec intelligence artificielle
-- **Objectifs :**
+- **Objectifs :** Recréer le jeu de société dit du "Blokus" avec toutes ses règles et spécificités, jouable à 4 joueurs avec participation possible d'IA performantes
 - **Technologies utilisées :**
 
 
@@ -36,9 +36,9 @@ Ajoutez ici une description du projet, ses objectifs, et toute autre information
 
 Listez les prérequis nécessaires pour utiliser ce projet (langages, dépendances, etc.) :
 
-- **Langage(s) :** Ex. Python 3.10
+- **Langage(s) :** Ex. Python 3.10, HTML, JavaScript, CSS, SQLite3
 - **Frameworks :** Ex. Flask, Django, etc.
-- **Dépendances :** Voir le fichier `requirements.txt` (si applicable).
+- **Dépendances :** Voir le fichier `requirements.txt`
 
 
 ## Installation
@@ -58,7 +58,12 @@ Expliquez comment installer le projet sur une machine locale.
     pip install -r requirements.txt
     ```
 
-3. Autres étapes spécifiques à votre projet.
+3. Spécifiez le nom du fichier à exécuter en flask:
+    ```bash
+    export FLASK_APP=code_pages.py
+    ```
+
+4. Autres étapes spécifiques à votre projet.
 
 
 ## Exécution
@@ -71,4 +76,12 @@ Expliquez comment exécuter le projet.
     python main.py
     ```
 
-2. Autres instructions spécifiques à votre projet.
+2. Lancer la page web:
+
+    ```bash
+    flask run
+    ```
+
+3. Naviguer dans la page web selon les désirs.
+
+4. Autres instructions spécifiques à votre projet.
