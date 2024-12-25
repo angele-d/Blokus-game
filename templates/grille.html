@@ -116,7 +116,11 @@
                 alert(result.error || "Une erreur a eu lieu");
             }
         }
-        setInterval(genere_grille(2000))
+        function updategrille(){
+            id_game ="{{id_game}}"
+            genere_grille(id_game)
+        }
+        setInterval(updategrille,2000)
         
         
         // Sélectionne toutes les images et applique la fonction glisseElement à chacune
@@ -148,11 +152,11 @@
                 console.log("reponseok")
                 const result = await response.json();
                 if (result.status == "coup valide"){
-                    console.log("coup valide")
+                    console.log("coup valide");
                     var id_game = "{{id_game}}";
-                    genere_grille(id_game)
-                    var nonid = document.getElementById(element)
-                    nonid.remove()
+                    genere_grille(id_game);
+                    var nonid = document.getElementById(element);
+                    nonid.remove();
                 console.log('Réponse du serveur:', result);}
 
                 else if (result.status == "coup interdit"){
