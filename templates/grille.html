@@ -1,32 +1,24 @@
+<!DOCTYPE html>
+<html>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GRILLE</title>
-</head>
-<body>
-    <div>
-        <style>
-            body {
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                height: 100vh;
-                margin: 0;
-            }
-            #output-image {
-                position: fixed;
-                top: 100px;     /* Positionner à 100px du haut du conteneur */
-                left: 100px;
-            }
-        </style>
-        <img id="output-image" src="" alt="Image" height=800 width=800>
-        <!-- la position de la grille est : X = 120 et Y = 160 et 760 de hauteur avec 20 cases-->
-    </div>
-</body>
-</html>
-<!DOCTYPE html>
-    <title>Déplacer une image</title>
+
     <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        #output-image {
+            position: fixed;
+            top: 100px;     /* Positionner à 100px du haut du conteneur */
+            left: 100px;
+        }
+        
         /* Conteneur de l'image */
         #pos {
             position: relative;  /* Assurez-vous que le parent est positionné */
@@ -52,16 +44,20 @@
             max-width: 100%; /* Optionnel, ajuste la taille de l'image pour qu'elle soit responsive */
         }
 
-        #temporaire {
-            animation: fadeInOut 5s ease forwards; /* Animation personnalisée */
+        .temporaire {
             width: 300px;
             height: 40px;
             margin: 10px auto;
             text-align: center;
-            background-color: rgba(255, 0, 0, 0.7); /* Fond rouge avec transparence */
-            color: white;
             font-weight: bold;
             border-radius: 5px;
+            font-size:1.5rem;
+            background-color: rgba(255, 0, 0, 0.7); /* Fond rouge avec transparence */
+            color: white;
+            line-height:40px;
+            animation-name: example;
+            animation-duration: 5s;
+            visibility:hidden;
         }
         #haut_droite {
         position: fixed; /* Stays in the same position even when scrolling */
@@ -69,11 +65,16 @@
         right: 10px;     /* Adjust the distance from the right */
         text-align: right; /* Ensures text aligns to the right */
     }
-
     </style>
+
+    <div>
+        <img id="output-image" src="" alt="Image" height=800 width=800>
+        <!-- la position de la grille est : X = 120 et Y = 160 et 760 de hauteur avec 20 cases-->
+    </div>
 </head>
 
 <body>
+
     <!-- Conteneur = pos et sous-conteneur = posi -->
     {% for coord in coords %}
         {% if coord is iterable %}
@@ -91,6 +92,7 @@
     <div id="contenu"></div>
     <button id="myButton">Valider le coup</button>
     </div>
+    
     <script>
         id_game = "{{id_game}}"
         window.onload = genere_grille(id_game);
@@ -134,7 +136,7 @@
             var id_game = "{{id_game}}" ;
             var color = "{{color}}";
             console.log("retourne et rotation :", retourne, rotation)
-            const response = await fetch("/submit22", { //il faut envoyer idgame et la couleur du joueur d'une manière ou d'une autre
+            const response = await fetch("/submit22", { 
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -256,8 +258,8 @@
             function placementGrille(x,y,element) {
                 var element = element.querySelector("img")
                 // Le numéro de la case
-                carreX = Math.round(((x-120)/760)*20)
-                carreY = Math.round(((y-120)/760)*20)
+                carreX = Math.round(((x-120)/760)*20);
+                carreY = Math.round(((y-120)/760)*20);
                 // Affiche le carré où va la pièce
                 var carreText = "X: " + carreX + ", Y: " + carreY;
                 document.getElementById("carre").textContent = carreText;
