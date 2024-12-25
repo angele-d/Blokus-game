@@ -51,14 +51,20 @@
             text-align: center;
             font-weight: bold;
             border-radius: 5px;
-            font-size:1.5rem;
+            font-size: 1.5rem;
             background-color: rgba(255, 0, 0, 0.7); /* Fond rouge avec transparence */
             color: white;
-            line-height:40px;
-            animation-name: example;
-            animation-duration: 5s;
-            visibility:hidden;
+            line-height: 40px;
+            opacity: 0; /* Initialement invisible */
+            visibility: hidden; /* Initialement caché */
         }
+
+        /* Lorsque l'élément devient visible */
+        .temporaire.visible {
+            opacity: 1; /* Rendre visible */
+            visibility: visible; /* Rendre l'élément visible */
+        }
+
         #haut_droite {
         position: fixed; /* Stays in the same position even when scrolling */
         top: 10px;       /* Adjust the distance from the top */
@@ -89,7 +95,7 @@
     <div id="haut_droite">
     <p>Position de l'image : <span id="coords">X: 0, Y: 0</span></p>
     <p><br>Position carré : <span id="carre">X: 0, Y: 0</span></p>
-    <div id="contenu"></div>
+    <p id='temporaire' class='temporaire'>Vous ne pouvez pas faire ce coup</p>
     <button id="myButton">Valider le coup</button>
     </div>
     
@@ -160,9 +166,16 @@
                 console.log('Réponse du serveur:', result);}
 
                 else if (result.status == "coup interdit"){
-                    document.getElementById('contenu').innerHTML = "<p id='temporaire'>Vous ne pouvez pas faire ce coup</p>";
+                    // Après avoir ajouté l'élément, ajouter la classe 'visible' après un court délai pour déclencher l'animation
+                    setTimeout(function() {
+                        document.getElementById('temporaire').classList.add('visible'); // Ajouter la classe 'visible' pour rendre l'élément visible avec animation
+                    }, 10); 
+                    setTimeout(function() {
+                        document.getElementById('temporaire').classList.remove('visible'); // Enlève la classe 'visible' pour rendre l'élément visible avec animation
+                    }, 3000); 
                 }
-            } else {
+                }
+             else {
                 console.error('Erreur dans la réponse:', response.status);
             }
         }
