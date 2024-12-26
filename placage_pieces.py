@@ -53,7 +53,6 @@ def transcription_pieces_SQL_grille(Game):
         for j in range(20):
             m[i].append('V')
     for tpl in c.fetchall():
-        print(tpl)
         m = placer_piece_grille20x20(m,*tpl)
     return m
 

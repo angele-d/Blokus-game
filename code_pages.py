@@ -285,7 +285,7 @@ def submit22():
         player = color
         
         m = transcription_pieces_SQL_grille(id_game)
-        #print("Info envoyée : Coord =",carrX,carrY,"pièce=",id_piece,"id_game =", id_game,"flip =", flip, "retourne=",retourne )
+        print("Info envoyée : Coord =",carrX,carrY,"pièce=",id_piece,"id_game =", id_game,"flip =", flip, "retourne=",retourne )
         
         if coup_possible(m,id_piece,color,int(carrY),int(carrX),int(rotation),flip):
              if color == player: #verif que c'est le bon joueur qui joue
@@ -342,8 +342,11 @@ def generate():
 
 @app.route('/grille/<id_game>')
 def grille(id_game):
-    color = name_to_order(session['name'],id_game) #ATTENTION A NOTER : LES SESSIONS SONT RESET A CHAQUE LANCEMENT DU SERVEUR
-    print("J'adore,la couleur",color)
+    try :
+        color = name_to_order(session['name'],id_game) #ATTENTION A NOTER : LES SESSIONS SONT RESET A CHAQUE LANCEMENT DU SERVEUR
+    except Exception as e:
+        print(f"pas de nom pour la partie :{id_game}")
+        return f"pas de nom pour la partie :{id_game}",500
     liste_piece = piece_restante(id_game,color)
     coords = []
     for i in range(7):
@@ -355,7 +358,6 @@ def grille(id_game):
     for i in range(len(coords)):
         if not i+1 in liste_piece:
             coords[i] = None
-    print("J'adore,la couleur",color)
     return render_template('grille.html',coords = coords, color = color,id_game = id_game)
 
 #OUTIL DE DEBUG, A SUPPRIMER PLUS TARD
