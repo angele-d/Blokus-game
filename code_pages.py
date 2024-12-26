@@ -95,19 +95,15 @@ def piece_restante(id_game,player):
     return piece_restante
 
 
-def who_is_playing(id_move):
-    color = id_move%4
-    match color:
-        case 0:
-            return "B"
-        case 1:
-            return "Y"
-        case 2:
-            return "R"
-        case 3:
-            return "G"
-        case _:
-            print("Probleme sur color dans la BD")
+def who_is_playing(color):
+    if color == "G":
+        return "B"
+    elif color == "B":
+        return "Y"
+    elif color == "B"
+        return "R"
+    elif color == "R":
+        return "G"
 
 @app.route('/')
 def accueil():
@@ -319,7 +315,7 @@ def submit_form():
     rotation = request.form['rotation']
     flip = request.form['flip']
     ##Il va falloir refaire la fonction....
-    player = who_is_playing(id_move)
+    player = who_is_playing(color)
     try:
         m = transcription_pieces_SQL_grille(id_game)
         if coup_possible(m,id_piece,color,int(position_x),int(position_y),int(rotation),bool(int(flip))):
