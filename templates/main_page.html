@@ -1,7 +1,50 @@
 <head>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
+<body>
+<div class="bandeau"> 
+    <div class="bandeau_titre"> Jeu du BLOKUS </div> </div>
 <div class="container">
     <a href="/newgame" class="custom-button">Nouvelle partie</a>
     <a href="/join" class="custom-button">Rejoindre partie</a>
+</div>
+<hr>
+<div class="rules">
+    <h1> Règles du jeu </h1>
+    <div class="div1">
+        <p> <li>
+            <span class="gras"> Nombre de joueurs: </span> 4 joueurs <br>
+            <span class="italique"> Possibilité d'ajouter des IA si manque de joueurs </span> <br>
+        </li> </p> 
+        <p> <li> <span class="gras">Tirage des couleurs:</span> En amont par les joueurs eux-mêmes. <br>
+            4 couleurs dans l'ordre de jeu: <span class="bleu"> Bleu </span>, <span class="jaune"> Jaune </span>, <span class="rouge"> Rouge </span>, <span class="vert"> Vert </span>
+        </li> </p> 
+        <p> <li> <span class="gras">Placage des pièces: </span> <br>
+            - <span class="souligne"> Première pièce: </span> 
+            Dans le coin associé à la couleur du joueur. La case du coin est obligatoirement remplie par la pièce
+        </p> <p>
+            - <span class="souligne"> Autre pièce: </span> 
+            Doit toucher une pièce de la même couleur par 1 ou plusieurs coins et jamais par les côtés
+        </p> <p>
+            Possibilité de retourner et faire tourner les pièces à votre guise.
+        </li> </p>
+    </div>
+    <div class="div2">
+        <p> <li>
+            <span class="gras"> Fin de partie: </span> 4 joueurs <br>
+            - <span class="souligne">Lorsqu'un joueur ne peut plus placer de pièces: </span>Il passe son tour jusqu'à ce que plus aucun joueur ne puisse placer de pièces
+        </p> <p>
+            - <span class="souligne">Comptage des points: </span> <br>
+            <span class="gras"> -1 </span>point par carré non posé
+            <br><span class="gras"> +15 </span>points si les 21 pièces du joueur sont posées
+            <br><span class="gras"> +20 </span>points si les 21 pièces du joueur sont posées et que le carré solitaire est posé en dernier
+        </li> </p> 
+        <p> <li> <span class="gras">Durée d'une partie:</span> <br>
+        20 à 30 minutes
+        </li> </p> 
+    </div>
+</div>
+</body>
+<div class="footer">
+    <span class="gras souligne"> Crédits:</span> Briand Thibault, Regennass Anne, Girres Elisa, Denys Angèle
 </div>

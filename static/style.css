@@ -1,18 +1,40 @@
 body {
-    background-color: lightblue; /* Sets a solid background color */
+    font-family: : Arial, sans-serif;
+    background: linear-gradient(to right,lightblue,rgb(132, 226, 238), rgb(43, 212, 235),rgb(132, 226, 238),lightblue)
 }
 
+.bandeau {
+    height: 35px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    background-color: rgb(73, 97, 235);
+    padding: 10px 0;
+    width: 100%;
+    box-shadow: 0px 2px 8px 2px rgb(0, 225, 255);
+}
+
+.bandeau_titre {
+    color: white;
+    text-decoration: overline underline;
+    font-size: 24px;
+    font-weight: bold;
+    padding: 0px 20px;
+}
+
+
 .container {
+    margin-top: 50px;
     display: flex; 
     justify-content: center; 
     align-items: center; 
-    height: 100vh; 
+    height: 30vh; 
 }
 
 .custom-button {
     display: inline-block; 
     padding: 10px 20px; 
-    font-size: 16px; 
+    font-size: 24px; 
     color: black; 
     background-color: hsl(61, 100%, 50%); 
     border: none; 
@@ -26,8 +48,60 @@ body {
 }
 
 .custom-button:hover {
-    background-color: #b39200; 
+    background-color: #dfbc20; 
     transform: scale(1.05);
     color:white;
 }
 
+hr {
+    width: 80%;
+    color: rgb(73, 97, 235);
+}
+
+.rules h1 {
+    text-align: center; 
+    color:hsl(61, 100%, 50%); 
+    text-decoration: underline;
+    text-decoration-color: #dfbc20;
+    transition: font-size 0.6s ease;
+}
+
+.rules h1:hover{
+    font-size: 30px;
+}
+
+.rules .div1, .rules .div2{
+    display: inline-block;
+    width: 45%;
+    margin: 10px;
+    padding: 10px 10px;
+    background-color: rgb(133, 217, 245);
+    border: none; 
+    border-radius: 5px; 
+    font-size: 16px;
+    transition: transform 0.6s ease, text-shadow 0.3s ease;
+}
+
+.rules .div1:hover, .rules .div2:hover{
+    transform: scale(1.025);    
+}
+
+.footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    background-color: rgb(73, 97, 235);
+    width: 100%;
+    box-shadow: 0px 2px 8px 2px rgb(0, 225, 255);
+    color: white;
+    font-size: 12px;
+    padding: 10px 20px;
+}
+
+.gras{font-weight: bold;}
+.italique{font-style: italic; font-size: 13px;}
+.souligne{text-decoration: underline;}
+.rouge{color: red;}
+.bleu{color: blue;}
+.jaune{color:yellow;}
+.vert{color: green;}
