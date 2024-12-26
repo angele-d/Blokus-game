@@ -29,6 +29,7 @@ def nb_joueur(id_game):
     return nb_joueur
 
 #Renvoie la couleur correspondante au joueur qui doit jouer
+#NE FONCTIONNE PAS ENCORE
 def tour(id_game):
     nb_j = nb_joueur(id_game)
     conn = sqlite3.connect('Base')
