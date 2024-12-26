@@ -1,10 +1,10 @@
-id_game=id_ga
         window.onload = genere_grille(id_game);
         //fonction de génération de l'image de grille : 
         async function genere_grille(id_game) {
 
             const response = await fetch("/generate", {
                 method: "POST",
+                credentials: 'include',
                 headers: {
                     "Content-Type": "application/json",
                 },
@@ -40,11 +40,10 @@ id_game=id_ga
         let envoie = null
 
         async function envoieValeur(carrX, carrY, retourne, rotation , element) {
-            var id_game = "{{id_game}}" ;
-            var color = "{{color}}";
             console.log("retourne et rotation :", retourne, rotation)
             const response = await fetch("/submit22", { 
                 method: "POST",
+                credentials: 'include',
                 headers: {
                     "Content-Type": "application/json",
                 },
@@ -56,7 +55,6 @@ id_game=id_ga
                 const result = await response.json();
                 if (result.status == "coup valide"){
                     console.log("coup valide");
-                    var id_game = "{{id_game}}";
                     genere_grille(id_game);
                     var nonid = document.getElementById(element);
                     nonid.remove();
