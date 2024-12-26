@@ -1,10 +1,32 @@
-<h1>Nouvelle_partie</h1>
+<title> BLOKUS PP2I grp6 </title>
+
+<head>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+<div class="bandeau"> 
+    <div class="bandeau_titre"> Jeu du BLOKUS </div> 
+    <a class="bandeau_home" href="/"> Accueil </a>
+</div>
+
+<div class="nouvellePartie">
+<h1>Créez votre nouvelle partie !</h1>
+<br> <br>
+<div class="formNouvellePartie">
 <form action="/newgame_db" method="POST">
-    <label>Votre nom</label>
-    <input type="text" name="name" required>
-    <label>Nom de la partie</label>
-    <input type="text" name="name_game" required>
-    <label>Mot de passe</label>
-    <input type="text" name="password_game" required>
-    <button type="submit">Envoyer</button>
+    <p><label>Inscrivez votre pseudo: </label> <br>
+    <input type="text" name="name" required> </p>
+    <p><label>Quel sera le nom de votre partie ?</label> <br>
+    <input type="text" name="name_game" required> </p>
+    <p><label>Indiquez le mot de passe de cette partie: </label> <br>
+    <input type="text" name="password_game" required> </p>
+    <p><button type="submit">Création de la partie</button> </p>
 </form>
+</div>
+</div>
+</body>
+
+<div class="footer">
+    <span class="gras souligne"> Crédits:</span> Briand Thibault, Regennass Anne, Girres Elisa, Denys Angèle
+</div>
