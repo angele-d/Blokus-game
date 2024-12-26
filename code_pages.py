@@ -100,7 +100,7 @@ def who_is_playing(color):
         return "B"
     elif color == "B":
         return "Y"
-    elif color == "B"
+    elif color == "B":
         return "R"
     elif color == "R":
         return "G"
@@ -163,7 +163,7 @@ def newgame():
     name = request.form['name']
     name_game = request.form['name_game']
     password_game = request.form['password_game']
-    nb_move = -1 ### Si le nb_move passe a 0 ou plus, cela veut dire que la game est lancée
+    nb_move = -1 # Si le nb_move passe a 0 ou plus, cela veut dire que la game est lancée
     try:
         insert_name(new_game,name)
         insert_game(new_game,name_game,password_game,nb_move)
@@ -177,7 +177,7 @@ def newgame():
 
 @app.route('/getdatagame/<idgame>')
 def getdatagame(idgame):
-    #Ici, on doit choper toute les informations pour construire une page de lobby adaptée.
+    # Récupère toutes les informations pour construire une page de lobby adaptée
     conn = sqlite3.connect('Base')
     cursor = conn.cursor()
     query = "SELECT nom from nom_joueur WHERE id_game = ?"
@@ -210,7 +210,7 @@ def addIA(idgame):
 
 @app.route('/launchgame/<idgame>',methods =['POST'])
 def launchgame(idgame):
-    #On modifie la base de donnée game, cela sera ensuite entendu par le script javascript qui redirigera
+    #Modifie la base de donnée GAME, cela sera ensuite entendu par le script javascript qui redirigera
     #les joueurs
     conn = sqlite3.connect('Base')
     cursor = conn.cursor()
@@ -222,7 +222,7 @@ def launchgame(idgame):
 
 @app.route('/getdatalaunch/<idgame>')
 def getdatalaunch(idgame):
-    #Ici, on écoute pour voir si on peut lancer la partie
+    #Ecoute pour voir si on peut lancer la partie
     conn = sqlite3.connect('Base')
     cursor = conn.cursor()
     query = "SELECT nb_move from game WHERE id_game = ?"
@@ -314,7 +314,6 @@ def submit_form():
     position_y = request.form['position_y']
     rotation = request.form['rotation']
     flip = request.form['flip']
-    ##Il va falloir refaire la fonction....
     player = who_is_playing(color)
     try:
         m = transcription_pieces_SQL_grille(id_game)
