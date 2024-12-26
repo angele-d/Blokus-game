@@ -1,4 +1,4 @@
-id_game = "{{id_game}}"
+id_game=id_ga
         window.onload = genere_grille(id_game);
         //fonction de génération de l'image de grille : 
         async function genere_grille(id_game) {
@@ -21,7 +21,6 @@ id_game = "{{id_game}}"
             }
         }
         function updategrille(){
-            id_game ="{{id_game}}"
             genere_grille(id_game)
         }
         setInterval(updategrille,2000)
