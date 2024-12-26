@@ -29,6 +29,35 @@ def nb_joueur(id_game):
     return nb_joueur
 
 #Renvoie la couleur correspondante au joueur qui doit jouer
+def tour(id_game):
+    nb_j = nb_joueur(id_game)
+    conn = sqlite3.connect('Base')
+    cursor = conn.cursor()
+    query= '''SELECT COUNT(*) FROM coups WHERE color = ?"'''
+    cursor.execute(query,"B")
+    min_l = []
+    min_l.append(cursor.fetchone()[0])
+    if nb_j >= 2:
+        cursor.execute(query,"Y")
+        min_l.append(cursor.fetchone()[0])
+    if nb_j >= 3:
+        cursor.execute(query,"R")
+        min_l.append(cursor.fetchone()[0])
+    if nb_j >= 4:
+        cursor.execute(query,"G")
+        min_l.append(cursor.fetchone()[0])
+    conn.close()
+    if min_l == []:
+        return "B"
+    ind = min_l.index(min(min_l))
+    if ind == 0:
+        return "B"
+    if ind == 1:
+        return "Y"
+    if ind == 2:
+        return "R"
+    return "G"
+    
 
 # Enregistre la partie
 def insert_game(id_game, name_game, password_game, nb_move):
@@ -53,7 +82,7 @@ def insert_name(id_game,name):
     conn.commit()
     conn.close()
 
-# Désigne le prochain joueur par sa couleur
+
 #Détermine la couleur du joueur "name" dans la partie id_game
 def name_to_order(name,id_game):
     conn = sqlite3.connect('Base')
@@ -94,16 +123,6 @@ def piece_restante(id_game,player):
             piece_restante.append(i)
     return piece_restante
 
-
-def who_is_playing(color):
-    if color == "G":
-        return "B"
-    elif color == "B":
-        return "Y"
-    elif color == "B":
-        return "R"
-    elif color == "R":
-        return "G"
 
 @app.route('/')
 def accueil():
@@ -282,7 +301,8 @@ def submit22():
         numpiece= int(re.findall('\d+',element)[0])
         id_piece=f"P{numpiece}"
         id_move = 666 #GROS PLACEHOLDER LA TEAM IL FAUDRA METTRE EN PLACE LA LOGIQUE SUIVANTE POUR VOIR SI C'EST A SON TOUR
-        player = color
+        
+        player = tour(id_game)
         
         m = transcription_pieces_SQL_grille(id_game)
         print("Info envoyée : Coord =",carrX,carrY,"pièce=",id_piece,"id_game =", id_game,"flip =", flip, "retourne=",retourne )
