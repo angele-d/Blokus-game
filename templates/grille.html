@@ -17,20 +17,21 @@
     {% for coord in coords %}
         {% if coord is iterable %}
             <div class="posi" style="left: {{ coord[0] }}px; top: {{ coord[1] }}px;">
-                <!-- Utilise loop.index pour changer le nom de l'image dynamiquement -->
+                <!-- Utilise loop.index pour changer le nom de l'image dynamiquement et les pièces sont posées-->
                 <img id = "Image{{ loop.index }}" src="../static/piece/{{ color }}/{{ loop.index }}.png" alt="Piece" height="200" width="200">
             </div>
         {% endif %}
     {% endfor %}
 
-    <!-- Donne les coordonnées de la pièce choisie juste avant -->
     <div id="haut_droite">
     <p>Position de l'image : <span id="coords">X: 0, Y: 0</span></p>
     <p><br>Position carré : <span id="carre">X: 0, Y: 0</span></p>
     <p id='temporaire' class='temporaire'>Vous ne pouvez pas faire ce coup</p>
     <button id="myButton">Valider le coup</button>
     </div>
-    
+    <script>
+        var id_ga = "{{id_game}}"
+    </script>
     <script src="../static/js/js_grille.js"></script>
 </body>
 
