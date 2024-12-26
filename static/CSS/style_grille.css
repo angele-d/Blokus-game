@@ -1,0 +1,68 @@
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    }
+
+/* Pour la grille */
+#output-image {
+    position: fixed;
+    top: 100px;     /* Positionner à 100px du haut du conteneur */
+    left: 100px;
+}
+        
+/* Conteneur de l'image */
+#pos {
+    position: relative; 
+    z-index: 9;
+    background-color: transparent;
+    text-align: center;
+    border: none;
+}
+
+/* Zone de déplacement */
+.posi {
+    cursor: move;
+    z-index: 10;
+    background-color: transparent;
+    color: transparent;
+    position: absolute; /* Position absolue pour les éléments à déplacer */
+}
+
+/* Supprimer la bordure de l'image */
+.posi img {
+    border: none;
+    display: block; /* Pour éviter l'espacement au-dessous de l'image */
+    max-width: 100%; /* Ajuste la taille de l'image dans son conteneur*/
+}
+
+/* Pour afficher un message temporaire */
+.temporaire {
+    width: 300px;
+    height: 40px;
+    margin: 10px auto;
+    text-align: center;
+    font-weight: bold;
+    border-radius: 5px;
+    font-size: 1.5rem;
+    background-color: rgba(255, 0, 0, 0.7); /* Fond rouge avec transparence */
+    color: white;
+    line-height: 40px;
+    opacity: 0; /* Initialement invisible */
+    visibility: hidden; /* Initialement caché */
+}
+
+/* Pour rendre l'élément visible */
+.temporaire.visible {
+    opacity: 1;
+    visibility: visible; /* Rendre l'élément visible */
+}
+
+#haut_droite {
+    position: fixed; /* Garde la même position */
+    top: 10px;
+    right: 10px;
+    text-align: right; /* Aligne le texte à droite */
+}
