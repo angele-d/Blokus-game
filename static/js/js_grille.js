@@ -64,7 +64,7 @@
                 const result = await response.json();
                 if (result.status == "partie finie"){
                     console.log("partie finie");
-                    window.location.href = `/fin_de_partie`;
+                    window.location.href = `/fin_de_partie/${id_game}`;
                 }
                 else if (result.status == "coup valide"){
                     console.log("coup valide");

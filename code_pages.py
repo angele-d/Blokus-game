@@ -84,12 +84,15 @@ def tour(id_game):
     for i in range(4):
         if not 'B' in qpj:
             min_l[0]=100
-        elif not 'Y' in qpj:
-            min_l[1]=100
-        elif not 'R' in qpj:
-            min_l[2]=100
-        if not 'G' in qpj:
-            min_l[3]=100
+        if nb_j >= 2:
+            if not 'Y' in qpj:
+                min_l[1]=100
+        if nb_j >= 3:
+            if not 'R' in qpj:
+                min_l[2]=100
+        if nb_j >= 4:
+            if not 'G' in qpj:
+                min_l[3]=100
     ind = min_l.index(min(min_l))
     if ind == 0:
         return m,"B"
@@ -387,7 +390,7 @@ def generate():
 
     return jsonify({'image_url': f"/static/grille{num_game}.png"})
 
-@app.route('/grille/<id_game>/fin_de_partie')
+@app.route('/fin_de_partie/<id_game>')
 def fin_de_partie(id_game):
     sco = score(id_game)
     return render_template('fin_de_partie.html', score = sco)
