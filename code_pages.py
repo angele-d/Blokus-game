@@ -4,6 +4,7 @@ from score import score
 from placage_pieces import transcription_pieces_SQL_grille, generation_matrice_image
 import sqlite3
 import re
+from deb_IA import *
 
 app = Flask(__name__)
 app.secret_key = "swV#]S)p;ArRak`*chzd3FC6BZG$j<95HU:/ga3{26mLf:r'eFHMSU5$!E]X&TAp=<kg;%Run`Q}CdvZS93gp6;eKjxH'$?}cFfuJ<D2`Nsh)(7_4~nXX-g2qb!7rGZ4BPAw]u6`/;a,=CmF3M.pVz#*_<DwtN3zuS;!J4F:.7Rqj?5Zgp}L)v^9G<y&AaB`d"
@@ -38,7 +39,6 @@ def nb_move(id_game,color):
     nb_move = cursor.fetchone()[0]
     conn.close()
     return nb_move
-
 
 #Renvoie la couleur correspondante au joueur qui doit jouer
 #NE FONCTIONNE PAS ENCORE
