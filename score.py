@@ -2,18 +2,32 @@ from pieces import *
 from flask import g,Flask
 import sqlite3
 from deb_IA import *
+from code_pages import *
 
 DATABASE = 'BaseTest' # Merci de mettre a jour cette ligne quand la database sera rajouté au dépot github
 app = Flask(__name__)
 
-def fin_partie(grille,nb_joueur,Plist):
+def qui_peut_jouer(grille,nb_joueur,id_game):
+    Plist=piece_restante(id_game,'B')
+    couleur = []
     l = coups_possibles_force_brute(grille,'B',Plist)
-    l =+ coups_possibles_force_brute(grille,'Y',Plist)
+    if l == []:
+        couleur =+ ['B']
+    Plist=piece_restante(id_game,'Y')
+    l = coups_possibles_force_brute(grille,'Y',Plist)
+    if l == []:
+        couleur =+ ['Y']
     if nb_joueur >= 3:
-        l =+ coups_possibles_force_brute(grille,'R',Plist)
+        Plist=piece_restante(id_game,'R')
+        l = coups_possibles_force_brute(grille,'R',Plist)
+        if l == []:
+            couleur =+ ['R']
     if nb_joueur >= 4:
-        l =+ coups_possibles_force_brute(grille,'G',Plist)
-    return l == []
+        Plist=piece_restante(id_game,'G')
+        l = coups_possibles_force_brute(grille,'G',Plist)
+        if l == []:
+            couleur =+ ['G']
+    return couleur
 
 def get_db(): # cette fonction permet de créer une connexion à la base 
               # ou de récupérer la connexion existante 
