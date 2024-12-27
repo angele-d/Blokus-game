@@ -62,7 +62,11 @@
             if (response.ok) {
                 console.log("reponseok")
                 const result = await response.json();
-                if (result.status == "coup valide"){
+                if (result.status == "partie finie"){
+                    console.log("partie finie");
+                    window.location.href = `/fin_de_partie`;
+                }
+                else if (result.status == "coup valide"){
                     console.log("coup valide");
                     genere_grille(id_game);
                     var nonid = document.getElementById(element);
