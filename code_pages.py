@@ -405,6 +405,10 @@ def generate():
 
     return jsonify({'image_url': f"/static/grille{num_game}.png"})
 
+@app.route('/grille/<id_game>/fin_de_partie')
+def fin_de_partie():
+    return render_template('fin_de_partie.html')
+
 @app.route('/grille/<id_game>')
 def grille(id_game):
     if not session.get(f'access_{id_game}'):
