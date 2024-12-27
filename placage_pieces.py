@@ -3,6 +3,7 @@ from rotation_pieces import transformation
 from flask import g,Flask
 from PIL import Image
 import sqlite3
+import re
 
 DATABASE = 'Base'
 app = Flask(__name__)

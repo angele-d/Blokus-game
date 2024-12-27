@@ -72,7 +72,14 @@
                     var nonid = document.getElementById(element);
                     nonid.remove();
                 console.log('Réponse du serveur:', result);}
-
+                else if (result.status == "pas le bon tour"){
+                    setTimeout(function() {
+                        document.getElementById('tempo').classList.add('visible'); // Ajouter la classe 'visible' pour rendre l'élément visible avec animation
+                    }, 10); 
+                    setTimeout(function() {
+                        document.getElementById('tempo').classList.remove('visible'); // Enlève la classe 'visible' pour rendre l'élément visible avec animation
+                    }, 3000); 
+                }
                 else if (result.status == "coup interdit"){
                     // Après avoir ajouté l'élément, ajouter la classe 'visible' après un court délai pour déclencher l'animation
                     setTimeout(function() {
