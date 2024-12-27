@@ -1,6 +1,6 @@
 from flask import Flask, request, redirect, url_for, render_template, jsonify, session
 from logique_jeu import *
-from score import score,qui_peut_jouer
+from score import score,qui_peut_jouer, piece_restante
 from placage_pieces import transcription_pieces_SQL_grille, generation_matrice_image
 import sqlite3
 import re
@@ -145,24 +145,6 @@ def name_to_order(name,id_game):
         return 'R'
     elif ind == 3:
         return 'G'  
-    
-##Piece restante donne les pièces qui restent a un joueur:
-def piece_restante(id_game,player):
-    conn = sqlite3.connect('Base')
-    cursor = conn.cursor()
-    cursor.execute('''
-        SELECT id_piece FROM coups WHERE id_game = ? and color = ? ''',(id_game,player))
-    rows = cursor.fetchall()
-    conn.close()
-    piece_jouee = []
-    for i in range(len(rows)):
-        piece = int(re.findall(r'P(\d+)', rows[i][0])[0])
-        piece_jouee.append(piece)
-    piece_restante = []
-    for i in range(1,22):
-        if not i in piece_jouee:
-            piece_restante.append(i)
-    return piece_restante
 
 
 @app.route('/')

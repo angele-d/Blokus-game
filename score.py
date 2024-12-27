@@ -2,10 +2,12 @@ from pieces import *
 from flask import g,Flask
 import sqlite3
 from deb_IA import *
-from code_pages import *
+from placage_pieces import *
+
 
 DATABASE = 'BaseTest' # Merci de mettre a jour cette ligne quand la database sera rajouté au dépot github
 app = Flask(__name__)
+
 
 def qui_peut_jouer(grille,nb_joueur,id_game):
     Plist=piece_restante(id_game,'B')

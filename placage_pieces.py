@@ -16,6 +16,25 @@ def get_db(): # cette fonction permet de créer une connexion à la base
 
 #Manque les informations sur comment est faite la BD
 
+
+##Piece restante donne les pièces qui restent a un joueur:
+def piece_restante(id_game,player):
+    conn = sqlite3.connect('Base')
+    cursor = conn.cursor()
+    cursor.execute('''
+        SELECT id_piece FROM coups WHERE id_game = ? and color = ? ''',(id_game,player))
+    rows = cursor.fetchall()
+    conn.close()
+    piece_jouee = []
+    for i in range(len(rows)):
+        piece = int(re.findall(r'P(\d+)', rows[i][0])[0])
+        piece_jouee.append(piece)
+    piece_res = []
+    for i in range(1,22):
+        if not i in piece_jouee:
+            piece_res.append(i)
+    return piece_res
+
 def placer_piece_grille20x20(grille,num_piece,x,y,couleur,rotation,isflipped):
     '''
     Placage des pieces presentes dans la base de donnees, sur une grille 20x20
