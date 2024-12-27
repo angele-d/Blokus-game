@@ -1,6 +1,6 @@
 from flask import Flask, request, redirect, url_for, render_template, jsonify, session
 from logique_jeu import *
-from score import score
+from score import score,qui_peut_jouer
 from placage_pieces import transcription_pieces_SQL_grille, generation_matrice_image
 import sqlite3
 import re
@@ -43,47 +43,61 @@ def nb_move(id_game,color):
 #Renvoie la couleur correspondante au joueur qui doit jouer
 #NE FONCTIONNE PAS ENCORE
 def tour(id_game):
+    m = transcription_pieces_SQL_grille(id_game)
     nb_j = nb_joueur(id_game)
+    qpj = qui_peut_jouer(m,nb_j,id_game)
     conn = sqlite3.connect('Base')
     cursor = conn.cursor()
     query= '''SELECT COUNT(*) FROM coups WHERE color = ? AND id_game = ?'''
     cursor.execute(query,("B",id_game))
     min_l = []
     coup_B = cursor.fetchone()[0]
+    if qpj == []:
+        conn.close()
+        return m,None
     if coup_B == None:
         conn.close()
-        return "B"
+        return m,"B"
     min_l.append(coup_B)
     if nb_j >= 2:
         cursor.execute(query,("Y",id_game))
         coup_Y= cursor.fetchone()[0]
         if coup_Y == None:
             conn.close()
-            return "Y"
+            return m,"Y"
         min_l.append(coup_Y)
     if nb_j >= 3:
         cursor.execute(query,("R",id_game))
         coup_R = cursor.fetchone()[0]
         if coup_R == None:
             conn.close()
-            return "R"
+            return m,"R"
         min_l.append(coup_R)
     if nb_j >= 4:
         cursor.execute(query,("G",id_game))
         coup_G = cursor.fetchone()[0]
         if coup_G == None:
             conn.close()
-            return "G"
+            return m,"G"
         min_l.append(coup_G)
     conn.close()
+    for i in range(4):
+        if 'B' in qpj:
+            min_l[0]=100
+        elif 'Y' in qpj:
+            min_l[1]=100
+        elif 'R' in qpj:
+            min_l[2]=100
+        if 'G' in qpj:
+            min_l[3]=100
     ind = min_l.index(min(min_l))
     if ind == 0:
-        return "B"
+        return m,"B"
     if ind == 1:
-        return "Y"
+        return m,"Y"
     if ind == 2:
-        return "R"
-    return "G"
+        return m,"R"
+    return m,"G"
     
 
 # Enregistre la partie
@@ -329,21 +343,23 @@ def submit22():
     id_piece=f"P{numpiece}"
     id_move = nb_move(id_game,color)
     
-    player = tour(id_game)
-    
-    m = transcription_pieces_SQL_grille(id_game)
+    m,player = tour(id_game)
     print("Info envoyée : Coord =",carrX,carrY,"pièce=",id_piece,"id_game =", id_game,"flip =", flip, "retourne=",retourne )
     
     if coup_possible(m,id_piece,color,int(carrY),int(carrX),int(rotation),flip):
         if color == player: #verif que c'est le bon joueur qui joue
             insert_move(id_game, id_move, id_piece, color, int(carrY), int(carrX), int(rotation), flip)
             # Retourne une réponse avec un statut et les coordonnées
+            m,player = tour(id_game)
+            if player == None:
+                return jsonify({"status": "partie finie"}), 200
             return jsonify({"status": "coup valide"}), 200
         else: 
             print("Le joueur",color,"vaut jouer alors que c'est le tour de",player)
             return jsonify({"status" : "pas le bon tour"}), 200
     else: 
         return jsonify({"status" : "coup interdit"}), 200
+    
     # except Exception as e:
     #     # Gestion des erreurs et envoi d'une réponse appropriée
     #     print("erreur:",e)
