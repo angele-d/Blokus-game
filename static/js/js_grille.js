@@ -179,8 +179,8 @@
             function placementGrille(x,y,element) {
                 var element = element.querySelector("img")
                 // Le numéro de la case
-                carreX = Math.round(((x-120)/760)*20);
-                carreY = Math.round(((y-120)/760)*20);
+                carreX = Math.round(((x-120)/760)*19);
+                carreY = Math.round(((y-120)/760)*19);
                 // Affiche le carré où va la pièce
                 var carreText = "X: " + carreX + ", Y: " + carreY;
                 document.getElementById("carre").textContent = carreText;
