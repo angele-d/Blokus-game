@@ -1,4 +1,5 @@
 from flask import Flask, request, redirect, url_for, render_template, jsonify, session
+from flask_socketio import SocketIO, join_room, emit
 from logique_jeu import *
 from score import score,qui_peut_jouer, piece_restante
 from placage_pieces import transcription_pieces_SQL_grille, generation_matrice_image
@@ -8,6 +9,8 @@ from deb_IA import *
 
 app = Flask(__name__)
 app.secret_key = "swV#]S)p;ArRak`*chzd3FC6BZG$j<95HU:/ga3{26mLf:r'eFHMSU5$!E]X&TAp=<kg;%Run`Q}CdvZS93gp6;eKjxH'$?}cFfuJ<D2`Nsh)(7_4~nXX-g2qb!7rGZ4BPAw]u6`/;a,=CmF3M.pVz#*_<DwtN3zuS;!J4F:.7Rqj?5Zgp}L)v^9G<y&AaB`d"
+
+socketio = SocketIO(app)
 
 # Envoie le coup dans la base de données pour l'enregistrer
 def insert_move(id_game, id_move, id_piece, color, position_x, position_y, rotation, flip):
@@ -41,7 +44,7 @@ def nb_move(id_game,color):
     return nb_move
 
 #Renvoie la couleur correspondante au joueur qui doit jouer
-#NE FONCTIONNE PAS ENCORE
+
 def tour(id_game):
     m = transcription_pieces_SQL_grille(id_game)
     nb_j = nb_joueur(id_game)
@@ -162,25 +165,39 @@ def rejoin():
         nom_utilisateur = request.form['name']
         conn = sqlite3.connect('Base')
         cursor = conn.cursor()
+
         # Va chercher l'id de la partie pour orienter le joueur vers la bonne partie
         query = "SELECT id_game FROM game where password_game = ? and name_game = ?"
         cursor.execute(query,(mot_de_passe,nom_de_partie))
         rows = cursor.fetchall()
+
         # Pour chaque joueur est un nom différent dans une même partie
         quest = "SELECT COUNT(*) FROM nom_joueur JOIN game ON game.id_game = nom_joueur.id_game WHERE nom = ? AND name_game = ? AND nb_move = -1"
         cursor.execute(quest, (nom_utilisateur, nom_de_partie))
         count = cursor.fetchone()[0]
         conn.close()
+
         if count > 0:
             return "Ce nom est déjà pris"
         if len(rows) != 1:
             return "Mauvais mot de passe",500
+
         session[f'access_{rows[0][0]}'] = True
         ## LE NOM DE LA PERSONNE SERT PLUS TARD A CHOISIR L'ORDRE
         session['name'] = nom_utilisateur
         insert_name(rows[0][0],nom_utilisateur)
+
+        socketio.emit('join_room', {'room': rows[0][0]})
+
         return redirect(f"/game/{rows[0][0]}")
     return render_template('join_page.html')
+
+@socketio.on('join_room')
+def handle_join_room(data):
+    print("un joueur a rejoint la room")
+    room = data['room']
+    join_room(room)
+    emit('new_player', room=room)
 
 @app.route('/newgame')
 def new():
@@ -215,6 +232,8 @@ def newgame():
         session[f'access_{new_game}'] = True
         session[f'access_admin_{new_game}'] = True
         session['name'] = name
+
+        socketio.emit('join_room', {'room': rows[0][0]})
         return redirect(f"/game/{new_game}")
     except Exception as e:
         return f"L'erreur suivante à eu lieu: {e}", 500
@@ -231,7 +250,7 @@ def getdatagame(idgame):
     conn.close()
     return jsonify(rows)
 
-@app.route('/addIA/<idgame>')
+@app.route('/addIA/<idgame>',methods=['POST'])
 def addIA(idgame):
     #On compte le nombre d'IA qu'il y a dans la partie, puis on rajoute une IA si possible
     conn = sqlite3.connect('Base')
@@ -248,6 +267,9 @@ def addIA(idgame):
     conn.close()
     if nb_joueur < 4:
         insert_name(idgame,f"IA{nb_IA + 1}")
+        print("addingIA")
+        socketio.emit('new_player', room=idgame)
+        print("IAadded")
         return "IA ADDED",200
     return "TOO MUCH PLAYER", 200
  
@@ -263,6 +285,7 @@ def launchgame(idgame):
     cursor.execute(query,(idgame,))
     conn.commit()
     conn.close()
+    socketio.emit('launch', room = idgame)
     return jsonify("Tout fonctionne")
 
 @app.route('/getdatalaunch/<idgame>')
@@ -303,24 +326,50 @@ def game(idgame):
 @app.route('/submit22', methods=['POST'])
 def submit22():
     print("Requête reçue")
-    #try:        
+    try:        
     # Récupère les données envoyées
-    data = request.get_json()
-    if not data:
-        return jsonify({"error": "No data"}), 400  # Erreur si aucune donnée n'est reçue
+        data = request.get_json()
+        if not data:
+            return jsonify({"error": "No data"}), 400  # Erreur si aucune donnée n'est reçue
 
-    # Récupérer les coordonnées
-    carrX = data.get('carrX')
-    carrY = data.get('carrY')
-    retourne = data.get('retourne')
-    rotation = data.get('rotation')
-    element = data.get('element')
-    color = data.get('color')
-    id_game= data.get('id_game')
+        # Récupérer les coordonnées
+        carrX = data.get('carrX')
+        carrY = data.get('carrY')
+        retourne = data.get('retourne')
+        rotation = data.get('rotation')
+        element = data.get('element')
+        color = data.get('color')
+        id_game= data.get('id_game')
 
-    if carrX is None or carrY is None or retourne is None or rotation is None or element is None:
-        return jsonify({"error": "Info manquante"}), 400  # Erreur si coordonnées manquantes
+        if carrX is None or carrY is None or retourne is None or rotation is None or element is None:
+            return jsonify({"error": "Info manquante"}), 400  # Erreur si coordonnées manquantes
 
+        # Traitements des données pour qu'ils soit transmis a la logique de jeu
+        flip = (retourne == -1)
+        rotation = rotation//30
+        numpiece= int(re.findall('\d+',element)[0])
+        id_piece=f"P{numpiece}"
+        id_move = nb_move(id_game,color)
+        
+        player = tour(id_game)
+        
+        m = transcription_pieces_SQL_grille(id_game)
+        print("Info envoyée : Coord =",carrX,carrY,"pièce=",id_piece,"id_game =", id_game,"flip =", flip, "retourne=",retourne )
+        
+        if coup_possible(m,id_piece,color,int(carrY),int(carrX),int(rotation),flip):
+            if color == player: #verif que c'est le bon joueur qui joue
+                insert_move(id_game, id_move, id_piece, color, int(carrY), int(carrX), int(rotation), flip)
+                # Retourne une réponse avec un statut et les coordonnées
+                return jsonify({"status": "coup valide"}), 200
+            else: 
+                print("Le joueur",color,"vaut jouer alors que c'est le tour de",player)
+                return jsonify({"status" : "pas le bon tour"}), 200
+        else: 
+            return jsonify({"status" : "coup interdit"}), 200
+    except Exception as e:
+        #Gestion des erreurs et envoi d'une réponse appropriée
+        print("erreur:",e)
+        return jsonify({"error": str(e)}), 500  # Erreur interne du serveur
     # Traitements des données pour qu'ils soit transmis a la logique de jeu
     flip = (retourne == -1)
     rotation = rotation//30
@@ -435,5 +484,5 @@ def view_data():
     except Exception as e:
         return f"An error occurred while retrieving the data: {e}", 500
 
-if __name__ == 'main':
-    app.run(debug=True)
+if __name__ == '__main__':
+    socketio.run(app, debug=True)

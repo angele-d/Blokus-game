@@ -1,3 +1,4 @@
+<script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
 <body>
     <h1>SUPERBE PARTIE DE BLOCKUS</h1>
     <table border="1" id="tupleTable">
@@ -43,10 +44,25 @@
         });
 
         }
-        setInterval(launch,3000);
-        setInterval(fetchData, 3000);
+        const socket = io();
 
-        fetchData();
+        socket.on('connect', () => {
+            console.log('Socket connecté');
+            socket.emit('join_room', { room: idgame })
+        });
+
+        socket.on('new_player', (data) =>{
+            console.log("new player in lobby")
+            fetchData();
+        })
+        fetchData()
+        socket.on('launch',(data) =>{
+            console.log("launching the game")
+            launch();
+        })
+
+
+
     </script>
     <button id="IA" onclick="addIA()">RAJOUTER IA</button>
     <button id="Launch" onclick="sendRequest()">LANCER LA PARTIE!</button>
@@ -54,7 +70,7 @@
         function addIA(){
             //envoie une requête pour rajouter une IA à la partie
             fetch(`/addIA/${idgame}`,{
-                methode : 'POST'
+                method : 'POST'
             })
             return false;
         }
