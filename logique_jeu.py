@@ -87,12 +87,12 @@ def matrice_possible_start(pl):
         m[19][0] = 'P'
     return m
 
-def coup_restant_force_brute(m,pi,Plist):
+def coup_restant_force_brute(m,pl,Plist):
     '''
-    fonction EXTREMEMENT BOURRINE, pour calculer si il reste des coup possibles, a pas ou
-    peu utiliser
+    fonction pour calculer si il reste des coup possibles, a pas ou
+    peu utiliser car un peu bourrine
     :param m: matrice 20x20
-    :param pi: matrice 5x5 de la piece
+    :param pl: (str) R,B,Y,G = joueur
     :param Plist: liste de pieces
     :return: (bool)
     '''
@@ -101,12 +101,13 @@ def coup_restant_force_brute(m,pi,Plist):
             isflipped = True
         else:
             isflipped = False
-        for pl in Plist:
+        for pi in Plist:
+            mat=matrice_possible(m, pl)
             for rot in range(1,5):
                 for x in range(20):
                     for y in range(20):
-                        if m[x][y] == 'V':
-                            if coup_possible(m,pi,pl,x,y,rot,isflipped):
+                        if mat[x][y] == 'P':
+                            if coup_possible(m,pi, pl, x, y, rot, isflipped):
                                 return True
     return False   
 
