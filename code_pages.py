@@ -52,7 +52,6 @@ def tour(id_game):
     cursor.execute(query,("B",id_game))
     min_l = []
     coup_B = cursor.fetchone()[0]
-    print(coup_B)
     if qpj == []:
         conn.close()
         return m,None
@@ -83,13 +82,13 @@ def tour(id_game):
         min_l.append(coup_G)
     conn.close()
     for i in range(4):
-        if 'B' in qpj:
+        if not 'B' in qpj:
             min_l[0]=100
-        elif 'Y' in qpj:
+        elif not 'Y' in qpj:
             min_l[1]=100
-        elif 'R' in qpj:
+        elif not 'R' in qpj:
             min_l[2]=100
-        if 'G' in qpj:
+        if not 'G' in qpj:
             min_l[3]=100
     ind = min_l.index(min(min_l))
     if ind == 0:
