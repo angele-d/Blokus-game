@@ -1,4 +1,4 @@
-        window.onload = genere_grille(id_game);
+        window.onload = () => genere_grille(id_game);
         //fonction de génération de l'image de grille : 
         async function genere_grille(id_game) {
 
@@ -23,7 +23,16 @@
         function updategrille(){
             genere_grille(id_game)
         }
-        setInterval(updategrille,2000)
+       
+        let isUpdating = false;
+        setInterval(() => {
+            if (!isUpdating) {
+                isUpdating = true;
+                genere_grille(id_game).finally(() => {
+                    isUpdating = false;
+                });
+            }
+        }, 2000);
         
         
         // Sélectionne toutes les images et applique la fonction glisseElement à chacune

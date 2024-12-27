@@ -80,11 +80,11 @@ def matrice_possible_start(pl):
     if pl == 'B':
         m[0][0] = 'P'
     if pl == 'R':
-        m[0][20] = 'P'
+        m[0][19] = 'P'
     if pl == 'Y' :
-        m[20][20] = 'P'
+        m[19][19] = 'P'
     if pl == 'G':
-        m[20][0] = 'P'
+        m[19][0] = 'P'
     return m
 
 def coup_restant_force_brute(m,pi,Plist):
@@ -132,6 +132,10 @@ def coup_possible(m,pi,pl,x,y,rot,isflipped):
         for j in range (len(pi)):
             if pi[i][j]:
                 if x+i-2<0 or y+j-2<0:
+                    print("le coup a une coord négative")
+                    return False
+                if x+i-2>=20 or y+j-2>=20:
+                    print("le coup sort de la grille")
                     return False
                 if mat_pos[x+i-2][y+j-2] not in ['V','P']:
                     return False

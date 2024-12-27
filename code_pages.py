@@ -18,15 +18,27 @@ def insert_move(id_game, id_move, id_piece, color, position_x, position_y, rotat
     ''', (id_game, id_move, id_piece, color, position_x, position_y, rotation, flip))
     conn.commit()
     conn.close()
+    conn = sqlite3.connect('Base')
+    cursor = conn.cursor()
 
 #Compte le nombre de joueur dans la partie
 def nb_joueur(id_game):
     conn = sqlite3.connect('Base')
     cursor = conn.cursor()
-    cursor.execute('''SELECT COUNT(*) FROM nom_joueur''')
+    cursor.execute('''SELECT COUNT(*) FROM nom_joueur WHERE id_game = ?''',(id_game,))
     nb_joueur= cursor.fetchone()[0]
     conn.close()
     return nb_joueur
+
+def nb_move(id_game,color):
+    conn = sqlite3.connect('Base')
+    cursor = conn.cursor()
+    query= '''SELECT COUNT(*) FROM coups WHERE color = ? AND id_game = ?'''
+    cursor.execute(query,("B",id_game))
+    nb_move = cursor.fetchone()[0]
+    conn.close()
+    return nb_move
+
 
 #Renvoie la couleur correspondante au joueur qui doit jouer
 #NE FONCTIONNE PAS ENCORE
@@ -34,22 +46,36 @@ def tour(id_game):
     nb_j = nb_joueur(id_game)
     conn = sqlite3.connect('Base')
     cursor = conn.cursor()
-    query= '''SELECT COUNT(*) FROM coups WHERE color = ?"'''
-    cursor.execute(query,"B")
+    query= '''SELECT COUNT(*) FROM coups WHERE color = ? AND id_game = ?'''
+    cursor.execute(query,("B",id_game))
     min_l = []
-    min_l.append(cursor.fetchone()[0])
-    if nb_j >= 2:
-        cursor.execute(query,"Y")
-        min_l.append(cursor.fetchone()[0])
-    if nb_j >= 3:
-        cursor.execute(query,"R")
-        min_l.append(cursor.fetchone()[0])
-    if nb_j >= 4:
-        cursor.execute(query,"G")
-        min_l.append(cursor.fetchone()[0])
-    conn.close()
-    if min_l == []:
+    coup_B = cursor.fetchone()[0]
+    if coup_B == None:
+        conn.close()
         return "B"
+    min_l.append(coup_B)
+    if nb_j >= 2:
+        cursor.execute(query,("Y",id_game))
+        coup_Y= cursor.fetchone()[0]
+        if coup_Y == None:
+            conn.close()
+            return "Y"
+        min_l.append(coup_Y)
+    if nb_j >= 3:
+        cursor.execute(query,("R",id_game))
+        coup_R = cursor.fetchone()[0]
+        if coup_R == None:
+            conn.close()
+            return "R"
+        min_l.append(coup_R)
+    if nb_j >= 4:
+        cursor.execute(query,("G",id_game))
+        coup_G = cursor.fetchone()[0]
+        if coup_G == None:
+            conn.close()
+            return "G"
+        min_l.append(coup_G)
+    conn.close()
     ind = min_l.index(min(min_l))
     if ind == 0:
         return "B"
@@ -276,50 +302,52 @@ def game(idgame):
 
 
 @app.route('/submit22', methods=['POST'])
-#A SUPPRIMER PLUS TARD
 def submit22():
-    try:
-        # Récupère les données envoyées
-        data = request.get_json()
-        if not data:
-            return jsonify({"error": "No data"}), 400  # Erreur si aucune donnée n'est reçue
+    print("Requête reçue")
+    #try:        
+    # Récupère les données envoyées
+    data = request.get_json()
+    if not data:
+        return jsonify({"error": "No data"}), 400  # Erreur si aucune donnée n'est reçue
 
-        # Récupérer les coordonnées
-        carrX = data.get('carrX')
-        carrY = data.get('carrY')
-        retourne = data.get('retourne')
-        rotation = data.get('rotation')
-        element = data.get('element')
-        color = data.get('color')
-        id_game= data.get('id_game')
+    # Récupérer les coordonnées
+    carrX = data.get('carrX')
+    carrY = data.get('carrY')
+    retourne = data.get('retourne')
+    rotation = data.get('rotation')
+    element = data.get('element')
+    color = data.get('color')
+    id_game= data.get('id_game')
 
-        if carrX is None or carrY is None or retourne is None or rotation is None or element is None:
-            return jsonify({"error": "Info manquante"}), 400  # Erreur si coordonnées manquantes
+    if carrX is None or carrY is None or retourne is None or rotation is None or element is None:
+        return jsonify({"error": "Info manquante"}), 400  # Erreur si coordonnées manquantes
 
-        # Traitements des données pour qu'ils soit transmis a la logique de jeu
-        flip = (retourne == -1)
-        rotation = rotation//30
-        numpiece= int(re.findall('\d+',element)[0])
-        id_piece=f"P{numpiece}"
-        id_move = 666 #GROS PLACEHOLDER LA TEAM IL FAUDRA METTRE EN PLACE LA LOGIQUE SUIVANTE POUR VOIR SI C'EST A SON TOUR
-        
-        player = tour(id_game)
-        
-        m = transcription_pieces_SQL_grille(id_game)
-        print("Info envoyée : Coord =",carrX,carrY,"pièce=",id_piece,"id_game =", id_game,"flip =", flip, "retourne=",retourne )
-        
-        if coup_possible(m,id_piece,color,int(carrY),int(carrX),int(rotation),flip):
-             if color == player: #verif que c'est le bon joueur qui joue
-                 insert_move(id_game, id_move, id_piece, color, int(carrY), int(carrX), int(rotation), flip)
-                 # Retourne une réponse avec un statut et les coordonnées
-                 return jsonify({"status": "coup valide"}), 200
-             else: 
-                 return jsonify({"status" : "pas le bon tour"}), 200
+    # Traitements des données pour qu'ils soit transmis a la logique de jeu
+    flip = (retourne == -1)
+    rotation = rotation//30
+    numpiece= int(re.findall('\d+',element)[0])
+    id_piece=f"P{numpiece}"
+    id_move = nb_move(id_game,color)
+    
+    player = tour(id_game)
+    
+    m = transcription_pieces_SQL_grille(id_game)
+    print("Info envoyée : Coord =",carrX,carrY,"pièce=",id_piece,"id_game =", id_game,"flip =", flip, "retourne=",retourne )
+    
+    if coup_possible(m,id_piece,color,int(carrY),int(carrX),int(rotation),flip):
+        if color == player: #verif que c'est le bon joueur qui joue
+            insert_move(id_game, id_move, id_piece, color, int(carrY), int(carrX), int(rotation), flip)
+            # Retourne une réponse avec un statut et les coordonnées
+            return jsonify({"status": "coup valide"}), 200
         else: 
-             return jsonify({"status" : "coup interdit"}), 200
-    except Exception as e:
-        # Gestion des erreurs et envoi d'une réponse appropriée
-        return jsonify({"error": str(e)}), 500  # Erreur interne du serveur
+            print("Le joueur",color,"vaut jouer alors que c'est le tour de",player)
+            return jsonify({"status" : "pas le bon tour"}), 200
+    else: 
+        return jsonify({"status" : "coup interdit"}), 200
+    # except Exception as e:
+    #     # Gestion des erreurs et envoi d'une réponse appropriée
+    #     print("erreur:",e)
+    #     return jsonify({"error": str(e)}), 500  # Erreur interne du serveur
 
 
 
@@ -363,6 +391,8 @@ def generate():
 
 @app.route('/grille/<id_game>')
 def grille(id_game):
+    if not session.get(f'access_{id_game}'):
+        return "Vous n'avez pas accès à la partie", 505
     try :
         color = name_to_order(session['name'],id_game) #ATTENTION A NOTER : LES SESSIONS SONT RESET A CHAQUE LANCEMENT DU SERVEUR
     except Exception as e:
