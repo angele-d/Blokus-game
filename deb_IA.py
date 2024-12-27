@@ -35,7 +35,11 @@ def coups_possibles_force_brute(m,pl,Plist):
 #pour le début, les 4 premiers tours, on va utiliser le coups_possible_début plus tard
 #utliser le plus possible les grosses pièces au début, mais pas les barres, pour bloquer les adversaires
 
-def arbre_de_coups(pl, grille, Plist, n, arbre, nb_j):
+def arbre_de_coups(pl, grille, Plist, n, arbre, id_game):
+#/!\ ici chiant, pour récupérer les pièces restantes pour les adversaires, on utilise la base de données. Pour le premier tour, y'a pas de soucis, mais à partir du second tour, ca voudrait dire que l'on doit ajouter les modifications à la bd
+#et donc de simuler une game fictive, mais à partir de celle en cours déjà existante, donc chiant. Il faut donc voir pour à chaque fois pouvoir enlever les pièces jouées par les adversaires, mais ca fait beaucoup de possibilités, et boum la complexité
+#à refaire à partir de la simulation des coups des adversaires du coup, car sinon ils peuvent jouer plusieurs fois les mêmes coups
+#à moins de mettre leurs pièces en arguments, mais ici encore, ça fait beaucoup de possibilités différentes, et peu être trop
     '''
     Fonction qui genère l'arbre des coups possibles
     :param pl: (str) B,G,Y,R = joueur
@@ -43,7 +47,7 @@ def arbre_de_coups(pl, grille, Plist, n, arbre, nb_j):
     :param Plist: liste des pièces
     :param n: (int) nombre de coups à simuler, profondeur de l'arbre des coups (nb de coups du joueur pl)
     :param arbre: (list) arbre en cours de création, initialement []
-    :param nb_j: (int) nombres de joueurs
+    :param id_game: id_game
     :return: arbre des coups de la forme [(coup, [liste des coups suivants ce coup])]'''
     if n==0:
         return [] #l'arbre s'arrête là
@@ -60,13 +64,18 @@ def arbre_de_coups(pl, grille, Plist, n, arbre, nb_j):
                 Plist2=Plist.copy()
                 Plist2.pop(i)
                 grille2=placer_piece_grille20x20(grille, coup[0], coup[1], coup[2], pl, coup[3], coup[4]) #mise à jour la grille avec la nouvelle pièce ajoutée 
-                #List_aPlist =  trouver comment récupérer les pièces restantes des adversaires
+                joueurs=['B', 'Y', 'R', 'G']
+                List_aPlist=[]
+                for k in joueurs:
+                    if k==pl:
+                        List_aPlist.append([])
+                    else:
+                        piece_restante(id_game, k) #/!\ ici pb avec base de données
                 suite=coups_adversaires(List_aPlist, [grille2], pl, pl)
-                ss_arbre=[] #cpnstruction du sous-arbre
+                ss_arbre=[] #construction du sous-arbre
                 for j in suite:
                     ss_arbre.append(arbre_de_coups(pl, j, Plist2, n-1, []))
                 arbre.append((coup, ss_arbre))
-            
             return arbre
 
 def coups_adversaires(List_aPlist, Lcoups, pl, m):
