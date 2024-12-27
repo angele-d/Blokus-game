@@ -8,27 +8,33 @@ from placage_pieces import *
 DATABASE = 'BaseTest' # Merci de mettre a jour cette ligne quand la database sera rajouté au dépot github
 app = Flask(__name__)
 
+def piece_res(id_game,joueur):
+    l = piece_restante(id_game,joueur)
+    r = []
+    for i in l:
+        r += ['P'+str(i)]
+    return r
 
 def qui_peut_jouer(grille,nb_joueur,id_game):
-    Plist=piece_restante(id_game,'B')
+    Plist=piece_res(id_game,'B')
     couleur = []
     l = coups_possibles_force_brute(grille,'B',Plist)
-    if l == []:
-        couleur =+ ['B']
-    Plist=piece_restante(id_game,'Y')
+    if l != []:
+        couleur += ['B']
+    Plist=piece_res(id_game,'Y')
     l = coups_possibles_force_brute(grille,'Y',Plist)
-    if l == []:
-        couleur =+ ['Y']
+    if l != []:
+        couleur += ['Y']
     if nb_joueur >= 3:
-        Plist=piece_restante(id_game,'R')
+        Plist=piece_res(id_game,'R')
         l = coups_possibles_force_brute(grille,'R',Plist)
-        if l == []:
-            couleur =+ ['R']
+        if l != []:
+            couleur += ['R']
     if nb_joueur >= 4:
-        Plist=piece_restante(id_game,'G')
+        Plist=piece_res(id_game,'G')
         l = coups_possibles_force_brute(grille,'G',Plist)
-        if l == []:
-            couleur =+ ['G']
+        if l != []:
+            couleur += ['G']
     return couleur
 
 def get_db(): # cette fonction permet de créer une connexion à la base 

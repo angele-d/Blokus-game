@@ -2,6 +2,7 @@ from logique_jeu import *
 from score import *
 from placage_pieces import *
 from code_pages import *
+from pieces import *
 
 def coups_possibles_force_brute(m,pl,Plist):
     '''
