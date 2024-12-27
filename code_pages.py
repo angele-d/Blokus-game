@@ -406,8 +406,9 @@ def generate():
     return jsonify({'image_url': f"/static/grille{num_game}.png"})
 
 @app.route('/grille/<id_game>/fin_de_partie')
-def fin_de_partie():
-    return render_template('fin_de_partie.html')
+def fin_de_partie(id_game):
+    sco = score(id_game)
+    return render_template('fin_de_partie.html', score = sco)
 
 @app.route('/grille/<id_game>')
 def grille(id_game):
