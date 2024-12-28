@@ -155,13 +155,31 @@
                 const flip = transform.includes('scaleX(-1)');
                 // Donne valeur numérique de la rotation
                 rotation = e.style.transform.replace(/[^\d.]/g, '') || 0;
-                // Rotation de 90 degrés à partir de l'image actuelle
-                rotation = (parseInt(rotation) + 90) % 360;
-                e.dataset.rotation = `${rotation}`;
                 if (flip) {
+                    console.log(rotation)
+                    if (rotation == 1){
+                        rotation = 0
+                    }
+                    if (rotation == 10){
+                        rotation = 0
+                    }
+                    if (rotation > 1){
+                        rotation = rotation - 100
+                    }
+                    if (rotation > 181){
+                        rotation = rotation - 900
+                    }
+                    console.log(rotation)
+                    // Rotation de 90 degrés à partir de l'image actuelle
+                    rotation = (parseInt(rotation) + 90) % 360;
+                    e.dataset.rotation = `${rotation}`;
+                    console.log(rotation)
                     e.style.transform = `scaleX(-1) rotate(${rotation}deg)`;
                 }
                 else {
+                    // Rotation de 90 degrés à partir de l'image actuelle
+                    rotation = (parseInt(rotation) + 90) % 360;
+                    e.dataset.rotation = `${rotation}`;
                     e.style.transform = `rotate(-${rotation}deg)`;
                 }
             }
