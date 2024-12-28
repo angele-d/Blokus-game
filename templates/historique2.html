@@ -5,9 +5,14 @@
 </head>
 
 <body>
-    <p>Si la partie n'existe pas, vous serez redirigé vers la page d'accueil.</p>
-<div class="rejoindrePartie">
-    <div class="formRejoindrePartie">
+<div class="bandeau"> 
+    <div class="bandeau_inner"> 
+        <a href="/" class="bandeau_titre"> Jeu du BLOKUS </a> 
+    </div>
+</div>
+    
+<div class="infoPartie">
+    <div class="formInfoPartie">
         <form action="/histo" method="POST">
             <p><label for="game">Quel est le nom de votre partie ?</label> <br>
             <input type="text" id="game" name="game" placeholder="Votre nom de partie" required></p>
@@ -18,3 +23,5 @@
     </div>
 </div>
 </body>
+
+<p>Si la partie n'existe pas, vous serez redirigé vers la page d'accueil.</p>
