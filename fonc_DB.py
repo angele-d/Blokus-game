@@ -1,5 +1,8 @@
 import sqlite3
 import re
+from placage_pieces import *
+from score import *
+
 # Envoie le coup dans la base de données pour l'enregistrer
 def insert_move(id_game, id_move, id_piece, color, position_x, position_y, rotation, flip):
     conn = sqlite3.connect('Base')
