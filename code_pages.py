@@ -291,8 +291,18 @@ def grille(id_game):
         print(f"pas de nom pour la partie :{id_game}")
         return f"pas de nom pour la partie :{id_game}",500
     nb_j = nb_joueur(id_game)
+    
     if nb_j == 1:
         (m,color) = tour(id_game)
+    if nb_j == 2:
+        (m,j_actuel) = tour(id_game)
+        if color == 'B':
+            if j_actuel == 'Y' or j_actuel == 'R':
+                color = 'R'
+        else :
+            if j_actuel == 'R' or j_actuel == 'G':
+                color = 'G'            
+            
     liste_piece = piece_restante(id_game,color)
     coords = []
     for i in range(7):
