@@ -85,9 +85,9 @@ hr {
 
 .rules h1, .nouvellePartie h1 , .rejoindrePartie h1{
     text-align: center; 
-    color:hsl(61, 100%, 50%); 
+    color:hsl(61, 94%, 55%); 
     text-decoration: underline;
-    text-decoration-color: #dfbc20;
+    text-decoration-color: #cea907;
     transition: font-size 0.6s ease;
 }
 
@@ -120,10 +120,13 @@ hr {
     padding: 20px 20px;
     text-align: center;
     justify-content: center; 
-    border-radius: 2px;
+    border-radius: 5px;
     border-color: white;
     border-style:double;
+    border-width: 15px;
     font-size: 25px;
+    margin-left: 35%;
+    margin-right: 35%;
 }
 .formNouvellePartie input, .formRejoindrePartie input{
     margin-top: 10px;
@@ -142,6 +145,10 @@ hr {
     border-radius: 5px;
     padding: 5px 10px;
 }
+.eye-icon{cursor:pointer;}
+
+.informations{padding-left: 20px;}
+.informations h4{padding-left: 35px;}
 
 .footer {
     position: fixed;
