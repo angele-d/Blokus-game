@@ -314,15 +314,18 @@ def histo():
         # Pour trouver l'id de la partie
         quest = "SELECT id_game FROM game WHERE name_game = ? AND password_game = ?"
         cursor.execute(quest, (nom_de_partie, mot_de_passe))
-        count = cursor.fetchone()[0]
+        count = cursor.fetchone()
         conn.close()
         if count == None:
-            return "oulala probleme de non partie"
-    return redirect(f"/historique/{count}")
+            id_game = 0
+            return redirect(f"/historique/{id_game}/false")
+    return redirect(f"/historique/{count[0]}/true")
     
-@app.route('/historique/<id_game>')
-def historique(id_game):
+@app.route('/historique/<id_game>/<boo>')
+def historique(id_game,boo):
     try:
+        if boo == "false":
+            return redirect(f"/")
         conn = sqlite3.connect('Base')
         cursor = conn.cursor()
         # Retrouve tous les coups de la partie
