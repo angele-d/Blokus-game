@@ -60,7 +60,13 @@
                     console.log("coup valide");
                     genere_grille(id_game);
                     var nonid = document.getElementById(element);
+                    console.log("nb_joueur",nb_joueur)
                     nonid.remove();
+                    if (nb_joueur == 1){
+                        console.log("changement de joueur")
+                        location.reload()
+                    }
+
                 console.log('Réponse du serveur:', result);}
                 else if (result.status == "pas le bon tour"){
                     setTimeout(function() {

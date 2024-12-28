@@ -4,15 +4,20 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='CSS/style.css') }}">
 </head>
 <body>
+<div class="titre">
+    <h1> Bienvenue sur ce jeu de Blokus ! </h1>
+</div>
 <div class="bandeau"> 
-    <div class="bandeau_titre"> Jeu du BLOKUS </div> 
+    <div class="bandeau_inner"> 
+        <a href="/" class="bandeau_titre"> Jeu du BLOKUS </a> 
+    </div>
 </div>
 <div class="container">
     <a href="/newgame" class="custom-button">Nouvelle partie</a>
     <a href="/join" class="custom-button">Rejoindre partie</a>
     <a href="/historique2" class="custom-button">Historique de la partie</a>
 </div>
-<hr>
+<br> <br> <hr> <br>
 <div class="rules">
     <h1> Règles du jeu </h1>
     <div class="div1">
