@@ -224,7 +224,7 @@ def submit22():
             m,player = tour(id_game)
             if player == None:
                 socketio.emit('fin_de_partie', room = id_game)
-            socketio.emit('tour_joueur',player, room = id_game)
+            socketio.emit('tour_joueur', room = id_game)
             return jsonify({"status": "coup valide","joueur":player}), 200
         else: 
             print("Le joueur",color,"vaut jouer alors que c'est le tour de",player)
@@ -249,6 +249,13 @@ def generate():
     generation_matrice_image(matrix,num_game)
 
     return jsonify({'image_url': f"/static/grille{num_game}.png"})
+
+@app.route('/joueur', methods=['POST'])
+def joueur():
+    data = request.get_json() 
+    id_game = int(data.get('number')) 
+    m,player = tour(id_game)
+    return jsonify({'joueur': player})
 
 @app.route('/fin_de_partie/<id_game>')
 def fin_de_partie(id_game):

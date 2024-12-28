@@ -1,4 +1,5 @@
         window.onload = () => genere_grille(id_game);
+        tour_joueur();
         //fonction de génération de l'image de grille : 
         async function genere_grille(id_game) {
 
@@ -18,6 +19,25 @@
                 document.getElementById("output-image").src = result.image_url + '?' + new Date().getTime();
             } else {
                 alert(result.error || "Une erreur a eu lieu");
+            }
+        }
+        async function tour_joueur() {
+            const response = await fetch("/joueur", {
+                method: "POST",
+                credentials: 'include',
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ number: id_game }),
+            });
+
+            const result = await response.json();
+
+            if (response.ok) {
+                // Met a jour l'image
+                document.getElementById("couleur_joueur").textContent = result.joueur;
+            } else {
+                alert(result.error || "Une erreur a eu lieu pour le joueur");
             }
         }
         function updategrille(){
@@ -90,10 +110,7 @@
                 console.error('Erreur dans la réponse:', response.status);
             }
         }
-        function tour_joueur(player){
-            document.getElementById("couleur_joueur").textContent = player;
-        }
-        
+
         function glisseElement(element) {
             let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
             let doubleClic = false;
