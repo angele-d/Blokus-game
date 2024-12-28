@@ -62,6 +62,8 @@
                     var nonid = document.getElementById(element);
                     console.log("nb_joueur",nb_joueur)
                     nonid.remove();
+                    // Met à jour
+                    document.getElementById("couleur_joueur").textContent = result.joueur;
                     if (nb_joueur == 1){
                         console.log("changement de joueur")
                         location.reload()
