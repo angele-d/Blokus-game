@@ -1,12 +1,10 @@
 from flask import Flask, request, redirect, url_for, render_template, jsonify, session
 from flask_socketio import SocketIO, join_room, emit
-from logique_jeu import *
-from score import score,qui_peut_jouer, piece_restante
-from placage_pieces import transcription_pieces_SQL_grille, generation_matrice_image
 from fonc_DB import *
+from deb_IA import *
 import sqlite3
 import re
-from deb_IA import *
+
 
 app = Flask(__name__)
 app.secret_key = "swV#]S)p;ArRak`*chzd3FC6BZG$j<95HU:/ga3{26mLf:r'eFHMSU5$!E]X&TAp=<kg;%Run`Q}CdvZS93gp6;eKjxH'$?}cFfuJ<D2`Nsh)(7_4~nXX-g2qb!7rGZ4BPAw]u6`/;a,=CmF3M.pVz#*_<DwtN3zuS;!J4F:.7Rqj?5Zgp}L)v^9G<y&AaB`d"
@@ -186,51 +184,48 @@ def game(idgame):
 
 @app.route('/submit22', methods=['POST'])
 def submit22():
-    print("Requête reçue")
-    try:        
+    print("Requête reçue")   
     # Récupère les données envoyées
-        data = request.get_json()
-        if not data:
-            return jsonify({"error": "No data"}), 400  # Erreur si aucune donnée n'est reçue
+    data = request.get_json()
+    if not data:
+        return jsonify({"error": "No data"}), 400  # Erreur si aucune donnée n'est reçue
 
-        # Récupérer les coordonnées
-        carrX = data.get('carrX')
-        carrY = data.get('carrY')
-        retourne = data.get('retourne')
-        rotation = data.get('rotation')
-        element = data.get('element')
-        color = data.get('color')
-        id_game= data.get('id_game')
+    # Récupérer les coordonnées
+    carrX = data.get('carrX')
+    carrY = data.get('carrY')
+    retourne = data.get('retourne')
+    rotation = data.get('rotation')
+    element = data.get('element')
+    color = data.get('color')
+    id_game= data.get('id_game')
 
-        if carrX is None or carrY is None or retourne is None or rotation is None or element is None:
-            return jsonify({"error": "Info manquante"}), 400  # Erreur si coordonnées manquantes
+    if carrX is None or carrY is None or retourne is None or rotation is None or element is None:
+        return jsonify({"error": "Info manquante"}), 400  # Erreur si coordonnées manquantes
 
-        # Traitements des données pour qu'ils soit transmis a la logique de jeu
-        flip = (retourne == -1)
-        rotation = rotation//30
-        numpiece= int(re.findall('\d+',element)[0])
-        id_piece=f"P{numpiece}"
-        id_move = nb_move(id_game,color)
-        
-        player = tour(id_game)
-        
-        m = transcription_pieces_SQL_grille(id_game)
-        print("Info envoyée : Coord =",carrX,carrY,"pièce=",id_piece,"id_game =", id_game,"flip =", flip, "retourne=",retourne )
-        
-        if coup_possible(m,id_piece,color,int(carrY),int(carrX),int(rotation),flip):
-            if color == player: #verif que c'est le bon joueur qui joue
-                insert_move(id_game, id_move, id_piece, color, int(carrY), int(carrX), int(rotation), flip)
-                # Retourne une réponse avec un statut et les coordonnées
-                return jsonify({"status": "coup valide"}), 200
-            else: 
-                print("Le joueur",color,"vaut jouer alors que c'est le tour de",player)
-                return jsonify({"status" : "pas le bon tour"}), 200
+    # Traitements des données pour qu'ils soit transmis a la logique de jeu
+    flip = (retourne == -1)
+    rotation = rotation//30
+    numpiece= int(re.findall('\d+',element)[0])
+    id_piece=f"P{numpiece}"
+    id_move = nb_move(id_game,color)
+    
+    player = tour(id_game)
+    
+    m = transcription_pieces_SQL_grille(id_game)
+    print("Info envoyée : Coord =",carrX,carrY,"pièce=",id_piece,"id_game =", id_game,"flip =", flip, "retourne=",retourne )
+    
+    if coup_possible(m,id_piece,color,int(carrY),int(carrX),int(rotation),flip):
+        if color == player: #verif que c'est le bon joueur qui joue
+            insert_move(id_game, id_move, id_piece, color, int(carrY), int(carrX), int(rotation), flip)
+            # Retourne une réponse avec un statut et les coordonnées
+            socketio.emit('update_grille', room = id_game)
+            return jsonify({"status": "coup valide"}), 200
         else: 
-            return jsonify({"status" : "coup interdit"}), 200
-    except Exception as e:
-        #Gestion des erreurs et envoi d'une réponse appropriée
-        print("erreur:",e)
-        return jsonify({"error": str(e)}), 500  # Erreur interne du serveur
+            print("Le joueur",color,"vaut jouer alors que c'est le tour de",player)
+            return jsonify({"status" : "pas le bon tour"}), 200
+    else: 
+        return jsonify({"status" : "coup interdit"}), 200
+
     # Traitements des données pour qu'ils soit transmis a la logique de jeu
     flip = (retourne == -1)
     rotation = rotation//30

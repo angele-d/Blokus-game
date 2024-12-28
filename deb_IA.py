@@ -1,32 +1,6 @@
-from logique_jeu import *
-from score import *
-from placage_pieces import *
 from fonc_DB import *
-from pieces import *
 
-def coups_possibles_force_brute(m,pl,Plist):
-    '''
-    Fonction pour déterminer l'ensembles des coups possibles pour un joueur
-    :param m: matrice 20x20
-    :param pl: (str) R,B,Y ou G = joueur
-    :param Plist: liste de pieces
-    :return: (lst) liste des coups possibles, sous la forme [(pi, x, y, rot, isflipped)]
-    '''
-    coups=[]
-    for i in range(2):
-        if i == 1:
-            isflipped = True
-        else:
-            isflipped = False
-        MP=matrice_possible(m, pl)
-        for pi in Plist:
-            for rot in range(1,5):
-                for x in range(20):
-                    for y in range(20):
-                        if MP[x][y] == 'P':
-                            if coup_possible(m,pi,pl,x,y,rot,isflipped):
-                                coups.append((pi, x, y, rot, isflipped))
-    return coups
+
 
 #pour calculer le coup à faire, on utilise Monte carlo, avec approche probabiliste. Donc, d'une grille de jeu donnée, avec la liste des pièces restantes et le oueur qui joue
 #on va simuler un arbre des coups d'une profondeur n et donner à chaque branche une proba, déterminée par le nombre de victoire et le nombre de défaites que la branch epeut créer
