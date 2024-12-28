@@ -62,13 +62,7 @@
                     var nonid = document.getElementById(element);
                     console.log("nb_joueur",nb_joueur)
                     nonid.remove();
-<<<<<<< Updated upstream
-                    // Met à jour
-                    document.getElementById("couleur_joueur").textContent = result.joueur;
-                    if (nb_joueur == 1){
-=======
                     if (nb_joueur == 1 || nb_joueur == 2){
->>>>>>> Stashed changes
                         console.log("changement de joueur")
                         location.reload()
                     }
