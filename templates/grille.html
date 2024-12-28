@@ -48,6 +48,9 @@
         socket.on('fin_de_partie', ()=>{
             fin_de_partie();
         })
+        socket.on('tour_joueur', ()=>{
+            tour_joueur(player);
+        })
     </script>
     <script src="../static/js/js_grille.js"></script>
 

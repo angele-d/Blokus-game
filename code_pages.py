@@ -224,7 +224,8 @@ def submit22():
             m,player = tour(id_game)
             if player == None:
                 socketio.emit('fin_de_partie', room = id_game)
-            return jsonify({"status": "coup valide","joueur":player}), 200
+            socketio.emit('tour_joueur',player, room = id_game)
+            return jsonify({"status": "coup valide"}), 200
         else: 
             print("Le joueur",color,"vaut jouer alors que c'est le tour de",player)
             return jsonify({"status" : "pas le bon tour"}), 200
