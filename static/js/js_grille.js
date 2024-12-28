@@ -133,12 +133,19 @@
             }
 
             function tourne(e) {
+                const transform = e.style.transform || '';
+                const flip = transform.includes('scaleX(-1)');
                 // Donne valeur numérique de la rotation
                 rotation = e.style.transform.replace(/[^\d.]/g, '') || 0;
                 // Rotation de 90 degrés à partir de l'image actuelle
                 rotation = (parseInt(rotation) + 90) % 360;
                 e.dataset.rotation = `${rotation}`;
-                e.style.transform = `rotate(-${rotation}deg)`;
+                if (flip) {
+                    e.style.transform = `scaleX(-1) rotate(${rotation}deg)`;
+                }
+                else {
+                    e.style.transform = `rotate(-${rotation}deg)`;
+                }
             }
 
             function glisseSourisAppuie(e,element) {
