@@ -45,6 +45,9 @@
             console.log("la grille a changé")
             updategrille();
         })
+        socket.on('fin_de_partie', ()=>{
+            fin_de_partie();
+        })
     </script>
     <script src="../static/js/js_grille.js"></script>
 

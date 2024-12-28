@@ -24,6 +24,10 @@
             genere_grille(id_game)
         }
         
+        function fin_de_partie() {
+            console.log("partie finie");
+            window.location.href = `/fin_de_partie/${id_game}`;
+        }
         
         // Sélectionne toutes les images et applique la fonction glisseElement à chacune
         let elements = document.querySelectorAll('.posi');
@@ -52,11 +56,7 @@
             if (response.ok) {
                 console.log("reponseok")
                 const result = await response.json();
-                if (result.status == "partie finie"){
-                    console.log("partie finie");
-                    window.location.href = `/fin_de_partie/${id_game}`;
-                }
-                else if (result.status == "coup valide"){
+                if (result.status == "coup valide"){
                     console.log("coup valide");
                     genere_grille(id_game);
                     var nonid = document.getElementById(element);

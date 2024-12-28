@@ -223,7 +223,7 @@ def submit22():
             # Retourne une réponse avec un statut et les coordonnées
             m,player = tour(id_game)
             if player == None:
-                return jsonify({"status": "partie finie"}), 200
+                socketio.emit('fin_de_partie', room = id_game)
             return jsonify({"status": "coup valide","joueur":player}), 200
         else: 
             print("Le joueur",color,"vaut jouer alors que c'est le tour de",player)
