@@ -224,8 +224,7 @@ def submit22():
             m,player = tour(id_game)
             if player == None:
                 socketio.emit('fin_de_partie', room = id_game)
-            socketio.emit('tour_joueur',player, room = id_game)
-            return jsonify({"status": "coup valide"}), 200
+            return jsonify({"status": "coup valide","joueur":player}), 200
         else: 
             print("Le joueur",color,"vaut jouer alors que c'est le tour de",player)
             return jsonify({"status" : "pas le bon tour"}), 200
@@ -237,33 +236,6 @@ def submit22():
     #     print("erreur:",e)
     #     return jsonify({"error": str(e)}), 500  # Erreur interne du serveur
 
-
-
-
-#IL FAUT RENTRER LES CHOSES DE LA MANIERE SUIVANTE : ex : 5 	1 	P1 	R 	0 	0 	3 	0 (N'ECRIVEZ PAS FALSE)
-@app.route('/submit', methods=['POST'])
-def submit_form():
-    id_game = request.form['id_game']
-    id_move = request.form['id_move']
-    id_piece = request.form['id_piece']
-    color = request.form['color']
-    position_x = request.form['position_x']
-    position_y = request.form['position_y']
-    rotation = request.form['rotation']
-    flip = request.form['flip']
-    player = who_is_playing(color)
-    try:
-        m = transcription_pieces_SQL_grille(id_game)
-        if coup_possible(m,id_piece,color,int(position_x),int(position_y),int(rotation),bool(int(flip))):
-            if color == player: #verif que c'est le bon joueur qui joue
-                insert_move(id_game, id_move, id_piece, color, position_x, position_y, rotation, flip)
-                return "Move added successfully!", 200
-            else: 
-                return "Le joueur n'est pas le bon", 500
-        else: 
-            return "Le coup n'est pas valide", 500
-    except Exception as e:
-        return f"An error occured: {e}", 500
 
 @app.route('/generate', methods=['POST'])
 def generate():
