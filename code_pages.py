@@ -209,30 +209,6 @@ def submit22():
     id_piece=f"P{numpiece}"
     id_move = nb_move(id_game,color)
     
-    player = tour(id_game)
-    
-    m = transcription_pieces_SQL_grille(id_game)
-    print("Info envoyée : Coord =",carrX,carrY,"pièce=",id_piece,"id_game =", id_game,"flip =", flip, "retourne=",retourne )
-    
-    if coup_possible(m,id_piece,color,int(carrY),int(carrX),int(rotation),flip):
-        if color == player: #verif que c'est le bon joueur qui joue
-            insert_move(id_game, id_move, id_piece, color, int(carrY), int(carrX), int(rotation), flip)
-            # Retourne une réponse avec un statut et les coordonnées
-            socketio.emit('update_grille', room = id_game)
-            return jsonify({"status": "coup valide"}), 200
-        else: 
-            print("Le joueur",color,"vaut jouer alors que c'est le tour de",player)
-            return jsonify({"status" : "pas le bon tour"}), 200
-    else: 
-        return jsonify({"status" : "coup interdit"}), 200
-
-    # Traitements des données pour qu'ils soit transmis a la logique de jeu
-    flip = (retourne == -1)
-    rotation = rotation//30
-    numpiece= int(re.findall('\d+',element)[0])
-    id_piece=f"P{numpiece}"
-    id_move = nb_move(id_game,color)
-    
     m,player = tour(id_game)
     print("Info envoyée : Coord =",carrX,carrY,"pièce=",id_piece,"id_game =", id_game,"flip =", flip, "retourne=",retourne )
     
