@@ -83,15 +83,15 @@ hr {
     border:none;
 }
 
-.rules h1, .nouvellePartie h1 , .rejoindrePartie h1{
+.rules h1, .infoPartie h1{
     text-align: center; 
-    color:hsl(61, 100%, 50%); 
+    color:hsl(61, 94%, 55%); 
     text-decoration: underline;
-    text-decoration-color: #dfbc20;
+    text-decoration-color: #cea907;
     transition: font-size 0.6s ease;
 }
 
-.rules h1:hover, .nouvellePartie h1:hover, .rejoindrePartie h1:hover{
+.rules h1:hover, .infoPartie h1:hover{
     font-size: 30px;
 }
 
@@ -113,35 +113,42 @@ hr {
     transform: scale(1.025);    
 }
 
-.nouvellePartie, .rejoindrePartie {
+.infoPartie {
     margin-top: 100px;
 }
-.formNouvellePartie, .formRejoindrePartie{
+.formInfoPartie{
     padding: 20px 20px;
     text-align: center;
     justify-content: center; 
-    border-radius: 2px;
+    border-radius: 5px;
     border-color: white;
     border-style:double;
+    border-width: 15px;
     font-size: 25px;
+    margin-left: 35%;
+    margin-right: 35%;
 }
-.formNouvellePartie input, .formRejoindrePartie input{
+.formInfoPartie input{
     margin-top: 10px;
     padding: 5px 20px; 
     font-size: 15px;  
 }
-.formNouvellePartie button, .formRejoindrePartie button{
+.formInfoPartie button{
     font-size: 20px;
     font-weight: bold;
     border-radius: 5px;
     padding: 5px 8px;
 }
-.formNouvellePartie button:hover, .formRejoindrePartie button:hover{
+.formInfoPartie button:hover{
     background-color: hsl(61, 100%, 50%); 
     transform: scale(1.05);
     border-radius: 5px;
     padding: 5px 10px;
 }
+.eye-icon{cursor:pointer;}
+
+.informations{padding-left: 20px;}
+.informations h4{padding-left: 35px;}
 
 .footer {
     position: fixed;
