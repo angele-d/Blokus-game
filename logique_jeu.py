@@ -132,10 +132,10 @@ def coup_possible(m,pi,pl,x,y,rot,isflipped):
         for j in range (len(pi)):
             if pi[i][j]:
                 if x+i-2<0 or y+j-2<0:
-                    print("le coup a une coord négative")
+                    #print("le coup a une coord négative")
                     return False
                 if x+i-2>=20 or y+j-2>=20:
-                    print("le coup sort de la grille")
+                    #print("le coup sort de la grille")
                     return False
                 if mat_pos[x+i-2][y+j-2] not in ['V','P']:
                     return False

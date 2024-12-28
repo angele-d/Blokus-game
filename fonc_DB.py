@@ -82,21 +82,22 @@ def tour(id_game):
         conn.close()
         return m,"B"
     min_l.append(coup_B)
-    if nb_j >= 2:
-        cursor.execute(query,("Y",id_game))
-        coup_Y= cursor.fetchone()[0]
-        if coup_Y == None:
-            conn.close()
-            return m,"Y"
-        min_l.append(coup_Y)
-    if nb_j >= 3:
-        cursor.execute(query,("R",id_game))
-        coup_R = cursor.fetchone()[0]
-        if coup_R == None:
-            conn.close()
-            return m,"R"
-        min_l.append(coup_R)
-    if nb_j >= 4:
+
+    cursor.execute(query,("Y",id_game))
+    coup_Y= cursor.fetchone()[0]
+    if coup_Y == None:
+        conn.close()
+        return m,"Y"
+    min_l.append(coup_Y)
+
+    cursor.execute(query,("R",id_game))
+    coup_R = cursor.fetchone()[0]
+    if coup_R == None:
+        conn.close()
+        return m,"R"
+    min_l.append(coup_R)
+
+    if nb_j != 3:
         cursor.execute(query,("G",id_game))
         coup_G = cursor.fetchone()[0]
         if coup_G == None:
@@ -104,6 +105,7 @@ def tour(id_game):
             return m,"G"
         min_l.append(coup_G)
     conn.close()
+
     for i in range(4):
         if not 'B' in qpj:
             min_l[0]=100

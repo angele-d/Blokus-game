@@ -287,6 +287,9 @@ def grille(id_game):
     except Exception as e:
         print(f"pas de nom pour la partie :{id_game}")
         return f"pas de nom pour la partie :{id_game}",500
+    nb_j = nb_joueur(id_game)
+    if nb_j == 1:
+        (m,color) = tour(id_game)
     liste_piece = piece_restante(id_game,color)
     coords = []
     for i in range(7):
@@ -298,7 +301,8 @@ def grille(id_game):
     for i in range(len(coords)):
         if not i+1 in liste_piece:
             coords[i] = None
-    return render_template('grille.html',coords = coords, color = color,id_game = id_game)
+    return render_template('grille.html',coords = coords, color = color,id_game = id_game,nb_joueur = nb_j)
+
 
 @app.route('/historique2')
 def historique2():

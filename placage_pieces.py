@@ -22,6 +22,7 @@ def get_db(): # cette fonction permet de créer une connexion à la base
 def piece_restante(id_game,player):
     conn = sqlite3.connect('Base')
     cursor = conn.cursor()
+    print(id_game,player)
     cursor.execute('''
         SELECT id_piece FROM coups WHERE id_game = ? and color = ? ''',(id_game,player))
     rows = cursor.fetchall()
