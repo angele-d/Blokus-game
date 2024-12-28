@@ -23,16 +23,6 @@
         function updategrille(){
             genere_grille(id_game)
         }
-       
-        let isUpdating = false;
-        setInterval(() => {
-            if (!isUpdating) {
-                isUpdating = true;
-                genere_grille(id_game).finally(() => {
-                    isUpdating = false;
-                });
-            }
-        }, 2000);
         
         
         // Sélectionne toutes les images et applique la fonction glisseElement à chacune
