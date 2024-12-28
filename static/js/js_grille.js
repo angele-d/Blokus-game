@@ -62,7 +62,6 @@
                     var nonid = document.getElementById(element);
                     console.log("nb_joueur",nb_joueur)
                     nonid.remove();
-                    document.getElementById("couleur_joueur").textContent = result.joueur;
                     if (nb_joueur == 1 || nb_joueur == 2){
                         console.log("changement de joueur")
                         location.reload()
@@ -91,7 +90,10 @@
                 console.error('Erreur dans la réponse:', response.status);
             }
         }
-
+        function tour_joueur(player){
+            document.getElementById("couleur_joueur").textContent = player;
+        }
+        
         function glisseElement(element) {
             let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
             let doubleClic = false;
