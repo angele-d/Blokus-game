@@ -215,6 +215,8 @@ def submit22():
     if coup_possible(m,id_piece,color,int(carrY),int(carrX),int(rotation),flip):
         if color == player: #verif que c'est le bon joueur qui joue
             insert_move(id_game, id_move, id_piece, color, int(carrY), int(carrX), int(rotation), flip)
+            
+            socketio.emit('update_grille', room = id_game)
             # Retourne une réponse avec un statut et les coordonnées
             m,player = tour(id_game)
             if player == None:
