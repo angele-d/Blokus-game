@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
 <html>
 <head>
     <meta charset="UTF-8">
@@ -33,8 +34,18 @@
     <script>
         const id_game = "{{id_game}}"
         const color = "{{color}}"
+        const socket = io();
+        socket.on('connect', () => {
+            console.log('Socket connecté');
+            socket.emit('join_room', { room: id_game })
+        });
+        socket.on('update_grille', ()=>{
+            console.log("la grille a changé")
+            updategrille();
+        })
     </script>
     <script src="../static/js/js_grille.js"></script>
+
 </body>
 
 </html>
