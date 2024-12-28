@@ -205,7 +205,7 @@ def submit22():
     # Traitements des données pour qu'ils soit transmis a la logique de jeu
     flip = (retourne == -1)
     rotation = rotation//30
-    numpiece= int(re.findall('\d+',element)[0])
+    numpiece= int(re.findall(r'\d+',element)[0])
     id_piece=f"P{numpiece}"
     id_move = nb_move(id_game,color)
     
@@ -298,21 +298,37 @@ def grille(id_game):
             coords[i] = None
     return render_template('grille.html',coords = coords, color = color,id_game = id_game)
 
-#OUTIL DE DEBUG, A SUPPRIMER PLUS TARD
-@app.route('/view_data')
-def view_data():
-    try:
-        # Connect to the SQLite database
+@app.route('/historique2')
+def historique2():
+    return render_template('historique2.html')
+
+@app.route('/histo', methods=['GET','POST'])
+def histo():
+    if request.method == 'POST':
+        mot_de_passe = request.form['password']
+        nom_de_partie = request.form['game']
         conn = sqlite3.connect('Base')
         cursor = conn.cursor()
-
-        # Retrieve all rows from the "coups" table
-        cursor.execute("SELECT * FROM coups")
-        rows = cursor.fetchall()  # Fetch all rows as a list of tuples
+        # Pour trouver l'id de la partie
+        quest = "SELECT id_game FROM game WHERE name_game = ? AND password_game = ?"
+        cursor.execute(quest, (nom_de_partie, mot_de_passe))
+        count = cursor.fetchone()[0]
         conn.close()
-
-        # Pass the data to an HTML template
-        return render_template('view_data.html', rows=rows)
+        if count == None:
+            return "oulala probleme de non partie"
+    return redirect(f"/historique/{count}")
+    
+@app.route('/historique/<id_game>')
+def historique(id_game):
+    try:
+        conn = sqlite3.connect('Base')
+        cursor = conn.cursor()
+        # Retrouve tous les coups de la partie
+        query = "SELECT * FROM coups WHERE id_game = ?"
+        cursor.execute(query,(id_game,))
+        coups = cursor.fetchall()
+        conn.close()
+        return render_template('historique.html', coups = coups)
     except Exception as e:
         return f"An error occurred while retrieving the data: {e}", 500
 
