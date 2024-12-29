@@ -130,7 +130,7 @@ body {
 }
 .eye-icon{cursor:pointer;}
 
-/*lobby_admin.html*/
+/*lobby_admin.html / historique.html*/
 .lobby{
     padding-top: 50px;
     display: grid;
@@ -147,11 +147,11 @@ body {
     padding: 10px 15px;
     text-align: center;
 }
-.tableTitle{
+.tableTitle, .lobby thead{
     background-color: rgb(133, 217, 245);
     font-size: 25px;
 }
-.tablePlayers{
+.tablePlayers, .lobby tbody{
     background-color: rgb(149, 228, 238);
     font-size: 20px;
 }

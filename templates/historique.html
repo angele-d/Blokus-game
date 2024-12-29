@@ -1,12 +1,26 @@
 <!DOCTYPE html>
 <html lang="en">
+
+<title> BLOKUS PP2I grp6 </title>
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Historique</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='CSS/style.css') }}">
 </head>
+
 <body>
-    <h1>Historique</h1>
+<div class="bandeau"> 
+    <div class="bandeau_inner"> 
+        <a href="/" class="bandeau_titre"> Jeu du BLOKUS </a> 
+        <a href="/historique2" class="bandeau_retourArriere"> Voir un autre historique </a>
+    </div>
+</div>
+
+<div class="infoPartie"> 
+    <h1> Bienvenue dans l'historique de votre partie ! </h1>
+</div>  
+<div class="lobby">
     <table border="1">
         <thead>
             <tr>
@@ -35,5 +49,13 @@
             {% endfor %}
         </tbody>
     </table>
+</div>
 </body>
+
+
+<div class="footer">
+    <span class="gras souligne"> Crédits:</span> Briand Thibault, Regennass Anne, Girres Elisa, Denys Angèle
+</div>
+
+
 </html>
