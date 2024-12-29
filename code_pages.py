@@ -17,7 +17,7 @@ def accueil():
     return render_template('main_page.html')
 
 @app.route('/join', methods=['GET','POST'])
-def rejoin():
+def join():
     if request.method == 'POST':
         mot_de_passe = request.form['password']
         nom_de_partie = request.form['game']
@@ -50,6 +50,33 @@ def rejoin():
 
         return redirect(f"/game/{rows[0][0]}")
     return render_template('join_page.html')
+
+@app.route('/rejoin', methods=['GET','POST'])
+def rejoin():
+    if request.method == 'POST':
+        mot_de_passe = request.form['password']
+        nom_de_partie = request.form['game']
+        nom_utilisateur = request.form['name']
+        conn = sqlite3.connect('Base')
+        cursor = conn.cursor()
+        # Va chercher l'id de la partie pour orienter le joueur vers la bonne partie
+        query = "SELECT id_game FROM game where password_game = ? and name_game = ?"
+        cursor.execute(query,(mot_de_passe,nom_de_partie))
+        rows = cursor.fetchall()
+        if count > 0:
+            return "Ce nom est déjà pris"
+        if len(rows) != 1:
+            return "Mauvais mot de passe",500
+
+        session[f'access_{rows[0][0]}'] = True
+        ## LE NOM DE LA PERSONNE SERT PLUS TARD A CHOISIR L'ORDRE
+        session['name'] = nom_utilisateur
+        insert_name(rows[0][0],nom_utilisateur)
+
+        socketio.emit('join_room', {'room': rows[0][0]})
+
+        return redirect(f"/game/{rows[0][0]}")
+    return render_template('rejoin_page.html')
 
 @socketio.on('join_room')
 def handle_join_room(data):
