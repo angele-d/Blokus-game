@@ -10,6 +10,7 @@
     <script>
         const idgame = "{{ idgame }}"
         function fetchData() {
+            launch()
             fetch(`/getdatagame/${idgame}`) //envoie une requête pour avoir le json
                 .then(response => response.json()) // transforme pour pouvoir traiter la requête
                 .then(data => {
