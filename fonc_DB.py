@@ -173,3 +173,33 @@ def name_to_order(name,id_game):
         return 'R'
     elif ind == 3:
         return 'G'  
+
+def order_to_name(couleur,id_game):
+    conn = sqlite3.connect('Base')
+    cursor = conn.cursor()
+    cursor.execute('''
+        SELECT nom FROM nom_joueur WHERE id_game = ? ''',(id_game,))
+    rows = cursor.fetchall()
+    conn.close()
+    nbr = len(rows)
+    print(couleur)
+    if nbr == 1:
+        return rows[0][0]
+    elif nbr == 2:
+        if couleur == 'B':
+            return rows[0][0]
+        if couleur == 'Y':
+            return rows[1][0]
+        if couleur == 'R':
+            return rows[0][0]
+        if couleur == 'G':
+            return rows[1][0]
+    if couleur == 'B':
+        return rows[0][0]
+    if couleur == 'Y':
+        return rows[1][0]
+    if couleur == 'R':
+        return rows[2][0]
+    if couleur == 'G':
+        return rows[3][0]
+

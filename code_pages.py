@@ -286,8 +286,9 @@ def generate():
 def joueur():
     data = request.get_json() 
     id_game = int(data.get('number')) 
-    m,player = tour(id_game)
-    return jsonify({'joueur': player})
+    m,couleur = tour(id_game)
+    player = order_to_name(couleur,id_game)
+    return jsonify({'joueur': player,"couleur":couleur})
 
 @app.route('/fin_de_partie/<id_game>')
 def fin_de_partie(id_game):
