@@ -3,6 +3,7 @@ body {
     background: linear-gradient(to right,lightblue,rgb(132, 226, 238), rgb(43, 212, 235),rgb(132, 226, 238),lightblue)
 }
 
+/*Bandeau*/
 .bandeau {
     height: 35px;
     position: fixed;
@@ -14,7 +15,7 @@ body {
     box-shadow: 0px 2px 8px 2px rgb(0, 225, 255);
 }
 .bandeau_inner{margin-top: 0.4em;}
-.bandeau_titre .bandeau_home {
+.bandeau_titre .bandeau_retourArriere {
     display: inline-block;
     vertical-align: top;
     position: absolute;
@@ -26,34 +27,30 @@ body {
     font-weight: bold;
     padding: 0px 20px;
 }
-.bandeau_home {
-    position: fixed;
-    right: 0;
-    top: 0;
+.bandeau_retourArriere {
     font-size: 20px;
     font-weight: bold;
     padding: 10px 20px;
     color: white;
     text-decoration: none;
+    border-left: 2px rgb(2, 0, 95);
+    border-right: 2px rgb(2, 0, 95);
 }
 
-.titre {
-    margin-top: 120px;
-    text-align: center;
-    font-size: 30px;
-    text-decoration: underline;
-    text-decoration-color: rgb(73, 97, 235);
-    color: rgb(10, 35, 179);
+.footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    background-color: rgb(73, 97, 235);
+    width: 100%;
+    box-shadow: 0px 2px 8px 2px rgb(0, 225, 255);
+    color: white;
+    font-size: 12px;
+    padding: 10px 20px;
 }
 
-.container {
-    display: flex; 
-    justify-content: center; 
-    align-items: center; 
-    height: 20vh; 
-}
-
-.custom-button {
+/*Page d'accueil*/
+.accueilButton {
     display: inline-block; 
     padding: 10px 20px; 
     font-size: 24px; 
@@ -68,21 +65,13 @@ body {
     transition: background-color 0.3s ease, transform 0.2s ease; 
     margin: 40px
 }
-
-.custom-button:hover {
+.accueilButton:hover {
     background-color: #dfbc20; 
     transform: scale(1.05);
     color:white;
 }
 
-hr {
-    width: 80%;
-    color: rgb(73, 97, 235);
-    height: 5px;
-    background-color: rgb(73, 97, 235);
-    border:none;
-}
-
+/*Règles données à l'accueil*/
 .rules h1, .infoPartie h1{
     text-align: center; 
     color:hsl(61, 94%, 55%); 
@@ -90,11 +79,9 @@ hr {
     text-decoration-color: #cea907;
     transition: font-size 0.6s ease;
 }
-
 .rules h1:hover, .infoPartie h1:hover{
     font-size: 30px;
 }
-
 .rules .div1, .rules .div2{
     display: inline-block;
     vertical-align: top;
@@ -108,14 +95,10 @@ hr {
     font-size: 16px;
     transition: transform 0.6s ease, text-shadow 0.3s ease;
 }
+.rules .div1:hover, .rules .div2:hover{transform: scale(1.025);}
 
-.rules .div1:hover, .rules .div2:hover{
-    transform: scale(1.025);    
-}
-
-.infoPartie {
-    margin-top: 100px;
-}
+/*Tous les lobbys qui récupère des informations de partie*/
+.infoPartie {margin-top: 100px;}
 .formInfoPartie{
     padding: 20px 20px;
     text-align: center;
@@ -147,21 +130,90 @@ hr {
 }
 .eye-icon{cursor:pointer;}
 
-.informations{padding-left: 20px;}
-.informations h4{padding-left: 35px;}
+/*lobby_admin.html*/
+.lobby{
+    padding-top: 50px;
+    display: grid;
+    justify-content: center; 
+    align-items: center; 
+}
+.lobby table{
+    border-collapse: collapse;
+    border: 2px solid rgb(140 140 140);
+    letter-spacing: 1px;
+}
+.lobby table th, .lobby table td {
+    border: 3px solid rgb(2, 0, 95);
+    padding: 10px 15px;
+    text-align: center;
+}
+.tableTitle{
+    background-color: rgb(133, 217, 245);
+    font-size: 25px;
+}
+.tablePlayers{
+    background-color: rgb(149, 228, 238);
+    font-size: 20px;
+}
+.lobby button{
+    padding: 10px 20px; 
+    font-size: 15px; 
+    color: black; 
+    background-color: hsl(61, 100%, 50%); 
+    border: none; 
+    border-radius: 5px; 
+    cursor: pointer; 
+    text-align: center; 
+    text-decoration: none; 
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2); 
+    transition: background-color 0.3s ease, transform 0.2s ease; 
+    margin: 10px;
+}
+.lobby button:hover{
+    background-color: #dfbc20; 
+    transform: scale(1.05);
+    color:white;
+}
 
 
+/*Basard*/
 
-.footer {
+.informations{
     position: fixed;
-    bottom: 0;
-    left: 0;
+    padding-left: 20px;
+}
+.informations h4{padding-left: 35px;}
+.informations .div1, .informations .div2{
+    display: inline-block;
+    vertical-align: top;
+    box-sizing: border-box;
+    width: 49%;
+    padding: 10px 25px;
+    font-size: 15px;
+}
+
+.titre {
+    margin-top: 120px;
+    text-align: center;
+    font-size: 30px;
+    text-decoration: underline;
+    text-decoration-color: rgb(73, 97, 235);
+    color: rgb(10, 35, 179);
+}
+
+.container {
+    display: flex; 
+    justify-content: center; 
+    align-items: center; 
+    height: 20vh; 
+}
+
+hr {
+    width: 80%;
+    color: rgb(73, 97, 235);
+    height: 5px;
     background-color: rgb(73, 97, 235);
-    width: 100%;
-    box-shadow: 0px 2px 8px 2px rgb(0, 225, 255);
-    color: white;
-    font-size: 12px;
-    padding: 10px 20px;
+    border:none;
 }
 
 .gras{font-weight: bold;}

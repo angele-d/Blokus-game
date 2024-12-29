@@ -9,21 +9,32 @@
 <div class="bandeau"> 
     <div class="bandeau_inner"> 
         <a href="/" class="bandeau_titre"> Jeu du BLOKUS </a> 
+        <a href="/newgame" class="bandeau_retourArriere"> Créer une Partie </a>
+        <a href="/join" class="bandeau_retourArriere"> Rejoindre une Partie </a>
     </div>
 </div>
 
 <div class="infoPartie"> 
-    <h1> Liste des joueurs de la partie</h1>
+    <h1> Bienvenue au lobby de cette partie ! </h1>
 </div>    
-<div>
-    <table border="1" id="tupleTable">
-        <tr>
-            <th>VOUS ETES UN ADMIN</th>
-        </tr>
-    </table>
-    <div>
-        <button id="IA" onclick="addIA()">RAJOUTER IA</button>
-        <button id="Launch" onclick="sendRequest()">LANCER LA PARTIE!</button>
+<div class="lobby">
+    <table id="tupleTable"></table>
+</div>
+<div class="lobby">
+    <button id="IA" onclick="addIA()">AJOUTER IA</button>
+    <button id="Launch" onclick="sendRequest()">LANCER LA PARTIE!</button>
+</div>
+<br> <hr> <br>
+</div>
+<div class="informations">
+    <h4> Informations complémentaires: </h4>
+    <div class="div1">
+    <span class="gras"> 1. </span> Les pseudos de vos compagnons de partie apparaîtront ici lorsque ceux-ci se seront connectés ! <br> <br>
+    <span class="gras"> 2. </span> Limitation à 4 joueurs (IA comprise)
+    </div>
+    <div class="div2">
+    <span class="gras"> 3. </span> Les IA sont notés sous le format " IA{numéro de l'IA} " <br> <br>
+    <span class="gras"> Bonne partie ! </span>
     </div>
 </div>
 </body>
@@ -41,12 +52,12 @@
                 const table = document.getElementById('tupleTable'); //on va chercher ici la table html
                 table.innerHTML = `
                     <tr>
-                        <th>Name</th>
+                        <th class="tableTitle"> Liste des joueurs </th>
                     </tr>
                 `; // L'intérieur de la table c'est maintenant ce que précède
                 data.forEach(([name]) => {
                     const row = document.createElement('tr'); // on a une nouvelle ligne
-                    row.innerHTML = `<td>${name}</td>`;
+                    row.innerHTML = `<td class="tablePlayers"> ${name} </td>`;
                     table.appendChild(row); // on rajoute la nouvelle ligne
                 });
             })
