@@ -60,16 +60,22 @@ def rejoin():
         conn = sqlite3.connect('Base')
         cursor = conn.cursor()
         # Va chercher l'id de la partie pour orienter le joueur vers la bonne partie
-        query = "SELECT id_game FROM game where password_game = ? and name_game = ?"
+        query = "SELECT id_game FROM game WHERE password_game = ? and name_game = ?"
+        quest = "SELECT COUNT(*) FROM nom_joueur WHERE id_game = ? AND nom=?"
         cursor.execute(query,(mot_de_passe,nom_de_partie))
         rows = cursor.fetchall()
         if len(rows) != 1:
+            conn.close()
             return "Mauvais mot de passe",500
-        session[f'access_{rows[0][0]}'] = True
+        cursor.execute(quest,(rows[0][0],nom_utilisateur ))
+        rowss = cursor.fetchall()
+        conn.close()
+        if len(rowss) == 0:
+            return "Pas de joueur de ce nom dans cette partie"
         ## LE NOM DE LA PERSONNE SERT PLUS TARD A CHOISIR L'ORDRE
+        session[f'access_{rows[0][0]}'] = True
+        session[f'access_admin_{rows[0][0]}'] = False
         session['name'] = nom_utilisateur
-        insert_name(rows[0][0],nom_utilisateur)
-
         socketio.emit('join_room', {'room': rows[0][0]})
 
         return redirect(f"/game/{rows[0][0]}")
@@ -200,8 +206,10 @@ def game(idgame):
         return "La partie n'existe pas",404
     else:
         if session.get(f'access_admin_{idgame}'):
+            print("!!!!!!!!!!!!!!!!!!!!!")
             return render_template('lobby_admin.html',idgame=idgame)
         else:
+            print("...................")
             return render_template('lobby.html',idgame=idgame)
 
 
