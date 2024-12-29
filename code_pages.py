@@ -63,11 +63,8 @@ def rejoin():
         query = "SELECT id_game FROM game where password_game = ? and name_game = ?"
         cursor.execute(query,(mot_de_passe,nom_de_partie))
         rows = cursor.fetchall()
-        if count > 0:
-            return "Ce nom est déjà pris"
         if len(rows) != 1:
             return "Mauvais mot de passe",500
-
         session[f'access_{rows[0][0]}'] = True
         ## LE NOM DE LA PERSONNE SERT PLUS TARD A CHOISIR L'ORDRE
         session['name'] = nom_utilisateur
