@@ -23,7 +23,7 @@
     <h1> Règles du jeu </h1>
     <div class="div1">
         <p> <li>
-            <span class="gras"> Nombre de joueurs: </span> 4 joueurs <br>
+            <span class="gras"> Nombre de joueurs: </span> 1 à 4 joueurs <br>
             <span class="italique"> Possibilité d'ajouter des IA si manque de joueurs </span> <br>
         </li> </p> 
         <p> <li> <span class="gras">Tirage des couleurs:</span> En amont par les joueurs eux-mêmes. <br>
@@ -58,3 +58,15 @@
 <div class="footer">
     <span class="gras souligne"> Crédits:</span> Briand Thibault, Regennass Anne, Girres Elisa, Denys Angèle
 </div>
+<script>
+const son = new Audio('{{ url_for("static", filename="sounds/blipSelect1.wav") }}');
+
+document.addEventListener("DOMContentLoaded",()=>{
+    document.querySelectorAll('.accueilButton').forEach(button =>{
+        button.addEventListener('click',() =>{
+            console.log("son")
+            son.play();
+        });
+    });
+});
+</script>

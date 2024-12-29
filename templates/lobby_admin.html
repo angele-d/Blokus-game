@@ -89,9 +89,12 @@
     });
 
     socket.on('new_player', (data) =>{
-        console.log("new player in lobby")
-        fetchData();
-    })
+            const son = new Audio('{{ url_for("static", filename="sounds/blipW.wav") }}');    
+            console.log("son")
+            son.play();
+            console.log("new player in lobby")
+            fetchData();
+        })
     fetchData()
     socket.on('launch',(data) =>{
         console.log("launching the game")
