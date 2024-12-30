@@ -11,6 +11,7 @@ app.secret_key = "swV#]S)p;ArRak`*chzd3FC6BZG$j<95HU:/ga3{26mLf:r'eFHMSU5$!E]X&T
 
 socketio = SocketIO(app)
 
+nbr_joue = []
 
 @app.route('/')
 def accueil():
@@ -106,7 +107,7 @@ def newgame():
     found = False
     for i in range(1,len(rows)):
         if rows[i][0] != rows[i_a][0] + 1:
-            newgame= rows[i_a] +1
+            new_game= rows[i_a] +1
             found = True
             break
         i_a += 1
@@ -126,8 +127,53 @@ def newgame():
         socketio.emit('join_room', {'room': rows[0][0]})
         return redirect(f"/game/{new_game}")
     except Exception as e:
-        return f"L'erreur suivante à eu lieu: {e}", 500
+        return f"L'erreur suivante a eu lieu: {e}", 500
 
+@app.route('/locale')
+def locale():
+    return render_template('locale.html')
+
+@app.route('/locale_info', methods=['POST'])
+def locale_info():
+    nbr = request.form['nbr']
+    return render_template('locale_info.html', nbr = int(nbr))
+
+@app.route('/locale_lobby', methods=['POST'])
+def locale_lobby():
+    conn = sqlite3.connect('Base')
+    cursor = conn.cursor()
+    query = "SELECT id_game FROM game ORDER BY id_game"
+    cursor.execute(query)  
+    rows = cursor.fetchall()  
+    conn.close()
+    i_a=0 
+    found = False
+    for i in range(1,len(rows)):
+        if rows[i][0] != rows[i_a][0] + 1:
+            new_game= rows[i_a] +1
+            found = True
+            break
+        i_a += 1
+    if not found:
+        new_game = len(rows) + 1
+    for i in range(len(request.form)-2):
+        name = request.form.get(f'name{i}')
+        nbr_joue.append(name)
+    name_game = request.form['name_game']
+    password_game = request.form['password_game']
+    nb_move = -1 # Si le nb_move passe a 0 ou plus, cela veut dire que la game est lancée
+    try:
+        for i in nbr_joue:
+            insert_name(new_game,i)
+        insert_game(new_game,name_game,password_game,nb_move)
+        session[f'access_{new_game}'] = True
+        session[f'access_admin_{new_game}'] = True
+        session['name'] = nbr_joue[0]
+
+        socketio.emit('join_room', {'room': rows[0][0]})
+        return redirect(f"/game/{new_game}")
+    except Exception as e:
+        return f"L'erreur suivante a eu lieu: {e}", 500
 
 @app.route('/getdatagame/<idgame>')
 def getdatagame(idgame):
@@ -207,10 +253,8 @@ def game(idgame):
         return "La partie n'existe pas",404
     else:
         if session.get(f'access_admin_{idgame}'):
-            print("!!!!!!!!!!!!!!!!!!!!!")
             return render_template('lobby_admin.html',idgame=idgame)
         else:
-            print("...................")
             return render_template('lobby.html',idgame=idgame)
 
 
@@ -312,8 +356,9 @@ def grille(id_game):
         print(f"pas de nom pour la partie :{id_game}")
         return f"pas de nom pour la partie :{id_game}",500
     nb_j = nb_joueur(id_game)
-    
-    if nb_j == 1:
+    print('.................................................')
+    print(nbr_joue)
+    if nb_j == 1 or nbr_joue != []:
         (m,color) = tour(id_game)
     if nb_j == 2:
         (m,j_actuel) = tour(id_game)
