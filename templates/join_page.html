@@ -1,32 +1,51 @@
 <title> BLOKUS PP2I grp6 </title>
 
 <head>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='CSS/style.css') }}">
 </head>
 
 <body>
-<div class="bandeau"> 
-    <div class="bandeau_titre"> Jeu du BLOKUS </div> 
-    <a class="bandeau_home" href="/"> Accueil </a>
-</div>
+    <div class="bandeau"> 
+        <div class="bandeau_inner"> 
+            <a href="/" class="bandeau_titre"> Jeu du BLOKUS </a> 
+        </div>
+    </div>
 
-<div class="rejoindrePartie">
+<div class="infoPartie">
     <h1>Entrez les informations pour rejoindre votre partie !</h1>
     <br> <br>
-    <div class="formRejoindrePartie">
+    <div class="formInfoPartie">
         <form action="/join" method="POST">
-            <p><label for="name">Inscrivez votre pseudo</label> <br>
-            <input type="text" id="name" name="name" placeholder="Votre nom" required> </p>
+            <p><label for="name">Inscrivez votre pseudo *</label> <br>
+            <input type="text" id="name" name="name" placeholder="Votre pseudo" required> </p>
             <p><label for="game">Quel est le nom de votre partie ?</label> <br>
             <input type="text" id="game" name="game" placeholder="Votre nom de partie" required></p>
             <p><label for="password">Ecrivez le mot de passe de cette partie</label> <br>
-            <input type="text" id="password" name="password" placeholder="Votre password" required></p>
-            <p><button type="submit"> Entrer dans la partie</button> </p>
+            <input type="password" id="password" name="password" placeholder="Password de votre partie" required>
+            <span id="togglePassword" class="eye-icon">👁️</span> </p>
+            <p><button type="submit"> Rejoindre la partie</button> </p>
         </form>
     </div>
-    </div>
-    </body>
+<br> <hr> <br>
+</div>
+<div class="informations">
+    <h4> Informations complémentaires: </h4>
+    <span class="gras"> *</span> pseudo que vous voudriez avoir durant la partie. <br>
+    <span class="italique"> Les IA pourront être ajoutées dans la page suivante</span>
+</div>
+</body>    
 
 <div class="footer">
     <span class="gras souligne"> Crédits:</span> Briand Thibault, Regennass Anne, Girres Elisa, Denys Angèle
 </div>
+
+<script>
+    const togglePassword = document.getElementById("togglePassword");
+    const password = document.getElementById("password");
+
+    togglePassword.addEventListener("click", function () {
+        const type = password.type === "password" ? "text" : "password";
+        password.type = type;
+        this.textContent = type === "password" ? "👁️" : "🙈";
+    });
+</script>

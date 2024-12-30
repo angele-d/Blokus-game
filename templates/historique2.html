@@ -1,0 +1,49 @@
+<title> BLOKUS PP2I grp6 </title>
+
+<head>
+    <link rel="stylesheet" href="{{ url_for('static', filename='CSS/style.css') }}">
+</head>
+
+<body>
+<div class="bandeau"> 
+    <div class="bandeau_inner"> 
+        <a href="/" class="bandeau_titre"> Jeu du BLOKUS </a> 
+    </div>
+</div>
+    
+<div class="infoPartie">
+    <h1>Découvrez l'historique de votre partie !</h1>
+    <br> <br>
+    <div class="formInfoPartie">
+        <form action="/histo" method="POST">
+            <p><label for="game">Quel est le nom de votre partie ?</label> <br>
+            <input type="text" id="game" name="game" placeholder="Votre nom de partie" required></p>
+            <p><label for="password">Ecrivez le mot de passe de cette partie</label> <br>
+            <input type="password" id="password" name="password" placeholder="Password de votre partie" required>
+            <span id="togglePassword" class="eye-icon">👁️</span> </p>
+            <p><button type="submit"> Entrer dans la partie</button> </p>
+        </form>
+    </div>
+</div>
+<br> <hr> <br>
+</div>
+<div class="informations">
+    <h4> Informations complémentaires: </h4>
+    <p>Si la partie n'existe pas, vous serez redirigé vers la page d'accueil.</p>
+</div>
+</body>
+
+<div class="footer">
+    <span class="gras souligne"> Crédits:</span> Briand Thibault, Regennass Anne, Girres Elisa, Denys Angèle
+</div>
+
+<script>
+    const togglePassword = document.getElementById("togglePassword");
+    const password = document.getElementById("password");
+
+    togglePassword.addEventListener("click", function () {
+        const type = password.type === "password" ? "text" : "password";
+        password.type = type;
+        this.textContent = type === "password" ? "👁️" : "🙈";
+    });
+</script>

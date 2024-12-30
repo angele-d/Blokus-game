@@ -1,4 +1,5 @@
         window.onload = () => genere_grille(id_game);
+        tour_joueur();
         //fonction de génération de l'image de grille : 
         async function genere_grille(id_game) {
 
@@ -20,20 +21,33 @@
                 alert(result.error || "Une erreur a eu lieu");
             }
         }
+        async function tour_joueur() {
+            const response = await fetch("/joueur", {
+                method: "POST",
+                credentials: 'include',
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ number: id_game }),
+            });
+
+            const result = await response.json();
+
+            if (response.ok) {
+                // Met a jour l'image
+                document.getElementById("couleur_joueur").textContent = result.joueur;
+            } else {
+                alert(result.error || "Une erreur a eu lieu pour le joueur");
+            }
+        }
         function updategrille(){
             genere_grille(id_game)
         }
-       
-        let isUpdating = false;
-        setInterval(() => {
-            if (!isUpdating) {
-                isUpdating = true;
-                genere_grille(id_game).finally(() => {
-                    isUpdating = false;
-                });
-            }
-        }, 2000);
         
+        function fin_de_partie() {
+            console.log("partie finie");
+            window.location.href = `/fin_de_partie/${id_game}`;
+        }
         
         // Sélectionne toutes les images et applique la fonction glisseElement à chacune
         let elements = document.querySelectorAll('.posi');
@@ -66,9 +80,22 @@
                     console.log("coup valide");
                     genere_grille(id_game);
                     var nonid = document.getElementById(element);
+                    console.log("nb_joueur",nb_joueur)
                     nonid.remove();
-                console.log('Réponse du serveur:', result);}
+                    if (nb_joueur == 1 || nb_joueur == 2){
+                        console.log("changement de joueur")
+                        location.reload()
+                    }
 
+                console.log('Réponse du serveur:', result);}
+                else if (result.status == "pas le bon tour"){
+                    setTimeout(function() {
+                        document.getElementById('tempo').classList.add('visible'); // Ajouter la classe 'visible' pour rendre l'élément visible avec animation
+                    }, 10); 
+                    setTimeout(function() {
+                        document.getElementById('tempo').classList.remove('visible'); // Enlève la classe 'visible' pour rendre l'élément visible avec animation
+                    }, 3000); 
+                }
                 else if (result.status == "coup interdit"){
                     // Après avoir ajouté l'élément, ajouter la classe 'visible' après un court délai pour déclencher l'animation
                     setTimeout(function() {
@@ -124,12 +151,37 @@
             }
 
             function tourne(e) {
+                const transform = e.style.transform || '';
+                const flip = transform.includes('scaleX(-1)');
                 // Donne valeur numérique de la rotation
                 rotation = e.style.transform.replace(/[^\d.]/g, '') || 0;
-                // Rotation de 90 degrés à partir de l'image actuelle
-                rotation = (parseInt(rotation) + 90) % 360;
-                e.dataset.rotation = `${rotation}`;
-                e.style.transform = `rotate(-${rotation}deg)`;
+                if (flip) {
+                    console.log(rotation)
+                    if (rotation == 1){
+                        rotation = 0
+                    }
+                    if (rotation == 10){
+                        rotation = 0
+                    }
+                    if (rotation > 1){
+                        rotation = rotation - 100
+                    }
+                    if (rotation > 181){
+                        rotation = rotation - 900
+                    }
+                    console.log(rotation)
+                    // Rotation de 90 degrés à partir de l'image actuelle
+                    rotation = (parseInt(rotation) + 90) % 360;
+                    e.dataset.rotation = `${rotation}`;
+                    console.log(rotation)
+                    e.style.transform = `scaleX(-1) rotate(${rotation}deg)`;
+                }
+                else {
+                    // Rotation de 90 degrés à partir de l'image actuelle
+                    rotation = (parseInt(rotation) + 90) % 360;
+                    e.dataset.rotation = `${rotation}`;
+                    e.style.transform = `rotate(-${rotation}deg)`;
+                }
             }
 
             function glisseSourisAppuie(e,element) {

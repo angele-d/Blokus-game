@@ -1,9 +1,13 @@
 from pieces import *
 from flask import g,Flask
 import sqlite3
+from placage_pieces import *
+from logique_jeu import *
+
 
 DATABASE = 'BaseTest' # Merci de mettre a jour cette ligne quand la database sera rajouté au dépot github
 app = Flask(__name__)
+
 
 def get_db(): # cette fonction permet de créer une connexion à la base 
               # ou de récupérer la connexion existante 

@@ -1,154 +1,15 @@
 from flask import Flask, request, redirect, url_for, render_template, jsonify, session
-from logique_jeu import *
-from score import score
-from placage_pieces import transcription_pieces_SQL_grille, generation_matrice_image
+from flask_socketio import SocketIO, join_room, emit
+from fonc_DB import *
+from deb_IA import *
 import sqlite3
 import re
+
 
 app = Flask(__name__)
 app.secret_key = "swV#]S)p;ArRak`*chzd3FC6BZG$j<95HU:/ga3{26mLf:r'eFHMSU5$!E]X&TAp=<kg;%Run`Q}CdvZS93gp6;eKjxH'$?}cFfuJ<D2`Nsh)(7_4~nXX-g2qb!7rGZ4BPAw]u6`/;a,=CmF3M.pVz#*_<DwtN3zuS;!J4F:.7Rqj?5Zgp}L)v^9G<y&AaB`d"
 
-# Envoie le coup dans la base de données pour l'enregistrer
-def insert_move(id_game, id_move, id_piece, color, position_x, position_y, rotation, flip):
-    conn = sqlite3.connect('Base')
-    cursor = conn.cursor()
-    cursor.execute('''
-        INSERT INTO coups (id_game, id_move, id_piece, color, position_x, position_y, rotation, flip)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-    ''', (id_game, id_move, id_piece, color, position_x, position_y, rotation, flip))
-    conn.commit()
-    conn.close()
-    conn = sqlite3.connect('Base')
-    cursor = conn.cursor()
-
-#Compte le nombre de joueur dans la partie
-def nb_joueur(id_game):
-    conn = sqlite3.connect('Base')
-    cursor = conn.cursor()
-    cursor.execute('''SELECT COUNT(*) FROM nom_joueur WHERE id_game = ?''',(id_game,))
-    nb_joueur= cursor.fetchone()[0]
-    conn.close()
-    return nb_joueur
-
-def nb_move(id_game,color):
-    conn = sqlite3.connect('Base')
-    cursor = conn.cursor()
-    query= '''SELECT COUNT(*) FROM coups WHERE color = ? AND id_game = ?'''
-    cursor.execute(query,("B",id_game))
-    nb_move = cursor.fetchone()[0]
-    conn.close()
-    return nb_move
-
-
-#Renvoie la couleur correspondante au joueur qui doit jouer
-#NE FONCTIONNE PAS ENCORE
-def tour(id_game):
-    nb_j = nb_joueur(id_game)
-    conn = sqlite3.connect('Base')
-    cursor = conn.cursor()
-    query= '''SELECT COUNT(*) FROM coups WHERE color = ? AND id_game = ?'''
-    cursor.execute(query,("B",id_game))
-    min_l = []
-    coup_B = cursor.fetchone()[0]
-    if coup_B == None:
-        conn.close()
-        return "B"
-    min_l.append(coup_B)
-    if nb_j >= 2:
-        cursor.execute(query,("Y",id_game))
-        coup_Y= cursor.fetchone()[0]
-        if coup_Y == None:
-            conn.close()
-            return "Y"
-        min_l.append(coup_Y)
-    if nb_j >= 3:
-        cursor.execute(query,("R",id_game))
-        coup_R = cursor.fetchone()[0]
-        if coup_R == None:
-            conn.close()
-            return "R"
-        min_l.append(coup_R)
-    if nb_j >= 4:
-        cursor.execute(query,("G",id_game))
-        coup_G = cursor.fetchone()[0]
-        if coup_G == None:
-            conn.close()
-            return "G"
-        min_l.append(coup_G)
-    conn.close()
-    ind = min_l.index(min(min_l))
-    if ind == 0:
-        return "B"
-    if ind == 1:
-        return "Y"
-    if ind == 2:
-        return "R"
-    return "G"
-    
-
-# Enregistre la partie
-def insert_game(id_game, name_game, password_game, nb_move):
-    conn = sqlite3.connect('Base')
-    cursor = conn.cursor()
-    cursor.execute('''
-        INSERT INTO game (id_game, name_game, password_game, nb_move)
-        VALUES (?, ?, ?, ?)
-    ''', (id_game, name_game, password_game, nb_move))
-    conn.commit()
-    conn.close()
-
-# Enregistre les joueurs qui sont dans la partie
-def insert_name(id_game,name):
-    #A RAJOUTER : PAS DEUX FOIS LE MEME NOM DANS LA MEME PARTIE, SINON PROBLEME DE CLEF PRIMAIRE
-    conn = sqlite3.connect('Base')
-    cursor = conn.cursor()
-    cursor.execute('''
-        INSERT INTO nom_joueur (id_game, nom)
-        VALUES (?, ?)
-    ''', (id_game, name))
-    conn.commit()
-    conn.close()
-
-
-#Détermine la couleur du joueur "name" dans la partie id_game
-def name_to_order(name,id_game):
-    conn = sqlite3.connect('Base')
-    cursor = conn.cursor()
-    cursor.execute('''
-        SELECT nom FROM nom_joueur WHERE id_game = ? ''',(id_game,))
-    rows = cursor.fetchall()
-    conn.close()
-    ind = -1
-    for i in range(len(rows)):
-        if rows[i][0] == name:
-            ind = i
-    print("Le joueur:",name,"a la couleur",ind)
-    if ind == 0:
-        return 'B'
-    elif ind == 1:
-        return 'Y'
-    elif ind == 2:
-        return 'R'
-    elif ind == 3:
-        return 'G'  
-    
-##Piece restante donne les pièces qui restent a un joueur:
-def piece_restante(id_game,player):
-    conn = sqlite3.connect('Base')
-    cursor = conn.cursor()
-    cursor.execute('''
-        SELECT id_piece FROM coups WHERE id_game = ? and color = ? ''',(id_game,player))
-    rows = cursor.fetchall()
-    conn.close()
-    piece_jouee = []
-    for i in range(len(rows)):
-        piece = int(re.findall(r'P(\d+)', rows[i][0])[0])
-        piece_jouee.append(piece)
-    piece_restante = []
-    for i in range(1,22):
-        if not i in piece_jouee:
-            piece_restante.append(i)
-    return piece_restante
+socketio = SocketIO(app)
 
 
 @app.route('/')
@@ -156,6 +17,41 @@ def accueil():
     return render_template('main_page.html')
 
 @app.route('/join', methods=['GET','POST'])
+def join():
+    if request.method == 'POST':
+        mot_de_passe = request.form['password']
+        nom_de_partie = request.form['game']
+        nom_utilisateur = request.form['name']
+        conn = sqlite3.connect('Base')
+        cursor = conn.cursor()
+
+        # Va chercher l'id de la partie pour orienter le joueur vers la bonne partie
+        query = "SELECT id_game FROM game where password_game = ? and name_game = ?"
+        cursor.execute(query,(mot_de_passe,nom_de_partie))
+        rows = cursor.fetchall()
+
+        # Pour chaque joueur est un nom différent dans une même partie
+        quest = "SELECT COUNT(*) FROM nom_joueur JOIN game ON game.id_game = nom_joueur.id_game WHERE nom = ? AND name_game = ? AND nb_move = -1"
+        cursor.execute(quest, (nom_utilisateur, nom_de_partie))
+        count = cursor.fetchone()[0]
+        conn.close()
+
+        if count > 0:
+            return "Ce nom est déjà pris"
+        if len(rows) != 1:
+            return "Mauvais mot de passe",500
+
+        session[f'access_{rows[0][0]}'] = True
+        ## LE NOM DE LA PERSONNE SERT PLUS TARD A CHOISIR L'ORDRE
+        session['name'] = nom_utilisateur
+        insert_name(rows[0][0],nom_utilisateur)
+
+        socketio.emit('join_room', {'room': rows[0][0]})
+
+        return redirect(f"/game/{rows[0][0]}")
+    return render_template('join_page.html')
+
+@app.route('/rejoin', methods=['GET','POST'])
 def rejoin():
     if request.method == 'POST':
         mot_de_passe = request.form['password']
@@ -164,24 +60,33 @@ def rejoin():
         conn = sqlite3.connect('Base')
         cursor = conn.cursor()
         # Va chercher l'id de la partie pour orienter le joueur vers la bonne partie
-        query = "SELECT id_game FROM game where password_game = ? and name_game = ?"
+        query = "SELECT id_game FROM game WHERE password_game = ? and name_game = ?"
+        quest = "SELECT COUNT(*) FROM nom_joueur WHERE id_game = ? AND nom=?"
         cursor.execute(query,(mot_de_passe,nom_de_partie))
         rows = cursor.fetchall()
-        # Pour chaque joueur est un nom différent dans une même partie
-        quest = "SELECT COUNT(*) FROM nom_joueur JOIN game ON game.id_game = nom_joueur.id_game WHERE nom = ? AND name_game = ? AND nb_move = -1"
-        cursor.execute(quest, (nom_utilisateur, nom_de_partie))
-        count = cursor.fetchone()[0]
-        conn.close()
-        if count > 0:
-            return "Ce nom est déjà pris"
         if len(rows) != 1:
+            conn.close()
             return "Mauvais mot de passe",500
-        session[f'access_{rows[0][0]}'] = True
+        cursor.execute(quest,(rows[0][0],nom_utilisateur ))
+        rowss = cursor.fetchall()
+        conn.close()
+        if len(rowss) == 0:
+            return "Pas de joueur de ce nom dans cette partie"
         ## LE NOM DE LA PERSONNE SERT PLUS TARD A CHOISIR L'ORDRE
+        session[f'access_{rows[0][0]}'] = True
+        session[f'access_admin_{rows[0][0]}'] = False
         session['name'] = nom_utilisateur
-        insert_name(rows[0][0],nom_utilisateur)
+        socketio.emit('join_room', {'room': rows[0][0]})
+
         return redirect(f"/game/{rows[0][0]}")
-    return render_template('join_page.html')
+    return render_template('rejoin_page.html')
+
+@socketio.on('join_room')
+def handle_join_room(data):
+    print("un joueur a rejoint la room")
+    room = data['room']
+    join_room(room)
+    emit('new_player', room=room)
 
 @app.route('/newgame')
 def new():
@@ -216,6 +121,8 @@ def newgame():
         session[f'access_{new_game}'] = True
         session[f'access_admin_{new_game}'] = True
         session['name'] = name
+
+        socketio.emit('join_room', {'room': rows[0][0]})
         return redirect(f"/game/{new_game}")
     except Exception as e:
         return f"L'erreur suivante à eu lieu: {e}", 500
@@ -232,7 +139,7 @@ def getdatagame(idgame):
     conn.close()
     return jsonify(rows)
 
-@app.route('/addIA/<idgame>')
+@app.route('/addIA/<idgame>',methods=['POST'])
 def addIA(idgame):
     #On compte le nombre d'IA qu'il y a dans la partie, puis on rajoute une IA si possible
     conn = sqlite3.connect('Base')
@@ -249,6 +156,9 @@ def addIA(idgame):
     conn.close()
     if nb_joueur < 4:
         insert_name(idgame,f"IA{nb_IA + 1}")
+        print("addingIA")
+        socketio.emit('new_player', room=idgame)
+        print("IAadded")
         return "IA ADDED",200
     return "TOO MUCH PLAYER", 200
  
@@ -264,6 +174,7 @@ def launchgame(idgame):
     cursor.execute(query,(idgame,))
     conn.commit()
     conn.close()
+    socketio.emit('launch', room = idgame)
     return jsonify("Tout fonctionne")
 
 @app.route('/getdatalaunch/<idgame>')
@@ -295,16 +206,17 @@ def game(idgame):
         return "La partie n'existe pas",404
     else:
         if session.get(f'access_admin_{idgame}'):
+            print("!!!!!!!!!!!!!!!!!!!!!")
             return render_template('lobby_admin.html',idgame=idgame)
         else:
+            print("...................")
             return render_template('lobby.html',idgame=idgame)
 
 
 
 @app.route('/submit22', methods=['POST'])
 def submit22():
-    print("Requête reçue")
-    #try:        
+    print("Requête reçue")   
     # Récupère les données envoyées
     data = request.get_json()
     if not data:
@@ -324,58 +236,39 @@ def submit22():
 
     # Traitements des données pour qu'ils soit transmis a la logique de jeu
     flip = (retourne == -1)
-    rotation = rotation//30
-    numpiece= int(re.findall('\d+',element)[0])
+    if flip:
+        rotation = -rotation//30
+    else:
+        rotation = rotation//30
+    numpiece= int(re.findall(r'\d+',element)[0])
     id_piece=f"P{numpiece}"
     id_move = nb_move(id_game,color)
     
-    player = tour(id_game)
-    
-    m = transcription_pieces_SQL_grille(id_game)
-    print("Info envoyée : Coord =",carrX,carrY,"pièce=",id_piece,"id_game =", id_game,"flip =", flip, "retourne=",retourne )
+    m,player = tour(id_game)
+    print("Info envoyée : Coord =",carrX,carrY,"pièce=",id_piece,"id_game =", id_game,"flip =", flip, "rotation=",rotation )
     
     if coup_possible(m,id_piece,color,int(carrY),int(carrX),int(rotation),flip):
         if color == player: #verif que c'est le bon joueur qui joue
             insert_move(id_game, id_move, id_piece, color, int(carrY), int(carrX), int(rotation), flip)
+            
+            socketio.emit('update_grille', room = id_game)
             # Retourne une réponse avec un statut et les coordonnées
-            return jsonify({"status": "coup valide"}), 200
+            m,player = tour(id_game)
+            if player == None:
+                socketio.emit('fin_de_partie', room = id_game)
+            socketio.emit('tour_joueur', room = id_game)
+            return jsonify({"status": "coup valide","joueur":player}), 200
         else: 
             print("Le joueur",color,"vaut jouer alors que c'est le tour de",player)
             return jsonify({"status" : "pas le bon tour"}), 200
     else: 
         return jsonify({"status" : "coup interdit"}), 200
+    
     # except Exception as e:
     #     # Gestion des erreurs et envoi d'une réponse appropriée
     #     print("erreur:",e)
     #     return jsonify({"error": str(e)}), 500  # Erreur interne du serveur
 
-
-
-
-#IL FAUT RENTRER LES CHOSES DE LA MANIERE SUIVANTE : ex : 5 	1 	P1 	R 	0 	0 	3 	0 (N'ECRIVEZ PAS FALSE)
-@app.route('/submit', methods=['POST'])
-def submit_form():
-    id_game = request.form['id_game']
-    id_move = request.form['id_move']
-    id_piece = request.form['id_piece']
-    color = request.form['color']
-    position_x = request.form['position_x']
-    position_y = request.form['position_y']
-    rotation = request.form['rotation']
-    flip = request.form['flip']
-    player = who_is_playing(color)
-    try:
-        m = transcription_pieces_SQL_grille(id_game)
-        if coup_possible(m,id_piece,color,int(position_x),int(position_y),int(rotation),bool(int(flip))):
-            if color == player: #verif que c'est le bon joueur qui joue
-                insert_move(id_game, id_move, id_piece, color, position_x, position_y, rotation, flip)
-                return "Move added successfully!", 200
-            else: 
-                return "Le joueur n'est pas le bon", 500
-        else: 
-            return "Le coup n'est pas valide", 500
-    except Exception as e:
-        return f"An error occured: {e}", 500
 
 @app.route('/generate', methods=['POST'])
 def generate():
@@ -389,6 +282,19 @@ def generate():
 
     return jsonify({'image_url': f"/static/grille{num_game}.png"})
 
+@app.route('/joueur', methods=['POST'])
+def joueur():
+    data = request.get_json() 
+    id_game = int(data.get('number')) 
+    m,couleur = tour(id_game)
+    player = order_to_name(couleur,id_game)
+    return jsonify({'joueur': player,"couleur":couleur})
+
+@app.route('/fin_de_partie/<id_game>')
+def fin_de_partie(id_game):
+    sco = score(id_game)
+    return render_template('fin_de_partie.html', score = sco)
+
 @app.route('/grille/<id_game>')
 def grille(id_game):
     if not session.get(f'access_{id_game}'):
@@ -398,6 +304,19 @@ def grille(id_game):
     except Exception as e:
         print(f"pas de nom pour la partie :{id_game}")
         return f"pas de nom pour la partie :{id_game}",500
+    nb_j = nb_joueur(id_game)
+    
+    if nb_j == 1:
+        (m,color) = tour(id_game)
+    if nb_j == 2:
+        (m,j_actuel) = tour(id_game)
+        if color == 'B':
+            if j_actuel == 'Y' or j_actuel == 'R':
+                color = 'R'
+        else :
+            if j_actuel == 'R' or j_actuel == 'G':
+                color = 'G'            
+            
     liste_piece = piece_restante(id_game,color)
     coords = []
     for i in range(7):
@@ -409,25 +328,45 @@ def grille(id_game):
     for i in range(len(coords)):
         if not i+1 in liste_piece:
             coords[i] = None
-    return render_template('grille.html',coords = coords, color = color,id_game = id_game)
+    return render_template('grille.html',coords = coords, color = color,id_game = id_game,nb_joueur = nb_j)
 
-#OUTIL DE DEBUG, A SUPPRIMER PLUS TARD
-@app.route('/view_data')
-def view_data():
-    try:
-        # Connect to the SQLite database
+
+@app.route('/historique2')
+def historique2():
+    return render_template('historique2.html')
+
+@app.route('/histo', methods=['GET','POST'])
+def histo():
+    if request.method == 'POST':
+        mot_de_passe = request.form['password']
+        nom_de_partie = request.form['game']
         conn = sqlite3.connect('Base')
         cursor = conn.cursor()
-
-        # Retrieve all rows from the "coups" table
-        cursor.execute("SELECT * FROM coups")
-        rows = cursor.fetchall()  # Fetch all rows as a list of tuples
+        # Pour trouver l'id de la partie
+        quest = "SELECT id_game FROM game WHERE name_game = ? AND password_game = ?"
+        cursor.execute(quest, (nom_de_partie, mot_de_passe))
+        count = cursor.fetchone()
         conn.close()
-
-        # Pass the data to an HTML template
-        return render_template('view_data.html', rows=rows)
+        if count == None:
+            id_game = 0
+            return redirect(f"/historique/{id_game}/false")
+    return redirect(f"/historique/{count[0]}/true")
+    
+@app.route('/historique/<id_game>/<boo>')
+def historique(id_game,boo):
+    try:
+        if boo == "false":
+            return redirect(f"/")
+        conn = sqlite3.connect('Base')
+        cursor = conn.cursor()
+        # Retrouve tous les coups de la partie
+        query = "SELECT * FROM coups WHERE id_game = ?"
+        cursor.execute(query,(id_game,))
+        coups = cursor.fetchall()
+        conn.close()
+        return render_template('historique.html', coups = coups)
     except Exception as e:
         return f"An error occurred while retrieving the data: {e}", 500
 
-if __name__ == 'main':
-    app.run(debug=True)
+if __name__ == '__main__':
+    socketio.run(app, debug=True)

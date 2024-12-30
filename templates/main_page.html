@@ -1,22 +1,29 @@
 <title> BLOKUS PP2I grp6 </title>
 
 <head>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='CSS/style.css') }}">
 </head>
 <body>
+<div class="titre">
+    <h1> Bienvenue sur ce jeu de Blokus ! </h1>
+</div>
 <div class="bandeau"> 
-    <div class="bandeau_titre"> Jeu du BLOKUS </div> 
+    <div class="bandeau_inner"> 
+        <a href="/" class="bandeau_titre"> Jeu du BLOKUS </a> 
+    </div>
 </div>
 <div class="container">
-    <a href="/newgame" class="custom-button">Nouvelle partie</a>
-    <a href="/join" class="custom-button">Rejoindre partie</a>
+    <a href="/newgame" class="accueilButton">Nouvelle partie</a>
+    <a href="/join" class="accueilButton">Rejoindre partie</a>
+    <a href="/rejoin" class="accueilButton">Reprendre une partie</a>
+    <a href="/historique2" class="accueilButton">Historique de la partie</a>
 </div>
-<hr>
+<br> <br> <hr> <br>
 <div class="rules">
     <h1> Règles du jeu </h1>
     <div class="div1">
         <p> <li>
-            <span class="gras"> Nombre de joueurs: </span> 4 joueurs <br>
+            <span class="gras"> Nombre de joueurs: </span> 1 à 4 joueurs <br>
             <span class="italique"> Possibilité d'ajouter des IA si manque de joueurs </span> <br>
         </li> </p> 
         <p> <li> <span class="gras">Tirage des couleurs:</span> En amont par les joueurs eux-mêmes. <br>
@@ -51,3 +58,15 @@
 <div class="footer">
     <span class="gras souligne"> Crédits:</span> Briand Thibault, Regennass Anne, Girres Elisa, Denys Angèle
 </div>
+<script>
+const son = new Audio('{{ url_for("static", filename="sounds/blipSelect1.wav") }}');
+
+document.addEventListener("DOMContentLoaded",()=>{
+    document.querySelectorAll('.accueilButton').forEach(button =>{
+        button.addEventListener('click',() =>{
+            console.log("son")
+            son.play();
+        });
+    });
+});
+</script>

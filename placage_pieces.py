@@ -3,6 +3,7 @@ from rotation_pieces import transformation
 from flask import g,Flask
 from PIL import Image
 import sqlite3
+import re
 
 DATABASE = 'Base'
 app = Flask(__name__)
@@ -15,6 +16,26 @@ def get_db(): # cette fonction permet de créer une connexion à la base
     return db
 
 #Manque les informations sur comment est faite la BD
+
+
+##Piece restante donne les pièces qui restent a un joueur:
+def piece_restante(id_game,player):
+    conn = sqlite3.connect('Base')
+    cursor = conn.cursor()
+    print(id_game,player)
+    cursor.execute('''
+        SELECT id_piece FROM coups WHERE id_game = ? and color = ? ''',(id_game,player))
+    rows = cursor.fetchall()
+    conn.close()
+    piece_jouee = []
+    for i in range(len(rows)):
+        piece = int(re.findall(r'P(\d+)', rows[i][0])[0])
+        piece_jouee.append(piece)
+    piece_res = []
+    for i in range(1,22):
+        if not i in piece_jouee:
+            piece_res.append(i)
+    return piece_res
 
 def placer_piece_grille20x20(grille,num_piece,x,y,couleur,rotation,isflipped):
     '''
@@ -58,6 +79,14 @@ def transcription_pieces_SQL_grille(Game):
 
 def generation_matrice_image(m,num_game):
     le = 3200
+    if m[0][0] == 'V':
+        m[0][0] = "SB"
+    if m[0][19] =='V':
+        m[0][19] = "SR"
+    if m[19][19] == 'V':
+        m[19][19] = "SY"
+    if m[19][0] == 'V':
+        m[19][0] = "SG"   
     result_image = Image.new("RGB", (le,le), (240,240,240))
     for i_index, i in enumerate(m):
         for j_index, tile in enumerate(i):
@@ -73,6 +102,14 @@ def generation_matrice_image(m,num_game):
                 path = './static/tiles/blue.png'
             elif tile == 'V':
                 path = './static/tiles/Empty.png'
+            elif tile == "SB":
+                path = './static/tiles/EmptyB.png'
+            elif tile == "SR":
+                path = './static/tiles/EmptyR.png'
+            elif tile == "SG":
+                path = './static/tiles/EmptyG.png'
+            elif tile == "SY":
+                path = './static/tiles/EmptyY.png'
             tile_image=Image.open(path)
             result_image.paste(tile_image,(y,x))
     result_image.save(f"./static/grille{num_game}.png")

@@ -29,7 +29,7 @@ Ajoutez ici une description du projet, ses objectifs, et toute autre information
 
 - **Sujet :** Développement d'une application web pour un jeu de société avec intelligence artificielle
 - **Objectifs :** Recréer le jeu de société dit du "Blokus" avec toutes ses règles et spécificités, jouable à 4 joueurs avec participation possible d'IA performantes
-- **Technologies utilisées :**
+- **Technologies utilisées :** Algorithme de Monte-Carlo ...
 
 
 ## Prérequis
@@ -37,13 +37,13 @@ Ajoutez ici une description du projet, ses objectifs, et toute autre information
 Listez les prérequis nécessaires pour utiliser ce projet (langages, dépendances, etc.) :
 
 - **Langage(s) :** Ex. Python 3.10, HTML, JavaScript, CSS, SQLite3
-- **Frameworks :** Ex. Flask, Django, etc.
+- **Frameworks :** Ex. Flask 3.1.0, Flask-SocketIO 5.5.0, Django, etc.
 - **Dépendances :** Voir le fichier `requirements.txt`
 
 
 ## Installation
 
-Expliquez comment installer le projet sur une machine locale.
+Comment installer le projet sur une machine locale:
 
 ### Étapes générales :
 
@@ -53,12 +53,12 @@ Expliquez comment installer le projet sur une machine locale.
    cd grp6
    ```
 
-2. Installez les dépendances (si applicable) :
+2. Installez les dépendances:
     ```bash
     pip install -r requirements.txt
     ```
 
-3. Spécifiez le nom du fichier à exécuter en flask:
+3. Spécifiez le nom du fichier à exécuter en flask: _//Possiblement à retirer_
     ```bash
     export FLASK_APP=code_pages.py
     ```
@@ -73,10 +73,10 @@ Expliquez comment exécuter le projet.
 1. Lancer l'application :
 
     ```bash
-    python main.py
+    python code_pages.py
     ```
 
-2. Lancer la page web:
+2. Lancer la page web: _//Possiblement à retirer_
 
     ```bash
     flask run

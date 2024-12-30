@@ -1,4 +1,3 @@
-from pieces import *
 from rotation_pieces import *
 
 def print_jeu(m):
@@ -87,29 +86,29 @@ def matrice_possible_start(pl):
         m[19][0] = 'P'
     return m
 
-def coup_restant_force_brute(m,pl,Plist):
+def coups_possibles_force_brute(m,pl,Plist):
     '''
-    fonction pour calculer si il reste des coup possibles, a pas ou
-    peu utiliser car un peu bourrine
+    Fonction pour déterminer l'ensembles des coups possibles pour un joueur
     :param m: matrice 20x20
-    :param pl: (str) R,B,Y,G = joueur
+    :param pl: (str) R,B,Y ou G = joueur
     :param Plist: liste de pieces
-    :return: (bool)
+    :return: (lst) liste des coups possibles, sous la forme [(pi, x, y, rot, isflipped)]
     '''
+    coups=[]
     for i in range(2):
         if i == 1:
             isflipped = True
         else:
             isflipped = False
+        MP=matrice_possible(m, pl)
         for pi in Plist:
-            mat=matrice_possible(m, pl)
             for rot in range(1,5):
                 for x in range(20):
                     for y in range(20):
-                        if mat[x][y] == 'P':
-                            if coup_possible(m,pi, pl, x, y, rot, isflipped):
-                                return True
-    return False   
+                        if MP[x][y] == 'P':
+                            if coup_possible(m,pi,pl,x,y,rot,isflipped):
+                                coups.append((pi, x, y, rot, isflipped))
+    return coups
 
 
 def coup_possible(m,pi,pl,x,y,rot,isflipped):
@@ -133,10 +132,10 @@ def coup_possible(m,pi,pl,x,y,rot,isflipped):
         for j in range (len(pi)):
             if pi[i][j]:
                 if x+i-2<0 or y+j-2<0:
-                    print("le coup a une coord négative")
+                    #print("le coup a une coord négative")
                     return False
                 if x+i-2>=20 or y+j-2>=20:
-                    print("le coup sort de la grille")
+                    #print("le coup sort de la grille")
                     return False
                 if mat_pos[x+i-2][y+j-2] not in ['V','P']:
                     return False

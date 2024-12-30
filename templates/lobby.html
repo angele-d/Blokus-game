@@ -1,3 +1,4 @@
+<script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
 <body>
     <h1>SUPERBE PARTIE DE BLOCKUS</h1>
     <table border="1" id="tupleTable">
@@ -9,6 +10,7 @@
     <script>
         const idgame = "{{ idgame }}"
         function fetchData() {
+            launch()
             fetch(`/getdatagame/${idgame}`) //envoie une requête pour avoir le json
                 .then(response => response.json()) // transforme pour pouvoir traiter la requête
                 .then(data => {
@@ -36,8 +38,21 @@
             .catch(error => console.error('Erreur sur les données :', error));
                 
         }
-        setInterval(launch,3000);
-        setInterval(fetchData, 3000);
+        const socket = io();
+        socket.on('connect', () => {
+            console.log('Socket connecté');
+            socket.emit('join_room', { room: idgame })
+        });
+        socket.on('new_player', (data) =>{
+            const son = new Audio('{{ url_for("static", filename="sounds/blipW.wav") }}');     
+            console.log("son")
+            son.play();
+            console.log("new player in lobby")
+            fetchData();
+        })
+        socket.on('launch',(data) =>{
+            console.log("launching the game")
+            launch();
+        })
 
-        fetchData();
     </script>

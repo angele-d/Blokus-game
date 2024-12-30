@@ -1,70 +1,119 @@
+<title> BLOKUS PP2I grp6 </title>
+
+<head>
+    <link rel="stylesheet" href="{{ url_for('static', filename='CSS/style.css') }}">
+</head>
+<script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
+
 <body>
-    <h1>SUPERBE PARTIE DE BLOCKUS</h1>
-    <table border="1" id="tupleTable">
-        <tr>
-            <th>VOUS ETES UN ADMIN</th>
-        </tr>
-    </table>
+<div class="bandeau"> 
+    <div class="bandeau_inner"> 
+        <a href="/" class="bandeau_titre"> Jeu du BLOKUS </a> 
+        <a href="/newgame" class="bandeau_retourArriere"> Créer une Partie </a>
+        <a href="/join" class="bandeau_retourArriere"> Rejoindre une Partie </a>
+    </div>
+</div>
 
-    <script>
-        const idgame = "{{ idgame }}"
-        function fetchData() {
-            fetch(`/getdatagame/${idgame}`) //envoie une requête pour avoir le json
-                .then(response => response.json()) // transforme pour pouvoir traiter la requête
-                .then(data => {
-                    const table = document.getElementById('tupleTable'); //on va chercher ici la table html
-                    table.innerHTML = `
-                        <tr>
-                            <th>Name</th>
-                        </tr>
-                    `; // L'intérieur de la table c'est maintenant ce que précède
-                    data.forEach(([name]) => {
-                        const row = document.createElement('tr'); // on a une nouvelle ligne
-                        row.innerHTML = `<td>${name}</td>`;
-                        table.appendChild(row); // on rajoute la nouvelle ligne
-                    });
-                })
-                .catch(error => console.error('Error fetching data:', error)); // envoie une erreur si le programme explose
-        }
-        function launch(){
-            fetch(`/getdatalaunch/${idgame}`)
-                .then(response =>response.json())
-                .then(data =>{
-            if (typeof data === 'undefined' || data === null) {
-                return; // ON FAIT EXPLOSER
-            }
-            if (data !== -1) {
-                // si c'est different de -1
-                window.location.href = `/grille/${idgame}`;
-            }}
-        )
-        .catch(error => {
-            return;
-        });
-
-        }
-        setInterval(launch,3000);
-        setInterval(fetchData, 3000);
-
-        fetchData();
-    </script>
-    <button id="IA" onclick="addIA()">RAJOUTER IA</button>
+<div class="infoPartie"> 
+    <h1> Bienvenue au lobby de cette partie ! </h1>
+</div>    
+<div class="lobby">
+    <table id="tupleTable"></table>
+</div>
+<div class="lobby">
+    <button id="IA" onclick="addIA()">AJOUTER IA</button>
     <button id="Launch" onclick="sendRequest()">LANCER LA PARTIE!</button>
-    <script>
-        function addIA(){
-            //envoie une requête pour rajouter une IA à la partie
-            fetch(`/addIA/${idgame}`,{
-                methode : 'POST'
+</div>
+<br> <hr> <br>
+</div>
+<div class="informations">
+    <h4> Informations complémentaires: </h4>
+    <div class="div1">
+    <span class="gras"> 1. </span> Les pseudos de vos compagnons de partie apparaîtront ici lorsque ceux-ci se seront connectés ! <br> <br>
+    <span class="gras"> 2. </span> Limitation à 4 joueurs (IA comprise)
+    </div>
+    <div class="div2">
+    <span class="gras"> 3. </span> Les IA sont notés sous le format " IA{numéro de l'IA} " <br> <br>
+    <span class="gras"> Bonne partie ! </span>
+    </div>
+</div>
+</body>
+
+<div class="footer">
+    <span class="gras souligne"> Crédits:</span> Briand Thibault, Regennass Anne, Girres Elisa, Denys Angèle
+</div>
+
+<script>
+    const idgame = "{{ idgame }}"
+    function fetchData() {
+        fetch(`/getdatagame/${idgame}`) //envoie une requête pour avoir le json
+            .then(response => response.json()) // transforme pour pouvoir traiter la requête
+            .then(data => {
+                const table = document.getElementById('tupleTable'); //on va chercher ici la table html
+                table.innerHTML = `
+                    <tr>
+                        <th class="tableTitle"> Liste des joueurs </th>
+                    </tr>
+                `; // L'intérieur de la table c'est maintenant ce que précède
+                data.forEach(([name]) => {
+                    const row = document.createElement('tr'); // on a une nouvelle ligne
+                    row.innerHTML = `<td class="tablePlayers"> ${name} </td>`;
+                    table.appendChild(row); // on rajoute la nouvelle ligne
+                });
             })
-            return false;
+            .catch(error => console.error('Error fetching data:', error)); // envoie une erreur si le programme explose
+    }
+
+    function launch(){
+        fetch(`/getdatalaunch/${idgame}`)
+            .then(response =>response.json())
+            .then(data =>{
+        if (typeof data === 'undefined' || data === null) {
+            return; // ON FAIT EXPLOSER
         }
-    </script>
-    <script>
-        function sendRequest() {
-            // Envoie la requête qui va modifier la base de donnée pour lancer la partie
-            fetch(`/launchgame/${idgame}`, {
-                method: 'POST'
-            })
-            return false;  
-        }
-    </script>
+        if (data !== -1) {
+            // si c'est different de -1
+            window.location.href = `/grille/${idgame}`;
+        }}
+    )
+    .catch(error => {
+        return;
+    });
+
+    }
+    const socket = io();
+
+    socket.on('connect', () => {
+        console.log('Socket connecté');
+        socket.emit('join_room', { room: idgame })
+    });
+
+    socket.on('new_player', (data) =>{
+            const son = new Audio('{{ url_for("static", filename="sounds/blipW.wav") }}');    
+            console.log("son")
+            son.play();
+            console.log("new player in lobby")
+            fetchData();
+        })
+    fetchData()
+    socket.on('launch',(data) =>{
+        console.log("launching the game")
+        launch();
+    })
+        
+    function addIA(){
+        //envoie une requête pour rajouter une IA à la partie
+        fetch(`/addIA/${idgame}`,{
+            method : 'POST'
+        })
+        return false;
+    }
+
+    function sendRequest() {
+        // Envoie la requête qui va modifier la base de donnée pour lancer la partie
+        fetch(`/launchgame/${idgame}`, {
+            method: 'POST'
+        })
+        return false;  
+    }
+</script>

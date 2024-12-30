@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
 <html>
 <head>
     <meta charset="UTF-8">
@@ -26,14 +27,33 @@
     <div id="haut_droite">
     <p>Position de l'image : <span id="coords">X: 0, Y: 0</span></p>
     <p><br>Position carré : <span id="carre">X: 0, Y: 0</span></p>
+    <p style="color: blue;"><br>C'est à <span id="couleur_joueur">Bleu</span> de jouer</p>
     <p id='temporaire' class='temporaire'>Vous ne pouvez pas faire ce coup</p>
+    <p id='tempo' class='temporaire'>Ce n'est pas votre tour</p>
     <button id="myButton">Valider le coup</button>
     </div>
     <script>
         const id_game = "{{id_game}}"
         const color = "{{color}}"
+        const nb_joueur ="{{nb_joueur}}"
+        const socket = io();
+        socket.on('connect', () => {
+            console.log('Socket connecté');
+            socket.emit('join_room', { room: id_game })
+        });
+        socket.on('update_grille', ()=>{
+            console.log("la grille a changé")
+            updategrille();
+        })
+        socket.on('fin_de_partie', ()=>{
+            fin_de_partie();
+        })
+        socket.on('tour_joueur', ()=>{
+            tour_joueur();
+        })
     </script>
     <script src="../static/js/js_grille.js"></script>
+
 </body>
 
 </html>
