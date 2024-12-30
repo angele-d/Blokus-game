@@ -326,11 +326,11 @@ def grille(id_game):
     liste_piece = piece_restante(id_game,color)
     coords = []
     for i in range(7):
-        coords.append((1000,-10+130*i))
+        coords.append((950,20+130*i))
     for i in range(7):
-        coords.append((1300,-10+130*i))
+        coords.append((1150,20+130*i))
     for i in range(7):
-        coords.append((1600,-10+130*i))
+        coords.append((1375,20+130*i))
     for i in range(len(coords)):
         if not i+1 in liste_piece:
             coords[i] = None
