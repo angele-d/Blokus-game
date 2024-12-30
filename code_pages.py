@@ -286,14 +286,9 @@ def generate():
 def joueur():
     data = request.get_json() 
     id_game = int(data.get('number')) 
-<<<<<<< Updated upstream
     couleur = tour(id_game)[1]
     player = order_to_name(couleur,id_game)
     return jsonify({'joueur': player,"couleur":couleur})
-=======
-    m,player = tour(id_game)
-    return jsonify({'joueur': player})
->>>>>>> Stashed changes
 
 @app.route('/fin_de_partie/<id_game>')
 def fin_de_partie(id_game):
