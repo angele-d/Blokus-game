@@ -1,3 +1,7 @@
+<head>
+    <title>LOBBY BLOCKUS</title>
+    <link rel="icon" href="{{ url_for('static', filename='/icon/icon.png') }}" type="image/png">
+</head>
 <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
 <body>
     <h1>SUPERBE PARTIE DE BLOCKUS</h1>
@@ -55,4 +59,16 @@
             launch();
         })
 
+    </script>
+<script>
+    const son = new Audio('{{ url_for("static", filename="sounds/blipSelect1.wav") }}');
+    
+    document.addEventListener("DOMContentLoaded",()=>{
+        document.querySelectorAll('button').forEach(button =>{
+            button.addEventListener('click',() =>{
+                console.log("son")
+                son.play();
+            });
+        });
+    });
     </script>

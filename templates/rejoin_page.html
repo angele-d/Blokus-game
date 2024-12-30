@@ -2,6 +2,7 @@
 
 <head>
     <link rel="stylesheet" href="{{ url_for('static', filename='CSS/style.css') }}">
+    <link rel="icon" href="{{ url_for('static', filename='/icon/icon.png') }}" type="image/png">
 </head>
 
 <body>
@@ -42,5 +43,17 @@
         const type = password.type === "password" ? "text" : "password";
         password.type = type;
         this.textContent = type === "password" ? "👁️" : "🙈";
+    });
+</script>
+<script>
+    const son = new Audio('{{ url_for("static", filename="sounds/blipSelect1.wav") }}');
+    
+    document.addEventListener("DOMContentLoaded",()=>{
+        document.querySelectorAll('button').forEach(button =>{
+            button.addEventListener('click',() =>{
+                console.log("son")
+                son.play();
+            });
+        });
     });
 </script>

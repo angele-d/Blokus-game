@@ -286,7 +286,7 @@ def generate():
 def joueur():
     data = request.get_json() 
     id_game = int(data.get('number')) 
-    m,couleur = tour(id_game)
+    couleur = tour(id_game)[1]
     player = order_to_name(couleur,id_game)
     return jsonify({'joueur': player,"couleur":couleur})
 
