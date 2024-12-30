@@ -12,7 +12,7 @@ def print_jeu(m):
 
 def inside(i,j):
     '''
-    Verifie que i et j correspondent bien aux coordonnees dans la grille 20x20
+    Vérifie que i et j correspondent bien aux coordonnées dans la grille 20x20
     :param i,j: (int)
     :return: (bool)
     '''
@@ -21,10 +21,10 @@ def inside(i,j):
 def matrice_possible(m,pl):
     '''
     Fonction auxiliaire à coup possible, annote les cases sur lequel la pièce suivante peut
-    etre posee (P) et ne peut pas etre posee (I)
+    être posée (P) et ne peut pas être posée (I)
     :param m: matrice 20x20
     :param pl: (string) R,B,Y ou G = joueur
-    :return: matrice 20x20 avec des P et I selon ou on peut poser la piece suivante
+    :return: matrice 20x20 avec des P et I selon ou on peut poser la pièce suivante
     '''
     vu = False
     for i in range(len(m)):
@@ -46,8 +46,8 @@ def matrice_possible(m,pl):
                         m[i-1][j-1] = 'P'
     for i in range(len(m)):
         for j in range(len(m)):
-            if m[i][j] == pl: #correspond au bon joueur
-                #verifie les contours: si vide ou P -> mettre un I = on peut pas placer une piece
+            if m[i][j] == pl: # Vérifie si cela correspond au bon joueur
+                # Vérifie les contours: si vide ou P -> mettre un I = on peut pas placer une piece
                 if inside(i+1,j):
                     if m[i+1][j] in ['V','P']:
                         m[i+1][j] = 'I'
