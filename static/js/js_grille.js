@@ -37,15 +37,19 @@
                 document.getElementById("couleur_joueur").textContent = result.joueur;
                 const couleurElement = document.getElementById('couleur_joueur');
                 if (result.couleur == 'B') {
+                    couleurElement.style.color = 'white';
                     couleurElement.style.backgroundColor = 'blue';
                 }
                 else if (result.couleur == 'Y') {
+                    couleurElement.style.color = 'black';
                     couleurElement.style.backgroundColor= 'yellow';
                 }
                 else if (result.couleur == 'R') {
+                    couleurElement.style.color = 'white';
                     couleurElement.style.backgroundColor = 'red';
                 }
                 else if (result.couleur == 'G') {
+                    couleurElement.style.color = 'white';
                     couleurElement.style.backgroundColor = 'green';
                 }
             } else {

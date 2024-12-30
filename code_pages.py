@@ -292,8 +292,14 @@ def joueur():
 
 @app.route('/fin_de_partie/<id_game>')
 def fin_de_partie(id_game):
+    conn = sqlite3.connect('Base')
+    cursor = conn.cursor()
+    query = "SELECT nom from nom_joueur WHERE id_game = ?"
+    cursor.execute(query,(id_game,))
+    d = cursor.fetchone()[0]
+    conn.close()
     sco = score(id_game)
-    return render_template('fin_de_partie.html', score = sco)
+    return render_template('fin_de_partie.html', score = sco, liste_joueur = d)
 
 @app.route('/grille/<id_game>')
 def grille(id_game):

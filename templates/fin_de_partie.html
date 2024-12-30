@@ -8,7 +8,9 @@
 </head>
 <body>
     <a>C'est la fin de votre partie</a>
-    <a>Votre score est de : {{score}}</a>
+    {% for i in range(score|length) %}
+        <p>Le score de {{liste_joueur[i]}} est de {{score[i]}}</p>
+    {% endfor %}
 </body>
 <script>
     const son = new Audio('{{ url_for("static", filename="sounds/blipSelect1.wav") }}');

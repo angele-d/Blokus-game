@@ -5,7 +5,7 @@ from placage_pieces import *
 from logique_jeu import *
 
 
-DATABASE = 'BaseTest' # Merci de mettre a jour cette ligne quand la database sera rajouté au dépot github
+DATABASE = 'Base' # Merci de mettre a jour cette ligne quand la database sera rajouté au dépot github
 app = Flask(__name__)
 
 
@@ -15,6 +15,11 @@ def get_db(): # cette fonction permet de créer une connexion à la base
     if db is None:
         db = g._database = sqlite3.connect(DATABASE)
     return db
+
+def close_db():
+    db = getattr(g, '_database', None)
+    if db is not None:
+        db.close()
 
 def malus(Pliste):
     '''
@@ -42,15 +47,23 @@ def score(Game): #IL EST POSSIBLE QU'IL FASSE CHANGER CE CODE, CE QUI EST ICI N'
     '''
     c = get_db().cursor()
     query = "SELECT id_piece, id_move, color FROM coups WHERE id_game = ?"
-    c.execute(query, (Game,))  
+    quest = "SELECT COUNT(*) FROM nom_joueur WHERE id_game = ?"
+    c.execute(query, (Game,))
+    liste = c.fetchall()
+    c.execute(quest, (Game,))
+    nbr = c.fetchone()[0]
     P0=[]
     Piece_restante_R = Tabpiece.copy()
     Piece_restante_B = Tabpiece.copy()
     Piece_restante_Y = Tabpiece.copy()
-    Piece_restante_G = Tabpiece.copy()
-    score =[0,0,0,0] #Dans l'ordre du dessus le score attribué a chaque couleur
-    MaxIdcoup = [[0,P0],[0,P0],[0,P0],[0,P0]] #Valeurs de base, qui n'arrivent jamais
-    for tpl in c.fetchall(): #chaque tuple de la requete
+    if nbr != 3:
+        Piece_restante_G = Tabpiece.copy()
+        score =[0,0,0,0] #Dans l'ordre du dessus le score attribué a chaque couleur
+        MaxIdcoup = [[0,P0],[0,P0],[0,P0],[0,P0]] #Valeurs de base, qui n'arrivent jamais
+    else:
+        score =[0,0,0] #Dans l'ordre du dessus le score attribué a chaque couleur
+        MaxIdcoup = [[0,P0],[0,P0],[0,P0]]
+    for tpl in liste: #chaque tuple de la requete
         if tpl[2] == 'R':
             if MaxIdcoup[0][0] < tpl[1]: #verifie qu'on a toujours le dernier coup de R dans MaxIdcoup
                 MaxIdcoup[0][0] = tpl[1]
@@ -75,15 +88,26 @@ def score(Game): #IL EST POSSIBLE QU'IL FASSE CHANGER CE CODE, CE QUI EST ICI N'
     score[0] = malus(Piece_restante_R)        
     score[1] = malus(Piece_restante_B)
     score[2] = malus(Piece_restante_Y)
-    score[3] = malus(Piece_restante_G)
+    if nbr != 3:
+        score[3] = malus(Piece_restante_G)
     for i in range(len(score)): #Points bonus
         if score[i] == 0: #Cad que le joueur a place toutes ses pieces
             score[i] = 15
             if MaxIdcoup[1] == P1: #Cad que le dernier coup joue est le carre solitaire
                 score[i] = 20
+    if nbr == 1:
+        ind = 0
+        for i in score:
+            ind =+ i
+        score = [ind]
+    elif nbr == 2:
+        ind = score[0]+score[2]
+        ind2 = score[1]+score[3]
+        score = [ind,ind2]
+    c.connection.close()
     return score
 
 if __name__ == "__main__":
     with app.app_context():
-        print(score(1))
+        print(score(103))
 
