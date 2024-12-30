@@ -1,5 +1,6 @@
 from fonc_DB import *
 from logique_jeu import *
+from pieces import *
 
 #pour calculer le coup à faire, on utilise Monte carlo, avec approche probabiliste. Donc, d'une grille de jeu donnée, avec la liste des pièces restantes et le oueur qui joue
 #on va simuler un arbre des coups d'une profondeur n et donner à chaque branche une proba, déterminée par le nombre de victoire et le nombre de défaites que la branch epeut créer
@@ -178,10 +179,38 @@ def coup_a_faire(pl, grille, n, id_game):
     '''
     joueurs=['B', 'Y', 'R', 'G']
     pls_Plist=[]
+    #récupération listes des pièces restantes de chaque joueur + indice correspondant au joueur IA
     for i in range(len(joueurs)):
         pls_Plist.append(piece_res(id_game, joueurs[i]))
         if joueurs[i]==pl:
             pl_nb=i
+    #création des arbres de coups possibles
+    arbre=arbre_de_coups(pl, grille, pls_Plist, n, [])
+    if len(arbre)==1:
+        return arbre[0][0]
+    #on détermine si des coups ammènent à des profondeurs moins fortes
+    profondeurs=[]
+    for i in arbre:
+        profondeurs.append(profondeur_ac(i[1]))
+    #ensiute on cherche à éliminer les coups avec les plus faibles profondeurs (les coups amenant à des fins de parties)
+    prof_max=max(profondeurs)
+    arbre2=[]
+    for i in range(len(profondeurs)):
+        if profondeurs[i]==prof_max:
+            arbre2.append(arbre[i])
+    if len(arbre2)==1:
+        return arbre[0][0]
+    #on cherche ensuite les coups qui utilisent les pièces les plus grandes
+    tailles_pi=[]
+    for i in range (len(arbre2)):
+        tailles_pi.append(taille_piece_arbre(arbre2[i][1]))
+    taille_max=max(tailles_pi)
+    arbre=[]
+    for i in range(len(tailles_pi)):
+        if taille_max==tailles_pi[i]:
+            arbre.append(arbre2[i])
+    if len(arbre)==1:
+        return arbre[0][0]
     
 
 def profondeur_ac(arbre):
@@ -194,5 +223,31 @@ def profondeur_ac(arbre):
     else:
         m=[]
         for i in range (len(arbre)):
-            m.append(1+profondeur_ac(arbre[i][0]))
+            m.append(1+profondeur_ac(arbre[i][1]))
     return max(m)
+
+def taille_piece(pi):
+    '''
+    :param pi: (str) id de la pièce
+    :return: nombre de cases dont la pièce est composée
+    '''
+    res=0
+    for i in range (5):
+        for j in range (5):
+            if pi[i][j]:
+                res+=1
+    return res
+
+def taille_piece_arbre(arbre):
+    '''
+    :param n: (int) nombre de cases des autres pièces de l'arbre
+    :param arbre: arbre dont la taille totale de toutes les pièces utilisées est à calculer de la forme list[(coup, ss-arbre)]
+    :return: (int) nombre de cases totale pour toutes les pièces utilisées
+    '''
+    if arbre==[]:
+        return 0
+    else:
+        m=0
+        for i in range (len(arbre)):
+            m+=taille_piece(arbre[i][0][0])+taille_piece_arbre(arbre[i][1])
+    return m
