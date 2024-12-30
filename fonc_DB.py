@@ -34,6 +34,28 @@ def nb_move(id_game,color):
     conn.close()
     return nb_move
 
+def ajoute_coup(id_game,x,y,m):
+    '''
+    Ajoute les coups possibles dans la BD
+    :param id_game: id_game
+    :param x: int
+    :param y: int
+    :param m: matrice 20x20
+    '''
+    cursor = conn.cursor()
+    query= '''SELECT color FROM coups WHERE id_game = ? AND position_x = ? AND position_y = ?'''
+    cursor.execute(query,(id_game,x,y))
+    player = cursor.fetchone()[0]
+    N_list = new_move(m,x,y)
+    Plist = piece_restante(id_game,player)
+    liste_coup = coup_rajoute(m,N_list,Plist)
+    quest= '''INSERT INTO coups_possibles (id_game, id_piece, color, flip, rotation, position_x, position_y) 
+               VALUES (?, ?, ?, ?, ?, ?, ?)'''
+    for coup in liste_coup:
+        cursor.execute(quest,(id_game,coup[0],coup[1],coup[5],coup[4],coup[2],coup[3]))
+        conn.commit()
+    conn.close()
+
 # Va chercher les coups possibles dans la BD
 def cherche_coups_possibles(id_game):
     conn = sqlite3.connect('Base')
