@@ -265,7 +265,21 @@ def coup_a_faire(pl, grille, n, id_game):
     if len(arbre2)==1:
         return arbre2[0][0]
     else:
-        return arbre2[random.randint(0, len(arbre2)-1)][0]
+        petit_carre=True
+        for i in range (len(arbre2)):
+            if arbre2[i][0][0]!=P1:
+                petit_carre=False
+                break
+        #si on ne commence que pas l'utilisation d'un petit carré
+        if petit_carre:
+            return arbre2[random.randint(0, len(arbre2)-1)][0]
+        #sinon
+        else:
+            for i in range(len(arbre2)):
+                if arbre2[i][0][0]==P1:
+                    arbre2.pop(i)
+            return arbre2[random.randint(0, len(arbre2)-1)][0]
+                    
 
 def profondeur_ac(arbre):
     '''
