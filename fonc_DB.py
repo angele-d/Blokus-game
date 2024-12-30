@@ -15,7 +15,7 @@ def insert_move(id_game, id_move, id_piece, color, position_x, position_y, rotat
     conn = sqlite3.connect('Base')
     cursor = conn.cursor()
 
-#Compte le nombre de joueur dans la partie
+# Compte le nombre de joueur qu'il y a dans la partie
 def nb_joueur(id_game):
     conn = sqlite3.connect('Base')
     cursor = conn.cursor()
@@ -24,17 +24,47 @@ def nb_joueur(id_game):
     conn.close()
     return nb_joueur
 
+# Donne le nombre de pièces que le joueur à placer sur la grille
 def nb_move(id_game,color):
     conn = sqlite3.connect('Base')
     cursor = conn.cursor()
     query= '''SELECT COUNT(*) FROM coups WHERE color = ? AND id_game = ?'''
-    cursor.execute(query,("B",id_game))
+    cursor.execute(query,(color,id_game))
     nb_move = cursor.fetchone()[0]
     conn.close()
     return nb_move
 
-#Renvoie la couleur correspondante au joueur qui doit jouer
+# Va chercher les coups possibles dans la BD
+def cherche_coups_possibles(id_game):
+    conn = sqlite3.connect('Base')
+    cursor = conn.cursor()
+    query= '''SELECT * FROM coups_possibles WHERE id_game = ?'''
+    cursor.execute(query,(id_game,))
+    coups_poss = cursor.fetchall()
+    conn.close()
+    return coups_poss
+
+def supprime_coups_liste(id_game,liste):
+    '''
+    Supprime les coups dans liste
+    :param id_game: int
+    :param liste: elle contient [[id_piece, color, position_x, position_y, rotation, flip],...]
+    '''
+    conn = sqlite3.connect('Base')
+    cursor = conn.cursor()
+    query= '''DELETE FROM coups_possibles WHERE id_game = ? AND id_piece = ? AND color = ? AND flip = ? AND rotation = ? AND position_x = ? AND position_y = ?'''
+    for coup in liste:
+        cursor.execute(query,(id_game,coup[0],coup[1],coup[5],coup[4],coup[2],coup[3]))
+        conn.commit()
+    conn.close()
+
 def qui_peut_jouer(grille,nb_joueur,id_game):
+    '''
+    Renvoie une liste des couleurs qui peuvent encore jouer
+    :param grille: matrice 20*20
+    :param nb_joueur: int
+    :param id_game: int
+    '''
     Plist=piece_res(id_game,'B')
     couleur = []
     l = coups_possibles_force_brute(grille,'B',Plist)
@@ -56,6 +86,7 @@ def qui_peut_jouer(grille,nb_joueur,id_game):
             couleur += ['G']
     return couleur
 
+# Donne les pièces restantes d'un joueur sous forme ['P1','P2',...]
 def piece_res(id_game,joueur):
     l = piece_restante(id_game,joueur)
     r = []
@@ -63,7 +94,7 @@ def piece_res(id_game,joueur):
         r += ['P'+str(i)]
     return r
 
-
+# Renvoie la couleur du joueur à qui c'est le tour de jouer
 def tour(id_game):
     m = transcription_pieces_SQL_grille(id_game)
     nb_j = nb_joueur(id_game)
@@ -74,10 +105,11 @@ def tour(id_game):
     cursor.execute(query,("B",id_game))
     min_l = []
     coup_B = cursor.fetchone()[0]
-    print(coup_B)
+    # Si plus personne ne peut jouer
     if qpj == []:
         conn.close()
         return m,None
+    # Si personne n'a encore joué
     if coup_B == 0:
         conn.close()
         return m,"B"
@@ -85,14 +117,14 @@ def tour(id_game):
 
     cursor.execute(query,("Y",id_game))
     coup_Y= cursor.fetchone()[0]
-    if coup_Y == None:
+    if coup_Y == 0:
         conn.close()
         return m,"Y"
     min_l.append(coup_Y)
 
     cursor.execute(query,("R",id_game))
     coup_R = cursor.fetchone()[0]
-    if coup_R == None:
+    if coup_R == 0:
         conn.close()
         return m,"R"
     min_l.append(coup_R)
@@ -100,12 +132,12 @@ def tour(id_game):
     if nb_j != 3:
         cursor.execute(query,("G",id_game))
         coup_G = cursor.fetchone()[0]
-        if coup_G == None:
+        if coup_G == 0:
             conn.close()
             return m,"G"
         min_l.append(coup_G)
     conn.close()
-
+    # Analyse qui peut encore jouer
     for i in range(4):
         if not 'B' in qpj:
             min_l[0]=100
@@ -118,6 +150,7 @@ def tour(id_game):
         if nb_j >= 4:
             if not 'G' in qpj:
                 min_l[3]=100
+    # Cherche la couleur à qui c'est le tour
     ind = min_l.index(min(min_l))
     if ind == 0:
         return m,"B"
@@ -128,7 +161,7 @@ def tour(id_game):
     return m,"G"
     
 
-# Enregistre la partie
+# Enregistre la partie dans la BD
 def insert_game(id_game, name_game, password_game, nb_move):
     conn = sqlite3.connect('Base')
     cursor = conn.cursor()
@@ -139,9 +172,8 @@ def insert_game(id_game, name_game, password_game, nb_move):
     conn.commit()
     conn.close()
 
-# Enregistre les joueurs qui sont dans la partie
+# Enregistre le nom des joueurs qui sont dans la partie id_game
 def insert_name(id_game,name):
-    #A RAJOUTER : PAS DEUX FOIS LE MEME NOM DANS LA MEME PARTIE, SINON PROBLEME DE CLEF PRIMAIRE
     conn = sqlite3.connect('Base')
     cursor = conn.cursor()
     cursor.execute('''
@@ -151,9 +183,13 @@ def insert_name(id_game,name):
     conn.commit()
     conn.close()
 
-
-#Détermine la couleur du joueur "name" dans la partie id_game
 def name_to_order(name,id_game):
+    '''
+    Détermine la couleur du joueur "name" dans la partie id_game
+    :param name: nom du joueur
+    :param id_game: int
+    :return: str
+    '''
     conn = sqlite3.connect('Base')
     cursor = conn.cursor()
     cursor.execute('''
@@ -164,7 +200,6 @@ def name_to_order(name,id_game):
     for i in range(len(rows)):
         if rows[i][0] == name:
             ind = i
-    print("Le joueur:",name,"a la couleur",ind)
     if ind == 0:
         return 'B'
     elif ind == 1:
@@ -174,7 +209,8 @@ def name_to_order(name,id_game):
     elif ind == 3:
         return 'G'  
 
-def order_to_name(couleur,id_game):
+# Cette fonction associe le nom du joueur à sa couleur
+def order_to_name(couleur,id_game): 
     conn = sqlite3.connect('Base')
     cursor = conn.cursor()
     cursor.execute('''
@@ -182,7 +218,6 @@ def order_to_name(couleur,id_game):
     rows = cursor.fetchall()
     conn.close()
     nbr = len(rows)
-    print(couleur)
     if nbr == 1:
         return rows[0][0]
     elif nbr == 2:
