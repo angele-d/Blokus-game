@@ -6,6 +6,31 @@ body {
     margin: 0;
     }
 
+/*Bandeau/Footer speciaux pour la grille*/
+.bandeauGrille {
+    height: 35px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    background-color: rgb(73, 97, 235);
+    padding: 10px 0;
+    width: 100%;
+    box-shadow: 0px 2px 8px 2px rgb(0, 225, 255);
+    z-index: 20;
+}
+.footerGrille {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    background-color: rgb(73, 97, 235);
+    width: 100%;
+    box-shadow: 0px 2px 8px 2px rgb(0, 225, 255);
+    color: white;
+    font-size: 12px;
+    padding: 10px 20px;
+    z-index: 20;
+}
+
 /* Pour la grille */
 #output-image {
     position: fixed;
@@ -40,29 +65,84 @@ body {
 
 /* Pour afficher un message temporaire */
 .temporaire {
-    width: 300px;
-    height: 40px;
+    width: 200px;
     margin: 10px auto;
     text-align: center;
     font-weight: bold;
     border-radius: 5px;
-    font-size: 1.5rem;
+    font-size: 1rem;
     background-color: rgba(255, 0, 0, 0.7); /* Fond rouge avec transparence */
     color: white;
-    line-height: 40px;
+    line-height: 30px;
     opacity: 0; /* Initialement invisible */
     visibility: hidden; /* Initialement caché */
 }
-
 /* Pour rendre l'élément visible */
 .temporaire.visible {
     opacity: 1;
     visibility: visible; /* Rendre l'élément visible */
 }
 
+button{
+    margin: 0px 40px;
+    cursor: pointer; 
+    font-size: 20px;
+    font-weight: bold;
+    border-radius: 5px;
+    padding: 5px 8px;
+}
+button:hover{
+    background-color: hsl(61, 100%, 50%); 
+    transform: scale(1.05);
+    border-radius: 5px;
+    padding: 5px 10px;
+}
+
 #haut_droite {
-    position: fixed; /* Garde la même position */
-    top: 10px;
-    right: 10px;
-    text-align: right; /* Aligne le texte à droite */
+    position: fixed;
+    top: 100px;
+    left: 86%;
+    text-align: left; /
+}
+
+.hrGrille {
+    position: fixed;
+    right: 5px;
+    width: 15%;
+    color: rgb(73, 97, 235);
+    height: 5px;
+    background-color: rgb(73, 97, 235);
+    border:none;
+}
+.VerticalLineGrille {
+    position: fixed;
+    right: 15%;
+    top: 0;
+    width: 5px;
+    height: 500vh;
+    background-color: rgb(73, 97, 235);
+    transform: translateX(-50%);
+}
+.infosGrille{
+    position: fixed;
+    left: 85%;
+    top: 0;
+    background-color: rgb(153, 204, 245);
+    width: 500px;
+    height: 500vh;
+}
+
+.encadre{
+    display: inline-block;  /* Change le comportement pour qu'il soit en bloc mais en ligne */
+    padding: 5px 5px;      /* Ajoute de l'espace autour du texte */
+    border: 2px solid rgb(0, 27, 31); /* Crée un cadre autour du texte */
+    background-color:rgb(60, 58, 177);
+    color: white;
+    cursor:default;
+}
+
+h3 {
+    padding: 0px 40px;
+    font-size: 25px;
+    text-decoration: underline;
 }
