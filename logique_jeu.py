@@ -150,4 +150,17 @@ def coup_restant_force_brute(grille, pl, Plist):
     :param Plist: Liste des pièces du joueur
     :return: (bool) il y a des coups possibles
     '''
-    return not coups_possibles_force_brute(grille, pl, Plist)==[]
+    for i in range(2):
+        if i == 1:
+            isflipped = True
+        else:
+            isflipped = False
+        MP=matrice_possible(grille, pl)
+        for pi in Plist:
+            for rot in range(1,5):
+                for x in range(20):
+                    for y in range(20):
+                        if MP[x][y] == 'P':
+                            if coup_possible(grille,pi,pl,x,y,rot,isflipped):
+                                return True
+    return False
