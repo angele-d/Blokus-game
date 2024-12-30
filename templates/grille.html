@@ -28,7 +28,12 @@
     <div id="haut_droite">
     <p>Position de l'image : <span id="coords">X: 0, Y: 0</span></p>
     <p><br>Position carré : <span id="carre">X: 0, Y: 0</span></p>
-    <p style="color: blue;"><br>C'est à <span id="couleur_joueur">Bleu</span> de jouer</p>
+    <style>
+        #couleur_joueur {
+          color: blue;
+        }
+    </style>
+    <p><br>C'est à <span id="couleur_joueur">la personne ayant créée la partie</span> de jouer</p>
     <p id='temporaire' class='temporaire'>Vous ne pouvez pas faire ce coup</p>
     <p id='tempo' class='temporaire'>Ce n'est pas votre tour</p>
     <button id="myButton">Valider le coup</button>
@@ -54,7 +59,6 @@
         })
     </script>
     <script src="../static/js/js_grille.js"></script>
-
 </body>
 
 </html>

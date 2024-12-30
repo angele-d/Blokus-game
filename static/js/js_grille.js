@@ -34,8 +34,20 @@
             const result = await response.json();
 
             if (response.ok) {
-                // Met a jour l'image
                 document.getElementById("couleur_joueur").textContent = result.joueur;
+                const couleurElement = document.getElementById('couleur_joueur');
+                if (result.couleur == 'B') {
+                    couleurElement.style.color = 'blue';
+                }
+                else if (result.couleur == 'Y') {
+                    couleurElement.style.color = 'yellow';
+                }
+                else if (result.couleur == 'R') {
+                    couleurElement.style.color = 'red';
+                }
+                else if (result.couleur == 'G') {
+                    couleurElement.style.color = 'green';
+                }
             } else {
                 alert(result.error || "Une erreur a eu lieu pour le joueur");
             }
