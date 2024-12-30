@@ -60,11 +60,22 @@ def ajoute_coup(id_game,x,y,m):
 def cherche_coups_possibles(id_game):
     conn = sqlite3.connect('Base')
     cursor = conn.cursor()
-    query= '''SELECT * FROM coups_possibles WHERE id_game = ?'''
+    query= '''SELECT id_piece, color, position_x, position_y, rotation, flip FROM coups_possibles WHERE id_game = ?'''
     cursor.execute(query,(id_game,))
     coups_poss = cursor.fetchall()
     conn.close()
     return coups_poss
+
+def supprime_coups(m,x,y,id_game):
+    coup = coup_possible(id_game)
+    a_check = []
+    for i in coup:
+        (id_piece,c,Px,Py,r,f) = i 
+        if abs(px - x) <= 6:
+            a_check.append(i)
+    a_del = coup_enleve(m,a_check)
+    supprime_coups_liste(id_game,a_del)
+
 
 def supprime_coups_liste(id_game,liste):
     '''
