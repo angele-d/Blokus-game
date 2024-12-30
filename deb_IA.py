@@ -1,24 +1,15 @@
 from fonc_DB import *
-from logique_jeu import *
-from pieces import *
+import random
 
-#pour calculer le coup à faire, on utilise Monte carlo, avec approche probabiliste. Donc, d'une grille de jeu donnée, avec la liste des pièces restantes et le oueur qui joue
-#on va simuler un arbre des coups d'une profondeur n et donner à chaque branche une proba, déterminée par le nombre de victoire et le nombre de défaites que la branch epeut créer
-#Pour ce faire, on fait un fonction avec comme argument, le joueur, le nombre de jouerus, la grille, les pieces restantes
-#on va devoir faire une fonction auxiliaire avec la création de l'arbre, l'analyse de celui-ci, et l'attribution des coefficients/proba des branches
-#on va d'abbord se focaliser sur le milieu de partie
-#pour le début, les 4 premiers tours, on va utiliser le coups_possible_début plus tard
-#utliser le plus possible les grosses pièces au début, mais pas les barres, pour bloquer les adversaires
-
-def arbre_de_coups(pl, grille, adv_Plist, n, arbre):
+def arbre_de_coups(pl, grille, adv_Plist, n):
     '''
     Fonction qui genère l'arbre des coups possibles
     :param pl: (str) B,G,Y,R = joueur
     :param grille: matrice 20x20
     :param adv_Plist: liste des pièces de tous les joueurs [BPlist, YPlist, RPlist, GPlist]
     :param n: (int) nombre de coups à simuler, profondeur de l'arbre des coups (nb de coups du joueur pl)
-    :param arbre: (list) arbre en cours de création, initialement []
-    :return: arbre des coups de la forme [(coup, [liste des coups suivants ce coup])]'''
+    :return: arbre des coups de la forme [(coup, [liste des coups suivants ce coup], [liste des pièces des différents joueurs au niveau de ce coup])]'''
+    arbre=[]
     if n==0:
         return [] #l'arbre s'arrête là
     if Plist==[]:
@@ -47,35 +38,35 @@ def arbre_de_coups(pl, grille, adv_Plist, n, arbre):
                 for k in len(joueurs):
                     if k==pl:
                         List_aPlist[i]=Plist2
-                suite=coups_adversaires(List_aPlist, [grille2], pl, pl)
+                suite=coups_adversaires(List_aPlist, [grille2], pl, pl) #renvoie liste des coups de la forme [(liste des grilles après coups, liste des pièces rstantes des joueurs)]
                 ss_arbre=[] #construction du sous-arbre
                 for j in suite:
-                    ss_arbre.append(arbre_de_coups(pl, j, Plist2, n-1, []))
-                arbre.append((coup, ss_arbre))
+                    ss_arbre.append(arbre_de_coups(pl, j[0], j[1], n-1))
+                arbre.append((coup, ss_arbre, List_aPlist))
             return arbre
 
 def coups_adversaires(List_aPlist, Lcoups, pl, m):
     '''
     Fonction qui renvoie toutes les grilles correspondantes à tous les coups possibles des adversaires
     :param List_aPlist: liste des pièces restantes des joueurs, sous la force [LpiècesB, LpiècesY, LpiècesR, LpiècesG]
-    :param Lcoups: liste des coups à renvoyer (liste de grilles)
+    :param Lcoups: liste des coups à renvoyer (liste de grilles, liste des pièces)
     :param pl: (str) B, Y, R, G = joueur simulé par IA
     :param m: (int) dernier joueur à avoir posé une pièce
-    :return: liste des grilles suite aux coups des adversaires
+    :return: liste des grilles suite aux coups des adversaires et la mise à jour des listes des pièces des joueurs, sous la forme lst[([grilles], [lst_pieces_joueurs])]
     '''
     #Si c'est au tour du joueur dont on simule les coups, on arrête là
     if pl=='B':
         if m=='G':
-            return Lcoups
+            return (Lcoups, List_aPlist)
     if pl=='Y':
         if m=='B':
-            return Lcoups
+            return (Lcoups, List_aPlist)
     if pl=='R':
         if m=='Y':
-            return Lcoups
+            return (Lcoups, List_aPlist)
     if pl=='G':
         if m=='R':
-            return Lcoups
+            return (Lcoups, List_aPlist)
     #Sinon
     if m=='G':
         if List_aPlist[0]==[]:
@@ -95,7 +86,11 @@ def coups_adversaires(List_aPlist, Lcoups, pl, m):
                     for grille in Lcoups2:
                         c_possibles=coups_possibles_force_brute(grille, 'B', List_aPlist[0])
                         for j in c_possibles:
-                            Lcoups2.append(j)
+                            L2=List_aPlist.copy()
+                            for k in range(len(L2[0])):
+                                if L2[0][k]==j[0]:
+                                    L2[0].pop(k)
+                            Lcoups2.append(j,L2)
             return coups_adversaires(List_aPlist, Lcoups2, pl, 'B')
     if m=='B':
         if List_aPlist[1]==[]:
@@ -115,7 +110,11 @@ def coups_adversaires(List_aPlist, Lcoups, pl, m):
                     for grille in Lcoups2:
                         c_possibles=coups_possibles_force_brute(grille, 'Y', List_aPlist[1])
                         for j in c_possibles:
-                            Lcoups2.append(j)
+                            L2=List_aPlist.copy()
+                            for k in range(len(L2[1])):
+                                if L2[1][k]==j[0]:
+                                    L2[1].pop(k)
+                            Lcoups2.append(j,L2)
             return coups_adversaires(List_aPlist, Lcoups2, pl, 'Y')
     if m=='Y':
         if List_aPlist[2]==[]:
@@ -135,7 +134,11 @@ def coups_adversaires(List_aPlist, Lcoups, pl, m):
                     for grille in Lcoups2:
                         c_possibles=coups_possibles_force_brute(grille, 'R', List_aPlist[2])
                         for j in c_possibles:
-                            Lcoups2.append(j)
+                            L2=List_aPlist.copy()
+                            for k in range(len(L2[2])):
+                                if L2[2][k]==j[0]:
+                                    L2[2].pop(k)
+                            Lcoups2.append(j,L2)
             return coups_adversaires(List_aPlist, Lcoups2, pl, 'R')
     if m=='R':
         if List_aPlist[3]==[]:
@@ -155,18 +158,12 @@ def coups_adversaires(List_aPlist, Lcoups, pl, m):
                     for grille in Lcoups2:
                         c_possibles=coups_possibles_force_brute(grille, 'G', List_aPlist[3])
                         for j in c_possibles:
-                            Lcoups2.append(j)
+                            L2=List_aPlist.copy()
+                            for k in range(len(L2[3])):
+                                if L2[3][k]==j[0]:
+                                    L2[3].pop(k)
+                            Lcoups2.append(j,L2)
             return coups_adversaires(List_aPlist, Lcoups2, pl, 'G')
-
-def score_arbre(pl, arbre):
-    '''
-    Fonction qui associe à chaque branche de l'arbre un score/proba et qui permet donc de shoisir quel coups faire
-    :param pl: (str) G,R,Y,B = joueur
-    :arbre: (list) arbre des coups simulés
-    '''
-    #par exemple, le nombre de branche qui ne mène pas à une défaite/nombre de branches totales
-    #trouver comment qualifier et pondérer les branches : nombres max de pièces posées, nombres d'adversaires bloqués, 
-    #nombres de cases utilisées, nombre de cases restantes entre la dernière pièce posée et le cadre du jeu
 
 def coup_a_faire(pl, grille, n, id_game):
     '''
@@ -211,11 +208,68 @@ def coup_a_faire(pl, grille, n, id_game):
             arbre.append(arbre2[i])
     if len(arbre)==1:
         return arbre[0][0]
-    
+    #on cherche maintenant à déterminer les coups qui bloquent le plus les adversaires, ie les branches où les adversaires ont le moins de coups possibles
+    arbre2=[]
+    min_coup_adv=nb_coups_adv(grille, arbre, pl_nb, pls_Plist) #de la forme [(adv, minimum de coup de l'adv, liste des coups qui y mènent)]
+    #si on a un seul adversaire, on garde tous les coups menant à ce minimum
+    if len(min_coup_adv)==1:
+        for i in range (len(arbre)): #[(coup,ss-arbre, lst_pieces_joueurs)]
+            if arbre[i][0] in min_coup_adv[0][2]:
+                arbre2.append(arbre[i])
+    #sinon, si on a 2 adversaires
+    elif len(min_coup_adv)==2:
+        #on regarde si il y des coups qui mènent aux deux minimums
+        cpareils=[]
+        for i in min_coup_adv[0][2]:
+            for j in min_coup_adv[1][2]:
+                if i==j:
+                    cpareils.append(i)
+        if cpareils!=[]:
+            for i in range(len(arbre)):
+                if arbre[i][0] in cpareils:
+                    arbre2.append(arbre[i])
+        else:
+            #si aucun coup n'est en commun, on les ajoute tous
+            for i in range (len(arbre)):
+                if arbre[i][0] in min_coup_adv[0][2] or arbre[i][0] in min_coup_adv[1][2]:
+                    arbre2.append(arbre[i])
+    else:
+        #si on a 3 adversaires
+        #on regarde d'abord si des coups sont commun aux trois minimums
+        cpareils=[]
+        for i in min_coup_adv[0][2]:
+            for j in min_coup_adv[1][2]:
+                for k in min_coup_adv[2][2]:
+                    if i==j and j==k:
+                        cpareils.append(i)
+        if cpareils!=[]:
+            for i in range(len(arbre)):
+                if arbre[i][0] in cpareils:
+                    arbre2.append(arbre[i])
+        else:
+            #sinon, on regarde si des coups sont commun à au moins deux minimums
+            for i in min_coup_adv[0][2]:
+                for j in min_coup_adv[1][2]:
+                    for k in min_coup_adv[2][2]:
+                        if i==j or j==k or i==k:
+                            cpareils.append(i)
+            if cpareils!=[]:
+                for i in range(len(arbre)):
+                    if arbre[i][0] in cpareils:
+                        arbre2.append(arbre[i])
+            else:
+                #si aucun chemin n'est en commun, on les ajoute tous
+                for i in range (len(arbre)):
+                    if (arbre[i][0] in min_coup_adv[0][2]) or (arbre[i][0] in min_coup_adv[1][2]) or (arbre[i][0] in min_coup_adv[2][2]):
+                        arbre2.append(arbre[i])
+    if len(arbre2)==1:
+        return arbre2[0][0]
+    else:
+        return arbre2[random.randint(0, len(arbre2)-1)][0]
 
 def profondeur_ac(arbre):
     '''
-    :param arbre: arbre des coups, de la forme list[(coup, sous-arbre)]
+    :param arbre: arbre des coups, de la forme list[(coup, sous-arbre, lst_pieces_joueurs)]
     :return: (int) profondeur max de l'arbre
     '''
     if arbre==[]:
@@ -241,13 +295,59 @@ def taille_piece(pi):
 def taille_piece_arbre(arbre):
     '''
     :param n: (int) nombre de cases des autres pièces de l'arbre
-    :param arbre: arbre dont la taille totale de toutes les pièces utilisées est à calculer de la forme list[(coup, ss-arbre)]
+    :param arbre: arbre dont la taille totale de toutes les pièces utilisées est à calculer de la forme list[(coup, ss-arbre, lst_pieces_joueurs)]
     :return: (int) nombre de cases totale pour toutes les pièces utilisées
     '''
     if arbre==[]:
         return 0
     else:
-        m=0
+        m=[]
         for i in range (len(arbre)):
-            m+=taille_piece(arbre[i][0][0])+taille_piece_arbre(arbre[i][1])
-    return m
+            m.append(taille_piece(arbre[i][0][0])+taille_piece_arbre(arbre[i][1]))
+    return max(m)
+
+def nb_coups_adv(grille, arbre, pl_nb, pls_Plist):
+    '''
+    :param grille: matrice 20x20 de jeu, à la base de l'arbre
+    :param arbre: arbre de coups de la forme list[(coup, ss-arbre, lst_pieces_joueurs)]
+    :param pl: (str) B, Y, R, G = joueur 
+    :param pl_nb: indice du joueur IA
+    :param pls_Plist: liste de toutes les pièces restantes des joueurs
+    :return: le nombre de coups minimal de chaque adversaires ainsi que les coups à la racine de l'arbre qui y conduisent de la forme [(adv, minimum de coup de l'adv, liste des coups qui y mènent)]
+    '''
+    joueurs=['B', 'Y', 'R', 'G']
+    res=[0,0,0,0]
+    res[pl_nb]=-1 #on met à -1 ce qui correspond au joueur ia
+    for i in range (len(pls_Plist)):
+        if pls_Plist[i]==[]:
+            res[i]=-2 #on met à -2 ce qui correspond à aucun joueur
+    coups_min_adv=[]
+    for i in range (len(res)):
+        if res[i]!=-1 and res[i]!=-2:
+            coups_min_adv.append(nb_coup_arbre(arbre, grille, joueurs[i], pls_Plist[i]))
+    return coups_min_adv
+
+def nb_coup_arbre(arbre, grille, pl, Plist):
+    '''
+    :param arbre: arbre des coups list[(coup,ss-arbre, lst_pieces_joueurs)] #coup de la forme (pi, x, y, rot, isflipped)
+    :param grille: matrice 20x20 de jeu
+    :param pl: (str) B, Y, R, G = joueur
+    :param Plist: (lst) liste des pièces restantes du joueur pl
+    :return: (int) le nombre de coups minimal du joueur pl par les coups de l'arbre, et la liste des coups à la racine de l'arbre emmenant à ce minimum
+    '''
+    if arbre==[]:
+        return len(coups_possibles_force_brute(grille, pl, Plist))
+    else:
+        colo=['B', 'Y', 'R', 'G']
+        for i in range(len(colo)):
+            if pl==colo[i]:
+                nb_pl=i
+        m=[]
+        for i in range (len(arbre)):
+            m.append(nb_coup_arbre(arbre[i][1], placer_piece_grille20x20(grille, arbre[i][0][0], arbre[i][0][1], arbre[i][0][2], pl, arbre[i][0][3], arbre[i][0][4] ), pl, arbre[i][2][nb_pl]))
+        cmin=[]
+        mini=min(m)
+        for i in range(len(arbre)):
+            if m[i]==mini:
+                cmin.append(arbre[i][0])
+        return (pl, mini, cmin)
