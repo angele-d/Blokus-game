@@ -37,16 +37,16 @@
                 document.getElementById("couleur_joueur").textContent = result.joueur;
                 const couleurElement = document.getElementById('couleur_joueur');
                 if (result.couleur == 'B') {
-                    couleurElement.style.color = 'blue';
+                    couleurElement.style.backgroundColor = 'blue';
                 }
                 else if (result.couleur == 'Y') {
-                    couleurElement.style.color = 'yellow';
+                    couleurElement.style.backgroundColor= 'yellow';
                 }
                 else if (result.couleur == 'R') {
-                    couleurElement.style.color = 'red';
+                    couleurElement.style.backgroundColor = 'red';
                 }
                 else if (result.couleur == 'G') {
-                    couleurElement.style.color = 'green';
+                    couleurElement.style.backgroundColor = 'green';
                 }
             } else {
                 alert(result.error || "Une erreur a eu lieu pour le joueur");
