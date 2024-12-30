@@ -9,25 +9,28 @@ from logique_jeu import *
 #pour le début, les 4 premiers tours, on va utiliser le coups_possible_début plus tard
 #utliser le plus possible les grosses pièces au début, mais pas les barres, pour bloquer les adversaires
 
-def arbre_de_coups(pl, grille, Plist, n, arbre, id_game):
-#/!\ ici chiant, pour récupérer les pièces restantes pour les adversaires, on utilise la base de données. Pour le premier tour, y'a pas de soucis, mais à partir du second tour, ca voudrait dire que l'on doit ajouter les modifications à la bd
-#et donc de simuler une game fictive, mais à partir de celle en cours déjà existante, donc chiant. Il faut donc voir pour à chaque fois pouvoir enlever les pièces jouées par les adversaires, mais ca fait beaucoup de possibilités, et boum la complexité
-#à refaire à partir de la simulation des coups des adversaires du coup, car sinon ils peuvent jouer plusieurs fois les mêmes coups
-#à moins de mettre leurs pièces en arguments, mais ici encore, ça fait beaucoup de possibilités différentes, et peu être trop
+def arbre_de_coups(pl, grille, adv_Plist, n, arbre):
     '''
     Fonction qui genère l'arbre des coups possibles
     :param pl: (str) B,G,Y,R = joueur
     :param grille: matrice 20x20
-    :param Plist: liste des pièces
+    :param adv_Plist: liste des pièces de tous les joueurs [BPlist, YPlist, RPlist, GPlist]
     :param n: (int) nombre de coups à simuler, profondeur de l'arbre des coups (nb de coups du joueur pl)
     :param arbre: (list) arbre en cours de création, initialement []
-    :param id_game: id_game
     :return: arbre des coups de la forme [(coup, [liste des coups suivants ce coup])]'''
     if n==0:
         return [] #l'arbre s'arrête là
     if Plist==[]:
         return [] #l'arbre s'arrête là
     else:
+        if pl=='B':
+            Plist=adv_Plist[0]
+        elif pl=='Y':
+            Plist=adv_Plist[1]
+        elif pl=='R':
+            Plist=adv_Plist[2]
+        else:
+            Plist=adv_Plist[3]
         cr=coup_restant_force_brute(grille, pl, Plist)
         if not cr:
             return [] #il n'y a plus de coups  possible, l'arbre s'arrête là
@@ -39,12 +42,10 @@ def arbre_de_coups(pl, grille, Plist, n, arbre, id_game):
                 Plist2.pop(i)
                 grille2=placer_piece_grille20x20(grille, coup[0], coup[1], coup[2], pl, coup[3], coup[4]) #mise à jour la grille avec la nouvelle pièce ajoutée 
                 joueurs=['B', 'Y', 'R', 'G']
-                List_aPlist=[]
-                for k in joueurs:
+                List_aPlist=adv_Plist.copy()
+                for k in len(joueurs):
                     if k==pl:
-                        List_aPlist.append([])
-                    else:
-                        piece_restante(id_game, k) #/!\ ici pb avec base de données
+                        List_aPlist[i]=Plist2
                 suite=coups_adversaires(List_aPlist, [grille2], pl, pl)
                 ss_arbre=[] #construction du sous-arbre
                 for j in suite:
@@ -166,12 +167,32 @@ def score_arbre(pl, arbre):
     #trouver comment qualifier et pondérer les branches : nombres max de pièces posées, nombres d'adversaires bloqués, 
     #nombres de cases utilisées, nombre de cases restantes entre la dernière pièce posée et le cadre du jeu
 
-def coup_a_faire(pl, grille, Plist, n):
+def coup_a_faire(pl, grille, n, id_game):
     '''
     fonction qui donne, par la méthode Monte Carlo, le coup à faire étant donné une grille de jeu et des pièces données
     :param pl: (str) G,Y,R,B = joueur
     :param grille: matrice 20*20
-    :param Plist: liste des pièces restantes
     :param n: (int) profondeur d'arbre à simuler
+    :param id_game: id_game
     :return: le coup à faire de la forme (num_piece, x, y, rot, isFlipped)
     '''
+    joueurs=['B', 'Y', 'R', 'G']
+    pls_Plist=[]
+    for i in range(len(joueurs)):
+        pls_Plist.append(piece_res(id_game, joueurs[i]))
+        if joueurs[i]==pl:
+            pl_nb=i
+    
+
+def profondeur_ac(arbre):
+    '''
+    :param arbre: arbre des coups, de la forme list[(coup, sous-arbre)]
+    :return: (int) profondeur max de l'arbre
+    '''
+    if arbre==[]:
+        return 0
+    else:
+        m=[]
+        for i in range (len(arbre)):
+            m.append(1+profondeur_ac(arbre[i][0]))
+    return max(m)
