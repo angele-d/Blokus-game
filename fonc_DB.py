@@ -34,6 +34,30 @@ def nb_move(id_game,color):
     conn.close()
     return nb_move
 
+# Va chercher les coups possibles dans la BD
+def cherche_coups_possibles(id_game):
+    conn = sqlite3.connect('Base')
+    cursor = conn.cursor()
+    query= '''SELECT * FROM coups_possibles WHERE id_game = ?'''
+    cursor.execute(query,(id_game,))
+    coups_poss = cursor.fetchall()
+    conn.close()
+    return coups_poss
+
+def supprime_coups_liste(id_game,liste):
+    '''
+    Supprime les coups dans liste
+    :param id_game: int
+    :param liste: elle contient [[id_piece, color, position_x, position_y, rotation, flip],...]
+    '''
+    conn = sqlite3.connect('Base')
+    cursor = conn.cursor()
+    query= '''DELETE FROM coups_possibles WHERE id_game = ? AND id_piece = ? AND color = ? AND flip = ? AND rotation = ? AND position_x = ? AND position_y = ?'''
+    for coup in liste:
+        cursor.execute(query,(id_game,coup[0],coup[1],coup[5],coup[4],coup[2],coup[3]))
+        conn.commit()
+    conn.close()
+
 def qui_peut_jouer(grille,nb_joueur,id_game):
     '''
     Renvoie une liste des couleurs qui peuvent encore jouer
