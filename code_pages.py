@@ -17,6 +17,7 @@ def accueil():
     return render_template('main_page.html')
 
 @app.route('/join', methods=['GET','POST'])
+# Est appelé une première fois pour demander des informations qui serviront au deuxième appel pour rediriger vers le bon lobby
 def join():
     if request.method == 'POST':
         mot_de_passe = request.form['password']
@@ -40,9 +41,8 @@ def join():
             return "Ce nom est déjà pris"
         if len(rows) != 1:
             return "Mauvais mot de passe",500
-
+        # Pour donner les droits
         session[f'access_{rows[0][0]}'] = True
-        ## LE NOM DE LA PERSONNE SERT PLUS TARD A CHOISIR L'ORDRE
         session['name'] = nom_utilisateur
         insert_name(rows[0][0],nom_utilisateur)
 
@@ -52,6 +52,7 @@ def join():
     return render_template('join_page.html')
 
 @app.route('/rejoin', methods=['GET','POST'])
+# Pour rejoindre une partie déjà lancée
 def rejoin():
     if request.method == 'POST':
         mot_de_passe = request.form['password']
@@ -72,8 +73,8 @@ def rejoin():
         conn.close()
         if len(rowss) == 0:
             return "Pas de joueur de ce nom dans cette partie"
-        ## LE NOM DE LA PERSONNE SERT PLUS TARD A CHOISIR L'ORDRE
         session[f'access_{rows[0][0]}'] = True
+        # Pour rediriger directement vers le jeu et non vers le lobby
         session[f'access_admin_{rows[0][0]}'] = False
         session['name'] = nom_utilisateur
         socketio.emit('join_room', {'room': rows[0][0]})

@@ -5,12 +5,11 @@ from placage_pieces import *
 from logique_jeu import *
 
 
-DATABASE = 'Base' # Merci de mettre a jour cette ligne quand la database sera rajouté au dépot github
+DATABASE = 'Base'
 app = Flask(__name__)
 
-
-def get_db(): # cette fonction permet de créer une connexion à la base 
-              # ou de récupérer la connexion existante 
+# Crée une connexion à la base ou de récupère la connexion existante
+def get_db():
     db = getattr(g, '_database', None)
     if db is None:
         db = g._database = sqlite3.connect(DATABASE)
@@ -58,48 +57,58 @@ def score(Game): #IL EST POSSIBLE QU'IL FASSE CHANGER CE CODE, CE QUI EST ICI N'
     Piece_restante_Y = Tabpiece.copy()
     if nbr != 3:
         Piece_restante_G = Tabpiece.copy()
-        score =[0,0,0,0] #Dans l'ordre du dessus le score attribué a chaque couleur
-        MaxIdcoup = [[0,P0],[0,P0],[0,P0],[0,P0]] #Valeurs de base, qui n'arrivent jamais
+        # Dans l'ordre du dessus le score attribué a chaque couleur
+        score =[0,0,0,0]
+        # Valeurs de base, qui n'arrivent jamais
+        MaxIdcoup = [[0,P0],[0,P0],[0,P0],[0,P0]]
     else:
-        score =[0,0,0] #Dans l'ordre du dessus le score attribué a chaque couleur
+        score =[0,0,0]
         MaxIdcoup = [[0,P0],[0,P0],[0,P0]]
-    for tpl in liste: #chaque tuple de la requete
+    # Chaque tuple de la requête
+    for tpl in liste:
         if tpl[2] == 'R':
-            if MaxIdcoup[0][0] < tpl[1]: #verifie qu'on a toujours le dernier coup de R dans MaxIdcoup
+            # Vérifie qu'on a toujours le dernier coup de R dans MaxIdcoup
+            if MaxIdcoup[0][0] < tpl[1]:
                 MaxIdcoup[0][0] = tpl[1]
                 MaxIdcoup[0][1] = tpl[0]
-            Piece_restante_R = [i for i in Piece_restante_R if i != tpl[0]] #Garde pieces =/ coup etudie
+            # Garde pieces =/ coup etudie
+            Piece_restante_R = [i for i in Piece_restante_R if i != tpl[0]]
         if tpl[2] == 'B':
-            if MaxIdcoup[1][0] < tpl[1]: #verifie qu'on a toujours le dernier coup de B dans MaxIdcoup
+            if MaxIdcoup[1][0] < tpl[1]:
                 MaxIdcoup[1][0] = tpl[1]
                 MaxIdcoup[1][1] = tpl[0]
-            Piece_restante_B = [i for i in Piece_restante_B if i != tpl[0]] #Garde pieces =/ coup etudie
+            Piece_restante_B = [i for i in Piece_restante_B if i != tpl[0]]
         if tpl[2] == 'Y':
-            if MaxIdcoup[2][0] < tpl[1]: #verifie qu'on a toujours le dernier coup de Y dans MaxIdcoup
+            if MaxIdcoup[2][0] < tpl[1]:
                 MaxIdcoup[2][0] = tpl[1]
                 MaxIdcoup[2][1] = tpl[0]
-            Piece_restante_Y = [i for i in Piece_restante_Y if i != tpl[0]] #Garde pieces =/ coup etudie
+            Piece_restante_Y = [i for i in Piece_restante_Y if i != tpl[0]]
         if tpl[2] == 'G':
-            if MaxIdcoup[3][0] < tpl[1]: #verifie qu'on a toujours le dernier coup de G dans MaxIdcoup
+            if MaxIdcoup[3][0] < tpl[1]:
                 MaxIdcoup[3][0] = tpl[1]
                 MaxIdcoup[3][1] = tpl[0]
-            Piece_restante_G = [i for i in Piece_restante_G if i != tpl[0]] #Garde pieces =/ coup etudie
-    #Calcul des scores suivant le nombre de pieces qu'il reste pour chaque joueur
+            Piece_restante_G = [i for i in Piece_restante_G if i != tpl[0]]
+    # Calcul des scores suivant le nombre de pièces qu'il reste pour chaque joueur
     score[0] = malus(Piece_restante_R)        
     score[1] = malus(Piece_restante_B)
     score[2] = malus(Piece_restante_Y)
     if nbr != 3:
         score[3] = malus(Piece_restante_G)
-    for i in range(len(score)): #Points bonus
-        if score[i] == 0: #Cad que le joueur a place toutes ses pieces
+    # Attribue les points bonus
+    for i in range(len(score)):
+        # Si le joueur a placé toutes ses pièces
+        if score[i] == 0:
             score[i] = 15
-            if MaxIdcoup[1] == P1: #Cad que le dernier coup joue est le carre solitaire
+             # Si le dernier coup joué est le carre solitaire
+            if MaxIdcoup[1] == P1:
                 score[i] = 20
+    # Si le joueur joue seul
     if nbr == 1:
         ind = 0
         for i in score:
             ind =+ i
         score = [ind]
+    # S'il y avait deux joueurs dans la partie
     elif nbr == 2:
         ind = score[0]+score[2]
         ind2 = score[1]+score[3]
