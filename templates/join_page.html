@@ -1,4 +1,4 @@
-<title> BLOKUS PP2I grp6 </title>
+<title> REJOINDRE PARTIE </title>
 
 <head>
     <link rel="stylesheet" href="{{ url_for('static', filename='CSS/style.css') }}">
@@ -50,3 +50,15 @@
         this.textContent = type === "password" ? "👁️" : "🙈";
     });
 </script>
+<script>
+    const son = new Audio('{{ url_for("static", filename="sounds/blipSelect1.wav") }}');
+    
+    document.addEventListener("DOMContentLoaded",()=>{
+        document.querySelectorAll('button').forEach(button =>{
+            button.addEventListener('click',() =>{
+                console.log("son")
+                son.play();
+            });
+        });
+    });
+    </script>

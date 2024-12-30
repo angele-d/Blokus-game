@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 
-<title> BLOKUS PP2I grp6 </title>
+<title> HISTORIQUE </title>
 
 <head>
     <meta charset="UTF-8">
@@ -60,3 +60,15 @@
 
 
 </html>
+<script>
+    const son = new Audio('{{ url_for("static", filename="sounds/blipSelect1.wav") }}');
+    
+    document.addEventListener("DOMContentLoaded",()=>{
+        document.querySelectorAll('button').forEach(button =>{
+            button.addEventListener('click',() =>{
+                console.log("son")
+                son.play();
+            });
+        });
+    });
+</script>
