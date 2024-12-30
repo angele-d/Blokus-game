@@ -1,4 +1,5 @@
 from rotation_pieces import *
+import time
 
 def print_jeu(m):
     '''
@@ -86,29 +87,40 @@ def matrice_possible_start(pl):
         m[19][0] = 'P'
     return m
 
-def coups_possibles_faux(m,pl,Plist):
-    '''
-    Fonction pour déterminer l'ensembles des coups possibles pour un joueur
-    :param m: matrice 20x20
-    :param pl: (str) R,B,Y ou G = joueur
-    :param Plist: liste de pieces
-    :return: (lst) liste des coups possibles, sous la forme [(pi, x, y, rot, isflipped)]
-    '''
+def coup_rajoute(m,x,y,Plist): #A modif un peu
+    start = time.time()
     coups=[]
-    for i in range(2):
-        if i == 1:
-            isflipped = True
-        else:
-            isflipped = False
-        MP=matrice_possible(m, pl)
-        for pi in Plist:
-            for rot in range(1,5):
-                for x in range(20):
-                    for y in range(20):
-                        if MP[x][y] == 'P':
-                            if coup_possible(m,pi,pl,x,y,rot,isflipped):
-                                coups.append((pi, x, y, rot, isflipped))
+    MP=matrice_possible(m, pl)
+    for k in range(-2,3):
+        for l in range(-2,3):
+            new_x = x+k
+            new_y = y+l
+            if inside(new_x,new_y):
+                if MP[new_x][new_y] == 'P':
+                    for i in range(2):
+                        if i == 1:
+                            isflipped = True
+                        else:
+                            isflipped = False
+                        for pi in Plist:
+                            for rot in range(1,5):
+                                for k2 in range (-2,3):
+                                    for l2 in range (-2,3):
+                                        ajout_x= new_x+k2
+                                        ajout_y = new_y+l2
+                                        if inside(ajout_x,ajout_y) and (MP[ajout_x][ajout_y] in ['P','V']):
+                                            if coup_possible(m,pi,pl,ajout_x,ajout_y,rot,isflipped): #Each should be on it's own thread
+                                                coups.append((pi,pl, ajout_x, ajout_y, rot, isflipped))
     return coups
+
+def coup_enleve(m,Clist):
+    enleve =[]
+    for i in Clist:
+        (pi,pl,x,y,rot,isflipped) = i
+        if not coup_possible(m,pi,pl,x,y,rot,isflipped):
+            enleve.append(i)
+    return enleve
+
 
 def coups_possibles_force_brute(m,pl,Plist):
     '''
@@ -118,13 +130,14 @@ def coups_possibles_force_brute(m,pl,Plist):
     :param Plist: liste de pieces
     :return: (lst) liste des coups possibles, sous la forme [(pi, x, y, rot, isflipped)]
     '''
+    start = time.time()
     coups=[]
+    MP=matrice_possible(m, pl)
     for i in range(2):
         if i == 1:
             isflipped = True
         else:
             isflipped = False
-        MP=matrice_possible(m, pl)
         for pi in Plist:
             for rot in range(1,5):
                 for x in range(20):
@@ -133,8 +146,10 @@ def coups_possibles_force_brute(m,pl,Plist):
                             for k in range(-2,3):
                                 for l in range(-2,3):
                                     if inside(x+k,y+l) and (MP[x+k][y+l] in ['P','V']):
-                                        if coup_possible(m,pi,pl,x,y,rot,isflipped):
+                                        if coup_possible(m,pi,pl,x,y,rot,isflipped): #Each should be on it's own thread
                                             coups.append((pi, x, y, rot, isflipped))
+    end = time.time()
+    print("temps-d'exec =", end - start)
     return coups
 
 
