@@ -67,6 +67,11 @@ def cherche_coups_possibles(id_game):
     return coups_poss
 
 def supprime_coups(m,x,y,id_game):
+    '''
+    Trouve et supprime les coups de la nouvelle matrice m  de la partie id_game ou on a joué un coup en x,y
+    :param m: matrice de la partie où on a joué le nouveau coup
+    :param x: 
+    '''
     coup = coup_possible(id_game)
     a_check = []
     for i in coup:
