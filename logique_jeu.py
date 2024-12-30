@@ -110,7 +110,7 @@ def coups_possibles_faux(m,pl,Plist):
                                 coups.append((pi, x, y, rot, isflipped))
     return coups
 
-def coup_possible_force_brute(m,pl,Plist):
+def coups_possibles_force_brute(m,pl,Plist):
     '''
     Fonction pour déterminer l'ensemble des coups possibles pour un joueur, moins brute
     :param m: matrice 20x20
