@@ -87,33 +87,63 @@ def matrice_possible_start(pl):
         m[19][0] = 'P'
     return m
 
-def coup_rajoute(m,x,y,Plist): #A modif un peu
-    start = time.time()
-    coups=[]
+def new_move(m,x,y):
+    '''
+    Fonction pour calculer les positions autour desquelles des nouveaux coups sont possibles
+    :param m: matrice 20x20
+    :param x: Position en x de la nouvelle pièce
+    :param y: Position en y de la nouvelle pièce
+    :return: (lst) liste des positions autour desquelles on peut faire des nouveaux coups
+    '''
+    N_list =[]
     MP=matrice_possible(m, pl)
-    for k in range(-2,3):
-        for l in range(-2,3):
+    for k in range(-3,4):
+        for l in range(-3,4):
             new_x = x+k
             new_y = y+l
             if inside(new_x,new_y):
                 if MP[new_x][new_y] == 'P':
-                    for i in range(2):
-                        if i == 1:
-                            isflipped = True
-                        else:
-                            isflipped = False
-                        for pi in Plist:
-                            for rot in range(1,5):
-                                for k2 in range (-2,3):
-                                    for l2 in range (-2,3):
-                                        ajout_x= new_x+k2
-                                        ajout_y = new_y+l2
-                                        if inside(ajout_x,ajout_y) and (MP[ajout_x][ajout_y] in ['P','V']):
-                                            if coup_possible(m,pi,pl,ajout_x,ajout_y,rot,isflipped): #Each should be on it's own thread
-                                                coups.append((pi,pl, ajout_x, ajout_y, rot, isflipped))
+                    N_list.append(new_x,new_y)
+    return N_list
+
+
+def coup_rajoute(m,x,y,N_List,Plist):
+    '''
+    Fonction pour calculer les nouveaux coups possibles aux positions N_List
+    :param m: matrice 20x20
+    :param x: Position en x de la nouvelle pièce
+    :param y: Position en y de la nouvelle pièce
+    :param N_list: Liste des nouvelles pos
+    :Plist: liste des pièces du joueur
+    :return: (lst) Liste des nouveaux coups
+    '''
+    start = time.time()
+    coups=[]
+    MP=matrice_possible(m, pl)
+    for (new_x, new_y) in N_List:
+        for i in range(2):
+            if i == 1:
+                isflipped = True
+            else:
+                isflipped = False
+            for pi in Plist:
+                for rot in range(1,5):
+                    for k2 in range (-2,3):
+                        for l2 in range (-2,3):
+                            ajout_x= new_x+k2
+                            ajout_y = new_y+l2
+                            if inside(ajout_x,ajout_y) and (MP[ajout_x][ajout_y] in ['P','V']):
+                                if coup_possible(m,pi,pl,ajout_x,ajout_y,rot,isflipped): #Each should be on it's own thread
+                                    coups.append((pi,pl, ajout_x, ajout_y, rot, isflipped))
     return coups
 
 def coup_enleve(m,Clist):
+    '''
+    Fonction qui calcule quel coup ne sont plus possible
+    :param m: Matrice de la partie
+    :param Clist: Liste de coup
+    :return: (lst) Liste des coups qui ne sont pas possible sur la matrice m
+    '''
     enleve =[]
     for i in Clist:
         (pi,pl,x,y,rot,isflipped) = i
