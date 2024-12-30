@@ -107,12 +107,10 @@ def new_move(m,x,y):
     return N_list
 
 
-def coup_rajoute(m,x,y,N_List,Plist):
+def coup_rajoute(m,N_List,Plist):
     '''
     Fonction pour calculer les nouveaux coups possibles aux positions N_List
     :param m: matrice 20x20
-    :param x: Position en x de la nouvelle pièce
-    :param y: Position en y de la nouvelle pièce
     :param N_list: Liste des nouvelles pos
     :Plist: liste des pièces du joueur
     :return: (lst) Liste des nouveaux coups
