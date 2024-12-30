@@ -86,7 +86,7 @@ def matrice_possible_start(pl):
         m[19][0] = 'P'
     return m
 
-def coups_possibles_force_brute(m,pl,Plist):
+def coups_possibles_faux(m,pl,Plist):
     '''
     Fonction pour déterminer l'ensembles des coups possibles pour un joueur
     :param m: matrice 20x20
@@ -109,6 +109,36 @@ def coups_possibles_force_brute(m,pl,Plist):
                             if coup_possible(m,pi,pl,x,y,rot,isflipped):
                                 coups.append((pi, x, y, rot, isflipped))
     return coups
+
+def coup_possible_force_brute(m,pl,Plist):
+    '''
+    Fonction pour déterminer l'ensemble des coups possibles pour un joueur, moins brute
+    :param m: matrice 20x20
+    :param pl: (str) R,B,Y ou G = joueur
+    :param Plist: liste de pieces
+    :return: (lst) liste des coups possibles, sous la forme [(pi, x, y, rot, isflipped)]
+    '''
+    coups=[]
+    for i in range(2):
+        if i == 1:
+            isflipped = True
+        else:
+            isflipped = False
+        MP=matrice_possible(m, pl)
+        for pi in Plist:
+            for rot in range(1,5):
+                for x in range(20):
+                    for y in range(20):
+                        if MP[x][y] == 'P':
+                            for k in range(-2,3):
+                                for l in range(-2,3):
+                                    if inside(x+k,y+l) and (MP[x+k][y+l] in ['P','V']):
+                                        if coup_possible(m,pi,pl,x,y,rot,isflipped):
+                                            coups.append((pi, x, y, rot, isflipped))
+    return coups
+
+
+
 
 
 def coup_possible(m,pi,pl,x,y,rot,isflipped):
