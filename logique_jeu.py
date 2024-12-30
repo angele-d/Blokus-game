@@ -142,3 +142,12 @@ def coup_possible(m,pi,pl,x,y,rot,isflipped):
                 elif mat_pos[x+i-2][y+j-2] == 'P':
                     touche = True
     return touche
+
+def coup_restant_force_brute(grille, pl, Plist):
+    '''
+    :param grille: matrice 20x20
+    :param pl: (str) G, Y, B, R = joueur
+    :param Plist: Liste des pièces du joueur
+    :return: (bool) il y a des coups possibles
+    '''
+    return not coups_possibles_force_brute(grille, pl, Plist)==[]
