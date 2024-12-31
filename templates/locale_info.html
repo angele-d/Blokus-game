@@ -1,4 +1,4 @@
-<title> PARTIE LOCALE </title>
+<title> BLOKUS PP2I grp6 - PARTIE LOCALE </title>
 
 <head>
     <link rel="stylesheet" href="{{ url_for('static', filename='CSS/style.css') }}">
@@ -8,7 +8,8 @@
 <body>
 <div class="bandeau"> 
     <div class="bandeau_inner"> 
-        <a href="/" class="bandeau_titre"> Jeu du BLOKUS </a> 
+        <a href="/" class="bandeau_titre"> Jeu du BLOKUS</a> 
+        <a href="/locale" class="bandeau_retourArriere"> Choix nombre de joueurs </a>
     </div>
 </div>
 
@@ -19,8 +20,9 @@
     <form action="/locale_lobby" method="POST">
         <p><label>Inscrivez vos pseudos: </label> <br>
         {% for i in range(nbr)%}
-            <input type="text" name="name{{i}}" placeholder="Votre pseudo" required> </p>
+            <input type="text" name="name{{i}}" placeholder="Pseudo Joueur {{i+1}}" required> 
         {% endfor %}
+        </p>
         <p><label>Quel sera le nom de votre partie ?</label> <br>
         <input type="text" name="name_game" placeholder="Votre nom de partie" required> </p>
         <p><label>Indiquez le mot de passe de cette partie: </label> <br>

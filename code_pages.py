@@ -304,7 +304,7 @@ def submit22():
             socketio.emit('tour_joueur', room = id_game)
             return jsonify({"status": "coup valide","joueur":player}), 200
         else: 
-            print("Le joueur",color,"vaut jouer alors que c'est le tour de",player)
+            print("Le joueur",color,"veut jouer alors que c'est le tour de",player)
             return jsonify({"status" : "pas le bon tour"}), 200
     else: 
         return jsonify({"status" : "coup interdit"}), 200
