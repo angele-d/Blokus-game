@@ -14,31 +14,33 @@
 <div class="bandeau"> 
     <div class="bandeau_inner"> 
         <a href="/" class="bandeau_titre"> Jeu du BLOKUS </a> 
+        <a href="/historique/{{id_game}}/true" class="bandeau_retourArriere"> Historique détaillé de votre partie </a>
     </div>
 </div>
 
 <div class="infoPartie">
+    <br>
     <h1>C'est la fin de votre partie ! </h1>
+</div>
     <br> <br>
-    <div class="infosFinPartie">
-        <h2> Découvrez vos scores :</h2>
-        <table>
-            <thead>
-                <tr>
-                    <td> Joueur </td>
-                    <td> Score </td>
-                </tr>
-            </thead>
-            <tbody>
-            {% for i in range(score|length) %}
-                <tr>
-                    <td> {{liste_joueur[i]}} </td>
-                    <td> {{score[i]}} </td>
-                <tr>
-            {% endfor %}
-            </tbody>
-        </table>
-    </div>
+<div class="infosFinPartie">
+    <h2> Découvrez vos scores :</h2>
+    <table>
+        <thead>
+            <tr>
+                <td> Joueur </td>
+                <td> Score </td>
+            </tr>
+        </thead>
+        <tbody>
+        {% for i in range(score|length) %}
+            <tr>
+                <td> {{liste_joueur[i]}} </td>
+                <td> {{score[i]}} </td>
+            <tr>
+        {% endfor %}
+        </tbody>
+    </table>
 </div>
 </body>
 

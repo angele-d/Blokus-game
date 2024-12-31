@@ -344,7 +344,7 @@ def fin_de_partie(id_game):
     d = cursor.fetchone()[0]
     conn.close()
     sco = score(id_game)
-    return render_template('fin_de_partie.html', score = sco, liste_joueur = d)
+    return render_template('fin_de_partie.html', id_game = id_game, score = sco, liste_joueur = d)
 
 @app.route('/grille/<id_game>')
 def grille(id_game):

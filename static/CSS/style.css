@@ -179,8 +179,10 @@ body {
 /*Fin de partie*/
 .infosFinPartie{
     padding: 20px 20px;
+    display: grid;
     text-align: center;
     justify-content: center; 
+    align-items: center;
     border-radius: 5px;
     border-color: white;
     border-style:double;
@@ -193,9 +195,6 @@ body {
     color: rgb(39, 68, 231);
 }
 .infosFinPartie table{
-    display: block;
-    justify-content: center; 
-    align-items: center;
     border-collapse: collapse;
     letter-spacing: 1px;
 }
