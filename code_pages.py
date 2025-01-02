@@ -11,8 +11,6 @@ app.secret_key = "swV#]S)p;ArRak`*chzd3FC6BZG$j<95HU:/ga3{26mLf:r'eFHMSU5$!E]X&T
 
 socketio = SocketIO(app)
 
-nbr_joue = []
-
 @app.route('/')
 def accueil():
     return render_template('main_page.html')
@@ -140,6 +138,7 @@ def locale_info():
 
 @app.route('/locale_lobby', methods=['POST'])
 def locale_lobby():
+    nbr_joue = []
     conn = sqlite3.connect('Base')
     cursor = conn.cursor()
     query = "SELECT id_game FROM game ORDER BY id_game"
@@ -158,7 +157,7 @@ def locale_lobby():
         new_game = len(rows) + 1
     for i in range(len(request.form)-2):
         name = request.form.get(f'name{i}')
-        nbr_joue.append(name)
+        nbr_joue.append(name+"(joueur local)")
     name_game = request.form['name_game']
     password_game = request.form['password_game']
     nb_move = -1 # Si le nb_move passe a 0 ou plus, cela veut dire que la game est lancée
@@ -356,9 +355,7 @@ def grille(id_game):
         print(f"pas de nom pour la partie :{id_game}")
         return f"pas de nom pour la partie :{id_game}",500
     nb_j = nb_joueur(id_game)
-    print('.................................................')
-    print(nbr_joue)
-    if nb_j == 1 or nbr_joue != []:
+    if nb_j == 1 or session['name'][-14:] == "(joueur local)":
         (m,color) = tour(id_game)
     if nb_j == 2:
         (m,j_actuel) = tour(id_game)
