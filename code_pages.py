@@ -280,10 +280,7 @@ def submit22():
 
     # Traitements des données pour qu'ils soit transmis a la logique de jeu
     flip = (retourne == -1)
-    if flip:
-        rotation = -rotation//30
-    else:
-        rotation = rotation//30
+    rotation = rotation//30
     numpiece= int(re.findall(r'\d+',element)[0])
     id_piece=f"P{numpiece}"
     id_move = nb_move(id_game,color)
