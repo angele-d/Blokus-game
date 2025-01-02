@@ -35,21 +35,23 @@ def nb_move(id_game,color):
     return nb_move
 
 #FONCTION APPELLEE DANS SUBMIT22
-def ajoute_coup(id_game,x,y,m):
+def ajoute_coup(id_game,pl,x,y,m):
     '''
     Ajoute les coups possibles dans la BD
     :param id_game: id_game
+    :param pl: joueur
     :param x: int
     :param y: int
     :param m: matrice 20x20
     '''
+    conn = sqlite3.connect('Base')
     cursor = conn.cursor()
     query= '''SELECT color FROM coups WHERE id_game = ? AND position_x = ? AND position_y = ?'''
     cursor.execute(query,(id_game,x,y))
     player = cursor.fetchone()[0]
-    N_list = new_move(m,x,y)
-    Plist = piece_restante(id_game,player)
-    liste_coup = coup_rajoute(m,N_list,Plist)
+    N_list = new_move(m,pl,x,y)
+    Plist = piece_res(id_game,player)
+    liste_coup = coup_rajoute(m,N_list,Plist,pl)
     quest= '''INSERT INTO coups_possibles (id_game, id_piece, color, flip, rotation, position_x, position_y) 
                VALUES (?, ?, ?, ?, ?, ?, ?)'''
     for coup in liste_coup:
@@ -66,13 +68,17 @@ def supprime_coups(m,x,y,id_game):
     :param y: position y du nouveau coup
     :id_game: id de la game
     '''
-    coup = coup_possible(id_game)
-    a_check = []
-    for i in coup:
-        (id_piece,c,Px,Py,r,f) = i 
-        if abs(px - x) <= 6:
-            a_check.append(i)
-    a_del = coup_enleve(m,a_check)
+    conn = sqlite3.connect('Base')
+    cursor = conn.cursor()
+    query = '''
+        SELECT id_piece, color, position_x, position_y, rotation, flip
+        FROM coups_possibles
+        WHERE id_game = ? AND ABS(position_x - ?) <= 6 AND ABS(position_y - ?) <= 6
+    '''
+    cursor.execute(query, (id_game, x,y))
+    coup= cursor.fetchall()
+    conn.close()
+    a_del = coup_enleve(m,coup)
     supprime_coups_liste(id_game,a_del)
 
 # Va chercher les coups possibles dans la BD
@@ -100,6 +106,29 @@ def supprime_coups_liste(id_game,liste):
         conn.commit()
     conn.close()
 
+def supprime_coups_piece(id_game,color,piece):
+    '''
+    Supprime tout les coups jouée avec la piece piece de la couleur color dans la partie id_game
+    param:id_game: id de la partie
+    param:color: couleur du joueur
+    param:piece: piece à supprimer
+    '''
+    conn = sqlite3.connect('Base')
+    cursor = conn.cursor()
+    query= '''DELETE FROM coups_possibles WHERE id_game = ? AND id_piece = ? AND color = ?'''
+    cursor.execute(query,(id_game,piece,color))
+    conn.commit()
+    conn.close
+
+def liste_coup_possible(id_game,color):
+    conn = sqlite3.connect('Base')
+    cursor = conn.cursor()
+    query= '''SELECT id_piece, color, position_x, position_y, rotation, flip FROM coups_possibles WHERE id_game = ? AND color = ?'''
+    cursor.execute(query,(id_game,color))
+    coups_poss = cursor.fetchall()
+    conn.close()
+    return coups_poss
+
 def qui_peut_jouer(grille,nb_joueur,id_game):
     '''
     Renvoie une liste des couleurs qui peuvent encore jouer
@@ -109,21 +138,22 @@ def qui_peut_jouer(grille,nb_joueur,id_game):
     '''
     Plist=piece_res(id_game,'B')
     couleur = []
-    l = coups_possibles_force_brute(grille,'B',Plist)
+
+    l = liste_coup_possible(id_game,'B')
     if l != []:
         couleur += ['B']
     Plist=piece_res(id_game,'Y')
-    l = coups_possibles_force_brute(grille,'Y',Plist)
+    l = liste_coup_possible(id_game,'Y')
     if l != []:
         couleur += ['Y']
     if nb_joueur >= 3:
         Plist=piece_res(id_game,'R')
-        l = coups_possibles_force_brute(grille,'R',Plist)
+        l = liste_coup_possible(id_game,'R')
         if l != []:
             couleur += ['R']
     if nb_joueur >= 4:
         Plist=piece_res(id_game,'G')
-        l = coups_possibles_force_brute(grille,'G',Plist)
+        l = liste_coup_possible(id_game,'G')
         if l != []:
             couleur += ['G']
     return couleur

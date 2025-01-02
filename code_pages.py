@@ -4,7 +4,7 @@ from fonc_DB import *
 from deb_IA import *
 import sqlite3
 import re
-
+import time
 
 app = Flask(__name__)
 app.secret_key = "swV#]S)p;ArRak`*chzd3FC6BZG$j<95HU:/ga3{26mLf:r'eFHMSU5$!E]X&TAp=<kg;%Run`Q}CdvZS93gp6;eKjxH'$?}cFfuJ<D2`Nsh)(7_4~nXX-g2qb!7rGZ4BPAw]u6`/;a,=CmF3M.pVz#*_<DwtN3zuS;!J4F:.7Rqj?5Zgp}L)v^9G<y&AaB`d"
@@ -295,10 +295,15 @@ def submit22():
         if color == player: #verif que c'est le bon joueur qui joue
             insert_move(id_game, id_move, id_piece, color, int(carrY), int(carrX), int(rotation), flip)
             m = transcription_pieces_SQL_grille(id_game)
-
-            ajoute_coup(id_game,int(carrY),int(carrX),m)
+            deb_A = time.time()
+            ajoute_coup(id_game,color,int(carrY),int(carrX),m)
+            fin_A = time.time()
+            print("TEMPSA =", fin_A -deb_A)
+            deb_B = time.time()
+            supprime_coups_piece(id_game,color,id_piece)
             supprime_coups(m,int(carrY),int(carrX),id_game)
-
+            fin_B = time.time()
+            print("TEMPSB =", fin_B -deb_B)
             socketio.emit('update_grille', room = id_game)
             # Retourne une réponse avec un statut et les coordonnées
             player = tour(id_game)[1]
@@ -359,6 +364,20 @@ def grille(id_game):
         print(f"pas de nom pour la partie :{id_game}")
         return f"pas de nom pour la partie :{id_game}",500
     nb_j = nb_joueur(id_game)
+
+    if cherche_coups_possibles(id_game) == []:
+        conn = sqlite3.connect('Base')
+        cursor = conn.cursor()
+        query= '''INSERT INTO coups_possibles (id_game, id_piece, color, flip, rotation, position_x, position_y) 
+                VALUES (?, ?, ?, ?, ?, ?, ?)'''
+        cursor.execute(query,(id_game,"P1","B",0,0,0,0))
+        cursor.execute(query,(id_game,"P1","Y",0,0,19,19))
+        cursor.execute(query,(id_game,"P1","R",0,0,0,19))
+        cursor.execute(query,(id_game,"P1","G",0,0,19,0))
+        conn.commit()
+        conn.close()
+
+
     if nb_j == 1 or session['name'][-14:] == "(joueur local)":
         (m,color) = tour(id_game)
     if nb_j == 2:
@@ -421,5 +440,7 @@ def historique(id_game,boo):
     except Exception as e:
         return f"An error occurred while retrieving the data: {e}", 500
 
+
+#FAIT AVEC DES PIECES JOUEES
 if __name__ == '__main__':
     socketio.run(app, debug=True)

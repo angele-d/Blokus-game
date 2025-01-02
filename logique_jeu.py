@@ -87,7 +87,7 @@ def matrice_possible_start(pl):
         m[19][0] = 'P'
     return m
 
-def new_move(m,x,y):
+def new_move(m,pl,x,y):
     '''
     Fonction pour calculer les positions autour desquelles des nouveaux coups sont possibles
     :param m: matrice 20x20
@@ -103,16 +103,17 @@ def new_move(m,x,y):
             new_y = y+l
             if inside(new_x,new_y):
                 if MP[new_x][new_y] == 'P':
-                    N_list.append(new_x,new_y)
+                    N_list.append((new_x,new_y))
     return N_list
 
 
-def coup_rajoute(m,N_List,Plist):
+def coup_rajoute(m,N_List,Plist,pl):
     '''
     Fonction pour calculer les nouveaux coups possibles aux positions N_List
     :param m: matrice 20x20
     :param N_list: Liste des nouvelles pos
     :Plist: liste des pièces du joueur
+    :pl: joueur actuel
     :return: (lst) Liste des nouveaux coups
     '''
     start = time.time()
