@@ -193,8 +193,13 @@
                     e.style.transform = `scaleX(-1) rotate(${rotation}deg)`;
                 }
                 else {
+                    console.log(rotation)
+                    if (rotation == 1){
+                        rotation = 0
+                    }
                     // Rotation de 90 degrés à partir de l'image actuelle
                     rotation = (parseInt(rotation) + 90) % 360;
+                    console.log(rotation)
                     e.dataset.rotation = `${rotation}`;
                     e.style.transform = `rotate(-${rotation}deg)`;
                 }
