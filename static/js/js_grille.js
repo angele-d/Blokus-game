@@ -133,12 +133,17 @@
             element.dataset.flip = "1";
             element.dataset.rotation = "0";
             // Quand la souris sélectionne l'image, on lance une nouvelle fonction
-            element.addEventListener('dblclick',function (){
+            element.addEventListener('dblclick',function (event){
+                document.addEventListener('contextmenu', function(event) {
+                    event.preventDefault();
+                })
                 flip(element.querySelector("img"))
                 doubleClic = true;
             })
             element.querySelector("img").onmousedown = function(event){
-                event.preventDefault();
+                document.addEventListener('contextmenu', function(event) {
+                    event.preventDefault();
+                })
                 if (doubleClic) {
                     doubleClic = false;
                     return;
