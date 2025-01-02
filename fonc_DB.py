@@ -43,6 +43,7 @@ def ajoute_coup(id_game,x,y,m):
     :param y: int
     :param m: matrice 20x20
     '''
+    conn = sqlite3.connect('Base')
     cursor = conn.cursor()
     query= '''SELECT color FROM coups WHERE id_game = ? AND position_x = ? AND position_y = ?'''
     cursor.execute(query,(id_game,x,y))
