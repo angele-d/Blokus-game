@@ -294,10 +294,14 @@ def submit22():
     if coup_possible(m,id_piece,color,int(carrY),int(carrX),int(rotation),flip):
         if color == player: #verif que c'est le bon joueur qui joue
             insert_move(id_game, id_move, id_piece, color, int(carrY), int(carrX), int(rotation), flip)
-            
+            m = transcription_pieces_SQL_grille(id_game)
+
+            ajoute_coup(id_game,int(carrY),int(carrX),m)
+            supprime_coups(m,int(carrY),int(carrX),id_game)
+
             socketio.emit('update_grille', room = id_game)
             # Retourne une réponse avec un statut et les coordonnées
-            m,player = tour(id_game)
+            player = tour(id_game)[1]
             if player == None:
                 socketio.emit('fin_de_partie', room = id_game)
             socketio.emit('tour_joueur', room = id_game)
