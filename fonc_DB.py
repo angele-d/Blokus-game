@@ -54,9 +54,14 @@ def ajoute_coup(id_game,pl,x,y,m):
     liste_coup = coup_rajoute(m,N_list,Plist,pl)
     quest= '''INSERT INTO coups_possibles (id_game, id_piece, color, flip, rotation, position_x, position_y) 
                VALUES (?, ?, ?, ?, ?, ?, ?)'''
-    for coup in liste_coup:
-        cursor.execute(quest,(id_game,coup[0],coup[1],coup[5],coup[4],coup[2],coup[3]))
-        conn.commit()
+    deb =time.time()
+    cursor.executemany(quest, [
+        (id_game, coup[0], coup[1], coup[5], coup[4], coup[2], coup[3]) 
+        for coup in liste_coup
+    ])
+    conn.commit()
+    fin = time.time()
+    print("temps d'exécution",fin-deb)
     conn.close()
 
 #FONCTION APPELLEE DANS SUBMIT22

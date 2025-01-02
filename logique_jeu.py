@@ -1,6 +1,7 @@
 from rotation_pieces import *
 import time
-
+import concurrent.futures
+import os
 def print_jeu(m):
     '''
     Fonction auxiliaire faite pour le debugging
@@ -95,6 +96,7 @@ def new_move(m,pl,x,y):
     :param y: Position en y de la nouvelle pièce
     :return: (lst) liste des positions autour desquelles on peut faire des nouveaux coups
     '''
+    deb =time.time()
     N_list =[]
     MP=matrice_possible(m, pl)
     for k in range(-3,4):
@@ -104,8 +106,27 @@ def new_move(m,pl,x,y):
             if inside(new_x,new_y):
                 if MP[new_x][new_y] == 'P':
                     N_list.append((new_x,new_y))
+    fin = time.time()
+    print("temps New_move",fin-deb)
     return N_list
 
+
+def chunk_list(data, size):
+    """
+    Divise une liste en morceau de taille donnée
+    """
+    return [data[i:i + size] for i in range(0, len(data), size)]
+
+def parall(chunk):
+    """
+    Fonction utilisée en parallèle pour déterminer si un coup est possible
+    """
+    results = []
+    for params in chunk:
+        if coup_possible(*params):
+            (m,id_piece,c,c1,c2,c3,c4) = params
+            results.append((id_piece,c,c1,c2,c3,c4))
+    return results
 
 def coup_rajoute(m,N_List,Plist,pl):
     '''
@@ -117,8 +138,11 @@ def coup_rajoute(m,N_List,Plist,pl):
     :return: (lst) Liste des nouveaux coups
     '''
     start = time.time()
-    coups=[]
+    to_check = []
+    deb = time.time()
     MP=matrice_possible(m, pl)
+
+    check_unique = set()
     for (new_x, new_y) in N_List:
         for i in range(2):
             if i == 1:
@@ -132,8 +156,29 @@ def coup_rajoute(m,N_List,Plist,pl):
                             ajout_x= new_x+k2
                             ajout_y = new_y+l2
                             if inside(ajout_x,ajout_y) and (MP[ajout_x][ajout_y] in ['P','V']):
-                                if coup_possible(m,pi,pl,ajout_x,ajout_y,rot,isflipped): #Each should be on it's own thread
-                                    coups.append((pi,pl, ajout_x, ajout_y, rot, isflipped))
+                                entry = (tuple(map(tuple, m)), pi, pl, ajout_x, ajout_y, rot, isflipped)
+                                if not entry in check_unique:
+                                    check_unique.add(entry)
+                                    to_check.append((m,pi,pl,ajout_x,ajout_y,rot,isflipped))
+    fin = time.time()
+    print("Temps de recherche:",fin-deb)
+    print("Nombre de call a coup possible : ", len(to_check))
+    coups = []
+
+    chunk_size = max(1, len(to_check) // os.cpu_count())
+    chunks = chunk_list(to_check, chunk_size)
+
+    deb = time.time()
+    with concurrent.futures.ProcessPoolExecutor() as executor:
+        futures = [executor.submit(parall, chunk) for chunk in chunks]
+        for future in concurrent.futures.as_completed(futures):
+            result = future.result()
+            if result:
+                coups.extend(result)
+    fin = time.time()
+    print("temps de parall: ", fin -deb )
+    print("Nb de nouvelle entrée", len(coups))
+
     return coups
 
 def coup_enleve(m,Clist):
