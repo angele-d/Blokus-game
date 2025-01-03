@@ -1,169 +1,100 @@
 from fonc_DB import *
 import random
 
-def arbre_de_coups(pl, grille, adv_Plist, n):
+def arbre_de_coups(pl, nb_pl, grille, adv_Plist, n, adv_coups):
     '''
     Fonction qui genère l'arbre des coups possibles
     :param pl: (str) B,G,Y,R = joueur
+    :param nb_pl: (int) indice du joueur pl
     :param grille: matrice 20x20
     :param adv_Plist: liste des pièces de tous les joueurs [BPlist, YPlist, RPlist, GPlist]
     :param n: (int) nombre de coups à simuler, profondeur de l'arbre des coups (nb de coups du joueur pl)
+    :param adv_coups: liste des coups possibles de chaque joueurs
     :return: arbre des coups de la forme [(coup, [liste des coups suivants ce coup], [liste des pièces des différents joueurs au niveau de ce coup])]'''
     arbre=[]
+    Plist=adv_Plist[nb_pl]
     if n==0:
         return [] #l'arbre s'arrête là
     if Plist==[]:
         return [] #l'arbre s'arrête là
+    if adv_coups[nb_pl]==[]:
+        return [] #l'arbre s'arrête là, plus de coups possibles
     else:
-        if pl=='B':
-            Plist=adv_Plist[0]
-        elif pl=='Y':
-            Plist=adv_Plist[1]
-        elif pl=='R':
-            Plist=adv_Plist[2]
-        else:
-            Plist=adv_Plist[3]
-        cr=coup_restant_force_brute(grille, pl, Plist)
-        if not cr:
-            return [] #il n'y a plus de coups  possible, l'arbre s'arrête là
-        else:
-            c_possibles=coups_possibles_force_brute(grille, pl, Plist)
-            for i in range (len(c_possibles)):
-                coup=c_possibles[i] #coup de la forme (pi, x, y, rot, isflipped)
-                Plist2=Plist.copy()
-                Plist2.pop(i)
-                grille2=placer_piece_grille20x20(grille, coup[0], coup[1], coup[2], pl, coup[3], coup[4]) #mise à jour la grille avec la nouvelle pièce ajoutée 
-                joueurs=['B', 'Y', 'R', 'G']
-                List_aPlist=adv_Plist.copy()
-                for k in len(joueurs):
-                    if k==pl:
-                        List_aPlist[i]=Plist2
-                suite=coups_adversaires(List_aPlist, [grille2], pl, pl) #renvoie liste des coups de la forme [(liste des grilles après coups, liste des pièces rstantes des joueurs)]
-                ss_arbre=[] #construction du sous-arbre
-                for j in suite:
-                    ss_arbre.append(arbre_de_coups(pl, j[0], j[1], n-1))
-                arbre.append((coup, ss_arbre, List_aPlist))
-            return arbre
+        c_possibles=adv_coups[nb_pl]
+        for i in range (len(c_possibles)):
+            coup=c_possibles[i] #coup de la forme (pi,COLOR, x, y, rot, isflipped)
+            Plist2=Plist.copy()
+            Plist2.pop(i)
+            grille2=placer_piece_grille20x20(grille, coup[0], coup[2], coup[3], pl, coup[4], coup[5]) #mise à jour la grille avec la nouvelle pièce ajoutée 
+            joueurs=['B', 'Y', 'R', 'G']
+            List_aPlist=adv_Plist.copy()
+            List_aCoups=adv_coups.copy()
+            for k in len(joueurs):
+                List_aCoups[i]=coup_enleve(grille2, List_aCoups[i])
+                if k==pl:
+                    List_aPlist[i]=Plist2
+                    List_aCoups[i]=coup_rajoute(grille2, new_move(grille2, pl, coup[2], coup[3]), List_aPlist[i], pl)
+            suite=coups_adversaires([(grille2, List_aPlist, List_aCoups)], pl, nb_pl, pl) #renvoie liste des coups de la forme [(liste des grilles après coups, liste des pièces rstantes des joueurs, liste des coups possibles de chaque joueurs)]
+            ss_arbre=[] #construction du sous-arbre
+            for j in suite:
+                ss_arbre.append(arbre_de_coups(pl, nb_pl, j[0], j[1], n-1, j[2]))
+            arbre.append((coup, ss_arbre, List_aPlist))
+        return arbre
 
-def coups_adversaires(List_aPlist, Lcoups, pl, m):
+def coups_adversaires(Lcoups, pl, nb_pl_ia, m):
     '''
     Fonction qui renvoie toutes les grilles correspondantes à tous les coups possibles des adversaires
-    :param List_aPlist: liste des pièces restantes des joueurs, sous la force [LpiècesB, LpiècesY, LpiècesR, LpiècesG]
-    :param Lcoups: liste des coups à renvoyer (liste de grilles, liste des pièces)
+    :param Lcoups: liste des coups à renvoyer (liste de grilles, liste des pièces, liste des coups possibles)
     :param pl: (str) B, Y, R, G = joueur simulé par IA
+    :param nb_pl_ia: (int) indice du joueur ia qu'on simule
     :param m: (int) dernier joueur à avoir posé une pièce
-    :return: liste des grilles suite aux coups des adversaires et la mise à jour des listes des pièces des joueurs, sous la forme lst[([grilles], [lst_pieces_joueurs])]
+    :return: liste des grilles suite aux coups des adversaires et la mise à jour des listes des pièces des joueurs, sous la forme lst[(grille, [lst_pieces_joueurs], [lst_coups_joueurs])]
     '''
+    joueurs=['B', 'Y', 'R', 'G']
     #Si c'est au tour du joueur dont on simule les coups, on arrête là
-    if pl=='B':
-        if m=='G':
-            return (Lcoups, List_aPlist)
-    if pl=='Y':
-        if m=='B':
-            return (Lcoups, List_aPlist)
-    if pl=='R':
-        if m=='Y':
-            return (Lcoups, List_aPlist)
-    if pl=='G':
-        if m=='R':
-            return (Lcoups, List_aPlist)
+    if nb_pl_ia==0 and joueurs[4]==m:
+        return Lcoups
+    elif joueurs[nb_pl_ia-1]==m:
+        return Lcoups
     #Sinon
     if m=='G':
-        if List_aPlist[0]==[]:
-            coups_adversaires(List_aPlist, Lcoups, pl, 'B')
-        else:
-            for i in Lcoups[0]:
-                possible=False
-                for grille in Lcoups:
-                    cr=coup_restant_force_brute(grille, 'B', List_aPlist[0])
-                    if cr:
-                        possible=True
-                        break
-                if not possible:
-                    coups_adversaires(List_aPlist, Lcoups, pl, 'B')
-                else:
-                    Lcoups2=[]
-                    for grille in Lcoups2:
-                        c_possibles=coups_possibles_force_brute(grille, 'B', List_aPlist[0])
-                        for j in c_possibles:
-                            L2=List_aPlist.copy()
-                            for k in range(len(L2[0])):
-                                if L2[0][k]==j[0]:
-                                    L2[0].pop(k)
-                            Lcoups2.append(j,L2)
-            return coups_adversaires(List_aPlist, Lcoups2, pl, 'B')
-    if m=='B':
-        if List_aPlist[1]==[]:
-            coups_adversaires(List_aPlist, Lcoups, pl, 'Y')
-        else:
-            for i in Lcoups[1]:
-                possible=False
-                for grille in Lcoups:
-                    cr=coup_restant_force_brute(grille, 'Y', List_aPlist[1])
-                    if cr:
-                        possible=True
-                        break
-                if not possible:
-                    coups_adversaires(List_aPlist, Lcoups, pl, 'Y')
-                else:
-                    Lcoups2=[]
-                    for grille in Lcoups2:
-                        c_possibles=coups_possibles_force_brute(grille, 'Y', List_aPlist[1])
-                        for j in c_possibles:
-                            L2=List_aPlist.copy()
-                            for k in range(len(L2[1])):
-                                if L2[1][k]==j[0]:
-                                    L2[1].pop(k)
-                            Lcoups2.append(j,L2)
-            return coups_adversaires(List_aPlist, Lcoups2, pl, 'Y')
-    if m=='Y':
-        if List_aPlist[2]==[]:
-            coups_adversaires(List_aPlist, Lcoups, pl, 'R')
-        else:
-            for i in Lcoups[2]:
-                possible=False
-                for grille in Lcoups:
-                    cr=coup_restant_force_brute(grille, 'R', List_aPlist[2])
-                    if cr:
-                        possible=True
-                        break
-                if not possible:
-                    coups_adversaires(List_aPlist, Lcoups, pl, 'R')
-                else:
-                    Lcoups2=[]
-                    for grille in Lcoups2:
-                        c_possibles=coups_possibles_force_brute(grille, 'R', List_aPlist[2])
-                        for j in c_possibles:
-                            L2=List_aPlist.copy()
-                            for k in range(len(L2[2])):
-                                if L2[2][k]==j[0]:
-                                    L2[2].pop(k)
-                            Lcoups2.append(j,L2)
-            return coups_adversaires(List_aPlist, Lcoups2, pl, 'R')
-    if m=='R':
-        if List_aPlist[3]==[]:
-            coups_adversaires(List_aPlist, Lcoups, pl, 'G')
-        else:
-            for i in Lcoups[3]:
-                possible=False
-                for grille in Lcoups:
-                    cr=coup_restant_force_brute(grille, 'G', List_aPlist[3])
-                    if cr:
-                        possible=True
-                        break
-                if not possible:
-                    coups_adversaires(List_aPlist, Lcoups, pl, 'G')
-                else:
-                    Lcoups2=[]
-                    for grille in Lcoups2:
-                        c_possibles=coups_possibles_force_brute(grille, 'G', List_aPlist[3])
-                        for j in c_possibles:
-                            L2=List_aPlist.copy()
-                            for k in range(len(L2[3])):
-                                if L2[3][k]==j[0]:
-                                    L2[3].pop(k)
-                            Lcoups2.append(j,L2)
-            return coups_adversaires(List_aPlist, Lcoups2, pl, 'G')
+        for i in Lcoups:
+            if i[2][0]!=[]: #si on a des coups possibles pour ce joueurs
+                Lgrille=[]
+                for j in range (len(i[2][0])): #on récupère les coups de la forme (id_piece,color,pos_x,pos_y,rot,flip)
+                    grille2=(placer_piece_grille20x20(i[0], j[0], j[2], j[3], j[1], j[4], j[5]))
+                    coup2=i[2].copy()
+                    pieces2=i[1].copy()
+                    for k in range (4):
+                        coup2[k]=coup_enleve(grille2, coup2)
+                        if k==0:
+                            for m in range (len(pieces2[k])):
+                                if pieces2[k][m]==j[0]:
+                                    pieces2[k].pop(m)
+                            coup2[k]=coup_rajoute(grille2, new_move(grille2, joueurs[k], j[2], j[3]), pieces2[k], joueurs[k])
+                    Lgrille.append((grille2, pieces2, coup2))
+        return coups_adversaires(Lgrille, pl, nb_pl_ia, 'B')
+    else:
+        #on récupère l'indice du joueur qu'on va simuler
+        for p in range(3):
+            if joueurs[p]==m:
+                nb_pl=p+1
+        for i in Lcoups:
+            if i[2][nb_pl]!=[]: #si on a des coups possibles pour ce joueurs
+                Lgrille=[]
+                for j in range (len(i[2][nb_pl])): #on récupère les coups de la forme (id_piece,color,pos_x,pos_y,rot,flip)
+                    grille2=(placer_piece_grille20x20(i[0], j[0], j[2], j[3], j[1], j[4], j[5]))
+                    coup2=i[2].copy()
+                    pieces2=i[1].copy()
+                    for k in range (4):
+                        coup2[k]=coup_enleve(grille2, coup2)
+                        if k==nb_pl:
+                            for m in range (len(pieces2[k])):
+                                if pieces2[k][m]==j[0]:
+                                    pieces2[k].pop(m)
+                            coup2[k]=coup_rajoute(grille2, new_move(grille2, joueurs[k], j[2], j[3]), pieces2[k], joueurs[k])
+                    Lgrille.append((grille2, pieces2, coup2))
+        return coups_adversaires(Lgrille, pl, nb_pl_ia, joueurs[nb_pl])
 
 def coup_a_faire(pl, grille, n, id_game):
     '''
@@ -176,15 +107,21 @@ def coup_a_faire(pl, grille, n, id_game):
     '''
     joueurs=['B', 'Y', 'R', 'G']
     pls_Plist=[]
+    coups_poss_pl=[]
     #récupération listes des pièces restantes de chaque joueur + indice correspondant au joueur IA
+    #récupération listes de coups possibles de chaque joueurs
     for i in range(len(joueurs)):
         pls_Plist.append(piece_res(id_game, joueurs[i]))
+        coups_poss_pl.append(liste_coup_possible(id_game, joueurs[i]))
         if joueurs[i]==pl:
             pl_nb=i
     #création des arbres de coups possibles
-    arbre=arbre_de_coups(pl, grille, pls_Plist, n, [])
+    arbre=arbre_de_coups(pl, pl_nb, grille, pls_Plist, n, [], coups_poss_pl)
+    
+    #------analyse de l'arbre------
+    
     if len(arbre)==1:
-        return arbre[0][0]
+        return arbre[0][0]  
     #on détermine si des coups ammènent à des profondeurs moins fortes
     profondeurs=[]
     for i in arbre:
