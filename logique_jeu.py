@@ -128,6 +128,16 @@ def parall(chunk):
             results.append((id_piece,c,c1,c2,c3,c4))
     return results
 
+def parallsupp(chunk):
+    """Fonction utilisée en parallèle pour déterminer les coups non possibles
+    """
+    results = []
+    for params in chunk:
+        if not coup_possible(*params):
+            (m,id_piece,c,c1,c2,c3,c4) = params
+            results.append((id_piece,c,c1,c2,c3,c4))
+    return results
+
 def coup_rajoute(m,N_List,Plist,pl):
     '''
     Fonction pour calculer les nouveaux coups possibles aux positions N_List
@@ -193,7 +203,7 @@ def coup_enleve(m,Clist):
     chunks = chunk_list(Clist, chunk_size)
     enleve =[]
     with concurrent.futures.ProcessPoolExecutor() as executor:
-        futures = [executor.submit(parall, chunk) for chunk in chunks]
+        futures = [executor.submit(parallsupp, chunk) for chunk in chunks]
         for future in concurrent.futures.as_completed(futures):
             result = future.result()
             if result:

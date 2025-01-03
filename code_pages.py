@@ -373,7 +373,8 @@ def grille(id_game):
         cursor.execute(query,(id_game,"P1","G",0,0,19,0))
         conn.commit()
         conn.close()
-
+    m = transcription_pieces_SQL_grille(id_game)
+    supprime_coups(m,0,0,id_game)
 
     if nb_j == 1 or session['name'][-14:] == "(joueur local)":
         (m,color) = tour(id_game)
@@ -439,6 +440,8 @@ def historique(id_game,boo):
 
 print(liste_coup_possible(157,"G"))
 print(piece_res(157,"G"))
+print(liste_coup_possible(159,"Y"))
+
 #FAIT AVEC DES PIECES JOUEES
 if __name__ == '__main__':
     socketio.run(app, debug=True)
