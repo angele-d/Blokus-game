@@ -154,6 +154,11 @@ def supprime_coups_piece(id_game,color,piece):
     conn.close
 
 def liste_coup_possible(id_game,color):
+    ''' Donne la liste des coups possible pour le joueur color dans la partie id_game sous la forme:
+    id_piece,color,pos_x,pos_y,rot,flip
+    param:id_game: id de la partie
+    param:color: couleur du joueur
+    '''
     conn = sqlite3.connect('Base')
     cursor = conn.cursor()
     query= '''SELECT id_piece, color, position_x, position_y, rotation, flip FROM coups_possibles WHERE id_game = ? AND color = ?'''
@@ -165,27 +170,21 @@ def liste_coup_possible(id_game,color):
 def qui_peut_jouer(grille,nb_joueur,id_game):
     '''
     Renvoie une liste des couleurs qui peuvent encore jouer
-    :param grille: matrice 20*20
     :param nb_joueur: int
     :param id_game: int
     '''
-    Plist=piece_res(id_game,'B')
     couleur = []
-
     l = liste_coup_possible(id_game,'B')
     if l != []:
         couleur += ['B']
-    Plist=piece_res(id_game,'Y')
     l = liste_coup_possible(id_game,'Y')
     if l != []:
         couleur += ['Y']
     if nb_joueur >= 3:
-        Plist=piece_res(id_game,'R')
         l = liste_coup_possible(id_game,'R')
         if l != []:
             couleur += ['R']
     if nb_joueur >= 4:
-        Plist=piece_res(id_game,'G')
         l = liste_coup_possible(id_game,'G')
         if l != []:
             couleur += ['G']
