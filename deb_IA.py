@@ -170,7 +170,7 @@ def coup_a_faire(pl, grille, n, id_game):
     fonction qui donne, par la méthode Monte Carlo, le coup à faire étant donné une grille de jeu et des pièces données
     :param pl: (str) G,Y,R,B = joueur
     :param grille: matrice 20*20
-    :param n: (int) profondeur d'arbre à simuler
+    :param n: (int) profondeur d'arbre à simuler / Compris entre 1 et 21
     :param id_game: id_game
     :return: le coup à faire de la forme (num_piece, x, y, rot, isFlipped)
     '''
