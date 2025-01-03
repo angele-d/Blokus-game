@@ -129,7 +129,7 @@ def liste_coup_possible(id_game,color):
     conn.close()
     return coups_poss
 
-def qui_peut_jouer(grille,nb_joueur,id_game):
+def qui_peut_jouer(nb_joueur,id_game):
     '''
     Renvoie une liste des couleurs qui peuvent encore jouer
     :param grille: matrice 20*20
@@ -170,7 +170,7 @@ def piece_res(id_game,joueur):
 def tour(id_game):
     m = transcription_pieces_SQL_grille(id_game)
     nb_j = nb_joueur(id_game)
-    qpj = qui_peut_jouer(m,nb_j,id_game)
+    qpj = qui_peut_jouer(nb_j,id_game)
     conn = sqlite3.connect('Base')
     cursor = conn.cursor()
     query= '''SELECT COUNT(*) FROM coups WHERE color = ? AND id_game = ?'''
@@ -309,4 +309,3 @@ def order_to_name(couleur,id_game):
         return rows[2][0]
     if couleur == 'G':
         return rows[3][0]
-
