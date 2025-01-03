@@ -249,9 +249,6 @@
                 var centerX = Math.round(pos.left + pos.width / 2);
                 var centerY = Math.round(pos.top + pos.height / 2);
                 placementGrille(centerX,centerY,element)
-                var coordsText = "X: " + centerX + ", Y: " + centerY;
-                // Met à jour
-                document.getElementById("coords").textContent = coordsText;
             }
             
             function placementGrille(x,y,element) {
