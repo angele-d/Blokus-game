@@ -77,21 +77,20 @@ def supprime_coups(m,x,y,id_game):
     conn = sqlite3.connect('Base')
     cursor = conn.cursor()
     query = '''
-        SELECT id_piece, color, position_x, position_y, rotation, flip
-        FROM coups_possibles
-        WHERE id_game = ? AND ABS(position_x - ?) <= 6 AND ABS(position_y - ?) <= 6
-    '''
+        SELECT id_piece, color, position_x, position_y, rotation, flip FROM coups_possibles WHERE id_game = ? '''
     fin = time.time()
-    cursor.execute(query, (id_game, x,y))
+    cursor.execute(query, (id_game,))
     coup= cursor.fetchall()
     conn.close()
     print("Temps de requête 1 :", fin -deb)
     deb = time.time()
     a_del = coup_enleve(m,coup)
     fin = time.time()
+    print(a_del)
     print("Temps de traitement de donnée :", fin - deb)
     deb = time.time()
     a_del = list(set(tuple(coup) for coup in a_del))
+    print(a_del)
     supprime_coups_liste(id_game,a_del)
     fin = time.time()
     print("nb de valeur a supprimer",len(a_del))
