@@ -73,6 +73,7 @@ def supprime_coups(m,x,y,id_game):
     :param y: position y du nouveau coup
     :id_game: id de la game
     '''
+    deb =time.time()
     conn = sqlite3.connect('Base')
     cursor = conn.cursor()
     query = '''
@@ -80,11 +81,21 @@ def supprime_coups(m,x,y,id_game):
         FROM coups_possibles
         WHERE id_game = ? AND ABS(position_x - ?) <= 6 AND ABS(position_y - ?) <= 6
     '''
+    fin = time.time()
     cursor.execute(query, (id_game, x,y))
     coup= cursor.fetchall()
     conn.close()
+    print("Temps de requête 1 :", fin -deb)
+    deb = time.time()
     a_del = coup_enleve(m,coup)
+    fin = time.time()
+    print("Temps de traitement de donnée :", fin - deb)
+    deb = time.time()
+    a_del = list(set(tuple(coup) for coup in a_del))
     supprime_coups_liste(id_game,a_del)
+    fin = time.time()
+    print("nb de valeur a supprimer",len(a_del))
+    print("Temps de requête n°2:", fin-deb)
 
 # Va chercher les coups possibles dans la BD
 def cherche_coups_possibles(id_game):
@@ -104,11 +115,29 @@ def supprime_coups_liste(id_game,liste):
     :param liste: elle contient [[id_piece, color, position_x, position_y, rotation, flip],...]
     '''
     conn = sqlite3.connect('Base')
+    conn.execute('PRAGMA journal_mode=WAL')
+    conn.execute('PRAGMA synchronous=OFF')
     cursor = conn.cursor()
-    query= '''DELETE FROM coups_possibles WHERE id_game = ? AND id_piece = ? AND color = ? AND flip = ? AND rotation = ? AND position_x = ? AND position_y = ?'''
-    for coup in liste:
-        cursor.execute(query,(id_game,coup[0],coup[1],coup[5],coup[4],coup[2],coup[3]))
-        conn.commit()
+    query= '''
+    DELETE FROM coups_possibles
+    WHERE id_game = :id_game AND (
+        id_piece = :id_piece AND color = :color AND flip = :flip
+        AND rotation = :rotation AND position_x = :position_x AND position_y = :position_y
+    )'''
+    formatted_data = [
+        {
+            'id_game': id_game,
+            'id_piece': coup[0],
+            'color': coup[1],
+            'flip': coup[5],
+            'rotation': coup[4],
+            'position_x': coup[2],
+            'position_y': coup[3]
+        }
+        for coup in liste
+    ]
+    cursor.executemany(query, formatted_data)
+    conn.commit()
     conn.close()
 
 def supprime_coups_piece(id_game,color,piece):

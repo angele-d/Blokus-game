@@ -188,11 +188,16 @@ def coup_enleve(m,Clist):
     :param Clist: Liste de coup
     :return: (lst) Liste des coups qui ne sont pas possible sur la matrice m
     '''
+    Clist = [(m,pi,pl,x,y,rot,isflipped) for (pi,pl,x,y,rot,isflipped) in Clist ]
+    chunk_size = max(1, len(Clist) // os.cpu_count())
+    chunks = chunk_list(Clist, chunk_size)
     enleve =[]
-    for i in Clist:
-        (pi,pl,x,y,rot,isflipped) = i
-        if not coup_possible(m,pi,pl,x,y,rot,isflipped):
-            enleve.append(i)
+    with concurrent.futures.ProcessPoolExecutor() as executor:
+        futures = [executor.submit(parall, chunk) for chunk in chunks]
+        for future in concurrent.futures.as_completed(futures):
+            result = future.result()
+            if result:
+                enleve.extend(result)
     return enleve
 
 

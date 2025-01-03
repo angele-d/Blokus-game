@@ -437,7 +437,8 @@ def historique(id_game,boo):
     except Exception as e:
         return f"An error occurred while retrieving the data: {e}", 500
 
-
+print(liste_coup_possible(157,"G"))
+print(piece_res(157,"G"))
 #FAIT AVEC DES PIECES JOUEES
 if __name__ == '__main__':
     socketio.run(app, debug=True)
