@@ -167,7 +167,7 @@ def liste_coup_possible(id_game,color):
     conn.close()
     return coups_poss
 
-def qui_peut_jouer(grille,nb_joueur,id_game):
+def qui_peut_jouer(nb_joueur,id_game):
     '''
     Renvoie une liste des couleurs qui peuvent encore jouer
     :param nb_joueur: int
@@ -180,14 +180,14 @@ def qui_peut_jouer(grille,nb_joueur,id_game):
     l = liste_coup_possible(id_game,'Y')
     if l != []:
         couleur += ['Y']
-    if nb_joueur >= 3:
-        l = liste_coup_possible(id_game,'R')
-        if l != []:
-            couleur += ['R']
-    if nb_joueur >= 4:
+    l = liste_coup_possible(id_game,'R')
+    if l != []:
+        couleur += ['R']
+    if nb_joueur != 3:
         l = liste_coup_possible(id_game,'G')
         if l != []:
             couleur += ['G']
+    print("joueurs",couleur)
     return couleur
 
 # Donne les pièces restantes d'un joueur sous forme ['P1','P2',...]
@@ -202,7 +202,7 @@ def piece_res(id_game,joueur):
 def tour(id_game):
     m = transcription_pieces_SQL_grille(id_game)
     nb_j = nb_joueur(id_game)
-    qpj = qui_peut_jouer(m,nb_j,id_game)
+    qpj = qui_peut_jouer(nb_j,id_game)
     conn = sqlite3.connect('Base')
     cursor = conn.cursor()
     query= '''SELECT COUNT(*) FROM coups WHERE color = ? AND id_game = ?'''
@@ -242,18 +242,16 @@ def tour(id_game):
         min_l.append(coup_G)
     conn.close()
     # Analyse qui peut encore jouer
+    print("onenestla")
     for i in range(4):
         if not 'B' in qpj:
             min_l[0]=100
-        if nb_j >= 2:
-            if not 'Y' in qpj:
-                min_l[1]=100
-        if nb_j >= 3:
-            if not 'R' in qpj:
-                min_l[2]=100
-        if nb_j >= 4:
-            if not 'G' in qpj:
-                min_l[3]=100
+        if not 'Y' in qpj:
+            min_l[1]=100
+        if not 'R' in qpj:
+            min_l[2]=100
+        if not 'G' in qpj:
+            min_l[3]=100
     # Cherche la couleur à qui c'est le tour
     ind = min_l.index(min(min_l))
     if ind == 0:
@@ -341,4 +339,3 @@ def order_to_name(couleur,id_game):
         return rows[2][0]
     if couleur == 'G':
         return rows[3][0]
-
