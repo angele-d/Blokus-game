@@ -33,7 +33,5 @@ def test_coup_rajoute():
                        ('P19', 'B', 7, 5, 1, True), ('P19', 'B', 7, 5, 4, True), ('P20', 'B', 7, 5, 1, True),
                        ('P20', 'B', 7, 5, 2, True), ('P20', 'B', 7, 5, 3, True),
                        ('P20', 'B', 7, 5, 4, True), ('P21', 'B', 7, 5, 2, True)]
-    for i in range(len(result)):
-        if result[i] in expected_result:
-            result = result[:i]+result[i+1:]
+    result = [i for i in result if i not in expected_result]
     assert result == []
