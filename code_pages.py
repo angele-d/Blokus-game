@@ -307,6 +307,7 @@ def submit22():
             if player == None:
                 socketio.emit('fin_de_partie', room = id_game)
             socketio.emit('tour_joueur', room = id_game)
+
             return jsonify({"status": "coup valide","joueur":player}), 200
         else: 
             print("Le joueur",color,"veut jouer alors que c'est le tour de",player)
@@ -353,6 +354,8 @@ def fin_de_partie(id_game):
 
 @app.route('/grille/<id_game>')
 def grille(id_game):
+    print("tour",tour(159))
+
     if not session.get(f'access_{id_game}'):
         return "Vous n'avez pas accès à la partie", 505
     try :
@@ -375,9 +378,14 @@ def grille(id_game):
         conn.close()
     m = transcription_pieces_SQL_grille(id_game)
     supprime_coups(m,0,0,id_game)
+    
+    print(coup_possible(m,"P2","R",17,14,1,False))
+    print("LEBUG",piece_res(159,'R'))
+    print(qui_peut_jouer(m,1,159))
 
     if nb_j == 1 or session['name'][-14:] == "(joueur local)":
         (m,color) = tour(id_game)
+        print("Joueur actuel:",color)
     if nb_j == 2:
         (m,j_actuel) = tour(id_game)
         if color == 'B':
@@ -438,9 +446,6 @@ def historique(id_game,boo):
     except Exception as e:
         return f"An error occurred while retrieving the data: {e}", 500
 
-print(liste_coup_possible(157,"G"))
-print(piece_res(157,"G"))
-print(liste_coup_possible(159,"Y"))
 
 #FAIT AVEC DES PIECES JOUEES
 if __name__ == '__main__':

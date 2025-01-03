@@ -180,14 +180,14 @@ def qui_peut_jouer(grille,nb_joueur,id_game):
     l = liste_coup_possible(id_game,'Y')
     if l != []:
         couleur += ['Y']
-    if nb_joueur >= 3:
-        l = liste_coup_possible(id_game,'R')
-        if l != []:
-            couleur += ['R']
-    if nb_joueur >= 4:
+    l = liste_coup_possible(id_game,'R')
+    if l != []:
+        couleur += ['R']
+    if nb_joueur != 3:
         l = liste_coup_possible(id_game,'G')
         if l != []:
             couleur += ['G']
+    print("joueurs",couleur)
     return couleur
 
 # Donne les pièces restantes d'un joueur sous forme ['P1','P2',...]
@@ -242,18 +242,16 @@ def tour(id_game):
         min_l.append(coup_G)
     conn.close()
     # Analyse qui peut encore jouer
+    print("onenestla")
     for i in range(4):
         if not 'B' in qpj:
             min_l[0]=100
-        if nb_j >= 2:
-            if not 'Y' in qpj:
-                min_l[1]=100
-        if nb_j >= 3:
-            if not 'R' in qpj:
-                min_l[2]=100
-        if nb_j >= 4:
-            if not 'G' in qpj:
-                min_l[3]=100
+        if not 'Y' in qpj:
+            min_l[1]=100
+        if not 'R' in qpj:
+            min_l[2]=100
+        if not 'G' in qpj:
+            min_l[3]=100
     # Cherche la couleur à qui c'est le tour
     ind = min_l.index(min(min_l))
     if ind == 0:
