@@ -1,0 +1,58 @@
+<title> BLOKUS PP2I grp6 - PARTIE LOCALE </title>
+
+<head>
+    <link rel="stylesheet" href="{{ url_for('static', filename='CSS/style.css') }}">
+    <link rel="icon" href="{{ url_for('static', filename='/icon/icon.png') }}" type="image/png">
+</head>
+
+<body>
+<div class="bandeau"> 
+    <div class="bandeau_inner"> 
+        <a href="/" class="bandeau_titre"> Jeu du BLOKUS </a> 
+    </div>
+</div>
+
+<div class="infoPartie">
+    <h1> Nouvelle partie locale !</h1>
+    <br> <br>
+    <div class="formInfoPartie">
+    <form action="/locale_info" method="POST">
+        <p><label>Combien de joueurs êtes-vous ?</label> <br>
+        <input type="text" name="nbr" placeholder="Nombre de joueurs" required> </p>
+        <p><button type="submit">Création de la partie</button> </p>
+    </form>
+    </div>
+</div>
+<br> <hr> <br>
+<div class="informations">
+    <h4> Informations complémentaires: </h4>
+    Les informations de la partie seront à enregistrer dans la page suivante !
+</div>
+</body>
+
+<div class="footer">
+    <span class="gras souligne"> Crédits:</span> Briand Thibault, Regennass Anne, Girres Elisa, Denys Angèle
+</div>
+
+<script>
+    const togglePassword = document.getElementById("togglePassword");
+    const password = document.getElementById("password");
+
+    togglePassword.addEventListener("click", function () {
+        const type = password.type === "password" ? "text" : "password";
+        password.type = type;
+        this.textContent = type === "password" ? "👁️" : "🙈";
+    });
+</script>
+<script>
+    const son = new Audio('{{ url_for("static", filename="sounds/blipSelect1.wav") }}');
+    
+    document.addEventListener("DOMContentLoaded",()=>{
+        document.querySelectorAll('button').forEach(button =>{
+            button.addEventListener('click',() =>{
+                console.log("son")
+                son.play();
+            });
+        });
+    });
+    </script>

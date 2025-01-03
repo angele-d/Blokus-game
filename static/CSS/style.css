@@ -176,6 +176,48 @@ body {
 }
 
 
+/*Fin de partie*/
+.infosFinPartie{
+    padding: 20px 20px;
+    display: grid;
+    text-align: center;
+    justify-content: center; 
+    align-items: center;
+    border-radius: 5px;
+    border-color: white;
+    border-style:double;
+    border-width: 15px;
+    font-size: 20px;
+    margin-left: 35%;
+    margin-right: 35%;
+}
+.infosFinPartie h2{
+    color: rgb(39, 68, 231);
+}
+.infosFinPartie table{
+    border-collapse: collapse;
+    letter-spacing: 1px;
+}
+.infosFinPartie table th, .infosFinPartie table td {
+    border: 3px solid rgb(2, 0, 95);
+    padding: 10px 15px;
+    text-align: center;
+}
+.infosFinPartie thead{
+    background-color: rgb(87, 204, 243);
+    font-size: 25px;
+    font-weight: bold;
+}
+.infosFinPartie tbody{
+    background-color: rgb(149, 228, 238);
+    font-size: 20px;
+}
+.resultEncadre{
+    display: inline-block;  /* Change le comportement pour qu'il soit en bloc mais en ligne */
+    padding: 2px 2px;      /* Ajoute de l'espace autour du texte */
+    border: 2px solid rgb(7, 55, 63); /* Crée un cadre autour du texte */
+}
+
 /*Basard*/
 
 .informations{

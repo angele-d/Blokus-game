@@ -1,5 +1,7 @@
 from rotation_pieces import *
-
+import time
+import concurrent.futures
+import os
 def print_jeu(m):
     '''
     Fonction auxiliaire faite pour le debugging
@@ -11,7 +13,7 @@ def print_jeu(m):
 
 def inside(i,j):
     '''
-    Verifie que i et j correspondent bien aux coordonnees dans la grille 20x20
+    Vérifie que i et j correspondent bien aux coordonnées dans la grille 20x20
     :param i,j: (int)
     :return: (bool)
     '''
@@ -20,10 +22,10 @@ def inside(i,j):
 def matrice_possible(m,pl):
     '''
     Fonction auxiliaire à coup possible, annote les cases sur lequel la pièce suivante peut
-    etre posee (P) et ne peut pas etre posee (I)
+    être posée (P) et ne peut pas être posée (I)
     :param m: matrice 20x20
     :param pl: (string) R,B,Y ou G = joueur
-    :return: matrice 20x20 avec des P et I selon ou on peut poser la piece suivante
+    :return: matrice 20x20 avec des P et I selon ou on peut poser la pièce suivante
     '''
     vu = False
     for i in range(len(m)):
@@ -45,8 +47,8 @@ def matrice_possible(m,pl):
                         m[i-1][j-1] = 'P'
     for i in range(len(m)):
         for j in range(len(m)):
-            if m[i][j] == pl: #correspond au bon joueur
-                #verifie les contours: si vide ou P -> mettre un I = on peut pas placer une piece
+            if m[i][j] == pl: # Vérifie si cela correspond au bon joueur
+                # Vérifie les contours: si vide ou P -> mettre un I = on peut pas placer une piece
                 if inside(i+1,j):
                     if m[i+1][j] in ['V','P']:
                         m[i+1][j] = 'I'
@@ -86,29 +88,128 @@ def matrice_possible_start(pl):
         m[19][0] = 'P'
     return m
 
-def coups_possibles_faux(m,pl,Plist):
+def new_move(m,pl,x,y):
     '''
-    Fonction pour déterminer l'ensembles des coups possibles pour un joueur
+    Fonction pour calculer les positions autour desquelles des nouveaux coups sont possibles
     :param m: matrice 20x20
-    :param pl: (str) R,B,Y ou G = joueur
-    :param Plist: liste de pieces
-    :return: (lst) liste des coups possibles, sous la forme [(pi, x, y, rot, isflipped)]
+    :param x: Position en x de la nouvelle pièce
+    :param y: Position en y de la nouvelle pièce
+    :return: (lst) liste des positions autour desquelles on peut faire des nouveaux coups
     '''
-    coups=[]
-    for i in range(2):
-        if i == 1:
-            isflipped = True
-        else:
-            isflipped = False
-        MP=matrice_possible(m, pl)
-        for pi in Plist:
-            for rot in range(1,5):
-                for x in range(20):
-                    for y in range(20):
-                        if MP[x][y] == 'P':
-                            if coup_possible(m,pi,pl,x,y,rot,isflipped):
-                                coups.append((pi, x, y, rot, isflipped))
+    deb =time.time()
+    N_list =[]
+    MP=matrice_possible(m, pl)
+    for k in range(-3,4):
+        for l in range(-3,4):
+            new_x = x+k
+            new_y = y+l
+            if inside(new_x,new_y):
+                if MP[new_x][new_y] == 'P':
+                    N_list.append((new_x,new_y))
+    fin = time.time()
+    print("temps New_move",fin-deb)
+    return N_list
+
+
+def chunk_list(data, size):
+    """
+    Divise une liste en morceau de taille donnée
+    """
+    return [data[i:i + size] for i in range(0, len(data), size)]
+
+def parall(chunk):
+    """
+    Fonction utilisée en parallèle pour déterminer si un coup est possible
+    """
+    results = []
+    for params in chunk:
+        if coup_possible(*params):
+            (m,id_piece,c,c1,c2,c3,c4) = params
+            results.append((id_piece,c,c1,c2,c3,c4))
+    return results
+
+def parallsupp(chunk):
+    """Fonction utilisée en parallèle pour déterminer les coups non possibles
+    """
+    results = []
+    for params in chunk:
+        if not coup_possible(*params):
+            (m,id_piece,c,c1,c2,c3,c4) = params
+            results.append((id_piece,c,c1,c2,c3,c4))
+    return results
+
+def coup_rajoute(m,N_List,Plist,pl):
+    '''
+    Fonction pour calculer les nouveaux coups possibles aux positions N_List
+    :param m: matrice 20x20
+    :param N_list: Liste des nouvelles pos
+    :Plist: liste des pièces du joueur
+    :pl: joueur actuel
+    :return: (lst) Liste des nouveaux coups
+    '''
+    start = time.time()
+    to_check = []
+    deb = time.time()
+    MP=matrice_possible(m, pl)
+
+    check_unique = set()
+    for (new_x, new_y) in N_List:
+        for i in range(2):
+            if i == 1:
+                isflipped = True
+            else:
+                isflipped = False
+            for pi in Plist:
+                for rot in range(1,5):
+                    for k2 in range (-2,3):
+                        for l2 in range (-2,3):
+                            ajout_x= new_x+k2
+                            ajout_y = new_y+l2
+                            if inside(ajout_x,ajout_y) and (MP[ajout_x][ajout_y] in ['P','V']):
+                                entry = (tuple(map(tuple, m)), pi, pl, ajout_x, ajout_y, rot, isflipped)
+                                if not entry in check_unique:
+                                    check_unique.add(entry)
+                                    to_check.append((m,pi,pl,ajout_x,ajout_y,rot,isflipped))
+    fin = time.time()
+    print("Temps de recherche:",fin-deb)
+    print("Nombre de call a coup possible : ", len(to_check))
+    coups = []
+
+    chunk_size = max(1, len(to_check) // os.cpu_count())
+    chunks = chunk_list(to_check, chunk_size)
+
+    deb = time.time()
+    with concurrent.futures.ProcessPoolExecutor() as executor:
+        futures = [executor.submit(parall, chunk) for chunk in chunks]
+        for future in concurrent.futures.as_completed(futures):
+            result = future.result()
+            if result:
+                coups.extend(result)
+    fin = time.time()
+    print("temps de parall: ", fin -deb )
+    print("Nb de nouvelle entrée", len(coups))
+
     return coups
+
+def coup_enleve(m,Clist):
+    '''
+    Fonction qui calcule quel coup ne sont plus possible
+    :param m: Matrice de la partie
+    :param Clist: Liste de coup
+    :return: (lst) Liste des coups qui ne sont pas possible sur la matrice m
+    '''
+    Clist = [(m,pi,pl,x,y,rot,isflipped) for (pi,pl,x,y,rot,isflipped) in Clist ]
+    chunk_size = max(1, len(Clist) // os.cpu_count())
+    chunks = chunk_list(Clist, chunk_size)
+    enleve =[]
+    with concurrent.futures.ProcessPoolExecutor() as executor:
+        futures = [executor.submit(parallsupp, chunk) for chunk in chunks]
+        for future in concurrent.futures.as_completed(futures):
+            result = future.result()
+            if result:
+                enleve.extend(result)
+    return enleve
+
 
 def coups_possibles_force_brute(m,pl,Plist):
     '''
@@ -118,13 +219,14 @@ def coups_possibles_force_brute(m,pl,Plist):
     :param Plist: liste de pieces
     :return: (lst) liste des coups possibles, sous la forme [(pi, x, y, rot, isflipped)]
     '''
+    start = time.time()
     coups=[]
+    MP=matrice_possible(m, pl)
     for i in range(2):
         if i == 1:
             isflipped = True
         else:
             isflipped = False
-        MP=matrice_possible(m, pl)
         for pi in Plist:
             for rot in range(1,5):
                 for x in range(20):
@@ -133,8 +235,10 @@ def coups_possibles_force_brute(m,pl,Plist):
                             for k in range(-2,3):
                                 for l in range(-2,3):
                                     if inside(x+k,y+l) and (MP[x+k][y+l] in ['P','V']):
-                                        if coup_possible(m,pi,pl,x,y,rot,isflipped):
+                                        if coup_possible(m,pi,pl,x,y,rot,isflipped): #Each should be on it's own thread
                                             coups.append((pi, x, y, rot, isflipped))
+    end = time.time()
+    print("temps-d'exec =", end - start)
     return coups
 
 

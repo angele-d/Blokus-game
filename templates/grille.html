@@ -1,69 +1,105 @@
 <!DOCTYPE html>
-<script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
 <html>
+
+<title> BLOKUS PP2I grp6 </title>
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" href="{{ url_for('static', filename='/icon/icon.png') }}" type="image/png">
-    <title>Partie</title>
-    <link rel="stylesheet" href="../static/CSS/style_grille.css">
     <div>
-        <img id="output-image" src="" alt="Image" height=800 width=800>
+        <img id="output-image" src="" height=800 width=800>
         <!-- la position de la grille est : X = 120 et Y = 160 et 760 de hauteur avec 20 cases-->
     </div>
+    <link rel="stylesheet" href="../static/CSS/style_grille.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='CSS/style.css') }}">
 </head>
 
 <body>
+<div class="bandeauGrille"> 
+    <div class="bandeau_inner"> 
+        <a href="/" class="bandeau_titre"> Jeu du BLOKUS </a> 
+    </div>
+</div>
 
-    <!-- Conteneur = pos et sous-conteneur = posi -->
-    {% for coord in coords %}
-        {% if coord is iterable %}
-            <div class="posi" style="left: {{ coord[0] }}px; top: {{ coord[1] }}px;">
-                <!-- Utilise loop.index pour changer le nom de l'image dynamiquement et les pièces sont posées-->
-                <img id = "Image{{ loop.index }}" src="../static/piece/{{ color }}/{{ loop.index }}.png" alt="Piece" height="200" width="200">
-            </div>
-        {% endif %}
-    {% endfor %}
 
-    <div id="haut_droite">
-    <p>Position de l'image : <span id="coords">X: 0, Y: 0</span></p>
-    <p><br>Position carré : <span id="carre">X: 0, Y: 0</span></p>
-    <style>
-        #couleur_joueur {
-          color: black;
-          backgroundColor : blue;
-        }
-    </style>
-    <p><br>C'est à <span id="couleur_joueur">la personne ayant créée la partie</span> de jouer</p>
+<!-- Conteneur = pos et sous-conteneur = posi -->
+{% for coord in coords %}
+    {% if coord is iterable %}
+        <div class="posi" style="left: {{ coord[0] }}px; top: {{ coord[1] }}px;">
+            <!-- Utilise loop.index pour changer le nom de l'image dynamiquement et les pièces sont posées-->
+            <img id = "Image{{ loop.index }}" src="../static/piece/{{ color }}/{{ loop.index }}.png" alt="Piece" height="200" width="200">
+        </div>
+    {% endif %}
+{% endfor %}
+<div class="infosGrille"> </div>
+<div class="VerticalLineGrille"> </div>
+<div id="haut_droite">
+    <p> <span class="gras"> Position de l'image : </span> <br> 
+        <span id="coords"> X: 0, Y: 0 </span>
+    </p>
+    <p><br> <span class="gras"> Position du carré : </span> <br>
+        <span id="carre">X: 0, Y: 0</span>
+    </p>
+    <p><br> <span class="gras"> C'est au tour de: </span> <br> 
+        <span id="couleur_joueur">le/la créateur/rice de la partie</span>
+    </p>
     <p id='temporaire' class='temporaire'>Vous ne pouvez pas faire ce coup</p>
     <p id='tempo' class='temporaire'>Ce n'est pas votre tour</p>
     <button id="myButton">Valider le coup</button>
+    <br> <br> <br> <br>
+    <hr class="hrGrille">
+    <br> <br>
+    <div>
+        <h3> Commandes: </h3>
+        <span class="encadre"> Click gauche </span>
+        Glisser
+        <br> <br>
+        <span class="encadre"> Click droit </span>
+        Tourner
+        <br> <br>
+        <span class="encadre"> Double click </span>
+        Retourner/Flip
     </div>
-    <script>
-        const id_game = "{{id_game}}"
-        const color = "{{color}}"
-        const nb_joueur ="{{nb_joueur}}"
-        const socket = io();
-        socket.on('connect', () => {
-            console.log('Socket connecté');
-            socket.emit('join_room', { room: id_game })
-        });
-        socket.on('update_grille', ()=>{
-            console.log("la grille a changé")
-            updategrille();
-        })
-        socket.on('fin_de_partie', ()=>{
-            fin_de_partie();
-        })
-        socket.on('tour_joueur', ()=>{
-            tour_joueur();
-        })
-    </script>
-    <script src="../static/js/js_grille.js"></script>
+</div>
+
 </body>
 
+<div class="footerGrille">
+    <span class="gras souligne"> Crédits:</span> Briand Thibault, Regennass Anne, Girres Elisa, Denys Angèle
+</div>
+
 </html>
+
+<style>
+    #couleur_joueur {
+      color: black;
+      backgroundColor : blue;
+    }
+</style>
+
+<script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
 <script>
+    const id_game = "{{id_game}}"
+    const color = "{{color}}"
+    const nb_joueur ="{{nb_joueur}}"
+    const socket = io();
+    socket.on('connect', () => {
+        console.log('Socket connecté');
+        socket.emit('join_room', { room: id_game })
+    });
+    socket.on('update_grille', ()=>{
+        console.log("la grille a changé")
+        updategrille();
+    })
+    socket.on('fin_de_partie', ()=>{
+        fin_de_partie();
+    })
+    socket.on('tour_joueur', ()=>{
+        tour_joueur();
+    })
+
+
     const son = new Audio('{{ url_for("static", filename="sounds/blipSelect1.wav") }}');
     
     document.addEventListener("DOMContentLoaded",()=>{
@@ -75,4 +111,5 @@
         });
     });
 </script>
+<script src="../static/js/js_grille.js"></script>
 

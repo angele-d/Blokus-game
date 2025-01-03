@@ -1,0 +1,69 @@
+<title> BLOKUS PP2I grp6 - PARTIE LOCALE </title>
+
+<head>
+    <link rel="stylesheet" href="{{ url_for('static', filename='CSS/style.css') }}">
+    <link rel="icon" href="{{ url_for('static', filename='/icon/icon.png') }}" type="image/png">
+</head>
+
+<body>
+<div class="bandeau"> 
+    <div class="bandeau_inner"> 
+        <a href="/" class="bandeau_titre"> Jeu du BLOKUS</a> 
+        <a href="/locale" class="bandeau_retourArriere"> Choix nombre de joueurs </a>
+    </div>
+</div>
+
+<div class="infoPartie">
+    <h1>Créez votre nouvelle partie !</h1>
+    <br> <br>
+    <div class="formInfoPartie">
+    <form action="/locale_lobby" method="POST">
+        <p><label>Inscrivez vos pseudos: </label> <br>
+        {% for i in range(nbr)%}
+            <input type="text" name="name{{i}}" placeholder="Pseudo Joueur {{i+1}}" required> 
+        {% endfor %}
+        </p>
+        <p><label>Quel sera le nom de votre partie ?</label> <br>
+        <input type="text" name="name_game" placeholder="Votre nom de partie" required> </p>
+        <p><label>Indiquez le mot de passe de cette partie: </label> <br>
+        <input id="password" type="password" name="password_game" placeholder="Password de votre partie" required>
+        <span id="togglePassword" class="eye-icon">👁️</span> </p>
+        <p><button type="submit">Création de la partie</button> </p>
+    </form>
+    </div>
+</div>
+<br> <hr> <br>
+</div>
+<div class="informations">
+    <h4> Informations complémentaires: </h4>
+    <span class="gras"> *</span> pseudo que vous voudriez avoir durant la partie. <br>
+    <span class="italique"> Les IA pourront être ajoutées dans la page suivante</span>
+</div>
+</body>
+
+<div class="footer">
+    <span class="gras souligne"> Crédits:</span> Briand Thibault, Regennass Anne, Girres Elisa, Denys Angèle
+</div>
+
+<script>
+    const togglePassword = document.getElementById("togglePassword");
+    const password = document.getElementById("password");
+
+    togglePassword.addEventListener("click", function () {
+        const type = password.type === "password" ? "text" : "password";
+        password.type = type;
+        this.textContent = type === "password" ? "👁️" : "🙈";
+    });
+</script>
+<script>
+    const son = new Audio('{{ url_for("static", filename="sounds/blipSelect1.wav") }}');
+    
+    document.addEventListener("DOMContentLoaded",()=>{
+        document.querySelectorAll('button').forEach(button =>{
+            button.addEventListener('click',() =>{
+                console.log("son")
+                son.play();
+            });
+        });
+    });
+    </script>
