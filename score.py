@@ -8,7 +8,7 @@ from logique_jeu import *
 DATABASE = 'Base'
 app = Flask(__name__)
 
-# Crée une connexion à la base ou de récupère la connexion existante
+# Crée une connexion avec la base ou récupère la connexion existante
 def get_db():
     db = getattr(g, '_database', None)
     if db is None:
@@ -22,7 +22,7 @@ def close_db():
 
 def malus(Pliste):
     '''
-    Calcule le score (negatif) correspondant a une liste de pieces donnee
+    Calcule le score (negatif) correspondant à une liste de pieces donnee
     :param Pliste: (tab) contient les id des pieces
     '''
     malus = 0
@@ -30,13 +30,16 @@ def malus(Pliste):
         for j in range(len(i)):
             for k in range(len(i)):
                 if i[j][k]:
-                    malus = malus -1
+                    malus -= 1
     return malus
 
+def enleve(liste,restante):
+    for i in restante:
+        liste = liste[:i-1] + liste[i:]
+    return liste
 
 
-def score(Game): #IL EST POSSIBLE QU'IL FASSE CHANGER CE CODE, CE QUI EST ICI N'A PAS L'AIR HYPER SEIN
-    # ON FERME JAMAIS LA CONNECTION PAR EXEMPLE...
+def score(id_game):
     ''' 
     Calcule le score de chaque joueur dans un jeu donne
     :param Game: id_game de la base de données
@@ -44,79 +47,74 @@ def score(Game): #IL EST POSSIBLE QU'IL FASSE CHANGER CE CODE, CE QUI EST ICI N'
     :MaxIdcoup: [[id_coup,piece_correspondante_id_coup],..] 
                 Utile uniquement pour verifier si P1 placee en dernier ou pas, selon joueur: [R,B,Y,G]
     '''
-    c = get_db().cursor()
-    query = "SELECT id_piece, id_move, color FROM coups WHERE id_game = ?"
-    quest = "SELECT COUNT(*) FROM nom_joueur WHERE id_game = ?"
-    c.execute(query, (Game,))
-    liste = c.fetchall()
-    c.execute(quest, (Game,))
-    nbr = c.fetchone()[0]
-    P0=[]
-    Piece_restante_R = Tabpiece.copy()
-    Piece_restante_B = Tabpiece.copy()
-    Piece_restante_Y = Tabpiece.copy()
+    conn = sqlite3.connect('Base')
+    cursor = conn.cursor()
+    cursor.execute('''SELECT COUNT(*) FROM nom_joueur WHERE id_game = ?''',(id_game,))
+    nbr= cursor.fetchone()[0]
+    cursor.execute('''SELECT id_piece,color FROM coups WHERE id_game = ? GROUP BY color ORDER BY id_move DESC LIMIT 4''',(id_game,))
+    derniere= cursor.fetchall()
+    conn.close()
+    print(nbr)
+    Piece_restante_R = piece_restante(id_game,'B')
+    Piece_restante_B = piece_restante(id_game,'Y')
+    Piece_restante_Y = piece_restante(id_game,'R')
     if nbr != 3:
-        Piece_restante_G = Tabpiece.copy()
+        Piece_restante_G = piece_restante(id_game,'G')
         # Dans l'ordre du dessus le score attribué a chaque couleur
         score =[0,0,0,0]
-        # Valeurs de base, qui n'arrivent jamais
-        MaxIdcoup = [[0,P0],[0,P0],[0,P0],[0,P0]]
     else:
         score =[0,0,0]
-        MaxIdcoup = [[0,P0],[0,P0],[0,P0]]
-    # Chaque tuple de la requête
-    for tpl in liste:
-        if tpl[2] == 'R':
-            # Vérifie qu'on a toujours le dernier coup de R dans MaxIdcoup
-            if MaxIdcoup[0][0] < tpl[1]:
-                MaxIdcoup[0][0] = tpl[1]
-                MaxIdcoup[0][1] = tpl[0]
-            # Garde pieces =/ coup etudie
-            Piece_restante_R = [i for i in Piece_restante_R if i != tpl[0]]
-        if tpl[2] == 'B':
-            if MaxIdcoup[1][0] < tpl[1]:
-                MaxIdcoup[1][0] = tpl[1]
-                MaxIdcoup[1][1] = tpl[0]
-            Piece_restante_B = [i for i in Piece_restante_B if i != tpl[0]]
-        if tpl[2] == 'Y':
-            if MaxIdcoup[2][0] < tpl[1]:
-                MaxIdcoup[2][0] = tpl[1]
-                MaxIdcoup[2][1] = tpl[0]
-            Piece_restante_Y = [i for i in Piece_restante_Y if i != tpl[0]]
-        if tpl[2] == 'G':
-            if MaxIdcoup[3][0] < tpl[1]:
-                MaxIdcoup[3][0] = tpl[1]
-                MaxIdcoup[3][1] = tpl[0]
-            Piece_restante_G = [i for i in Piece_restante_G if i != tpl[0]]
-    # Calcul des scores suivant le nombre de pièces qu'il reste pour chaque joueur
-    score[0] = malus(Piece_restante_R)        
-    score[1] = malus(Piece_restante_B)
-    score[2] = malus(Piece_restante_Y)
+    Tab_restante_R = enleve(Tabpiece.copy(),Piece_restante_R)
+    Tab_restante_B = enleve(Tabpiece.copy(),Piece_restante_B)
+    Tab_restante_Y = enleve(Tabpiece.copy(),Piece_restante_Y)
     if nbr != 3:
-        score[3] = malus(Piece_restante_G)
+        Tab_restante_G = enleve(Tabpiece.copy(),Piece_restante_G)
+    # Calcul des scores suivant le nombre de pièces qu'il reste pour chaque joueur       
+    score[0] = malus(Tab_restante_B)
+    score[1] = malus(Tab_restante_Y)
+    score[2] = malus(Tab_restante_R) 
+    if nbr != 3:
+        score[3] = malus(Tab_restante_G)
     # Attribue les points bonus
     for i in range(len(score)):
         # Si le joueur a placé toutes ses pièces
         if score[i] == 0:
             score[i] = 15
-             # Si le dernier coup joué est le carre solitaire
-            if MaxIdcoup[1] == P1:
-                score[i] = 20
+            if nbr != 3:
+                for i in derniere:
+                    if i[0] == 'P1':
+                        if i[1] == 'B':
+                            score[0] = 20
+                        if i[1] == 'Y':
+                            score[1] = 20
+                        if i[1] == 'R':
+                            score[2] = 20
+                        if i[1] == 'G':
+                            score[3] = 20
+            else :
+                for i in derniere[:3]:
+                    if i[0] == 'P1':
+                        if i[1] == 'B':
+                            score[0] = 20
+                        if i[1] == 'Y':
+                            score[1] = 20
+                        if i[1] == 'R':
+                            score[2] = 20
     # Si le joueur joue seul
     if nbr == 1:
         ind = 0
         for i in score:
-            ind =+ i
+            ind += i
         score = [ind]
     # S'il y avait deux joueurs dans la partie
     elif nbr == 2:
         ind = score[0]+score[2]
         ind2 = score[1]+score[3]
         score = [ind,ind2]
-    c.connection.close()
+    conn.close()
     return score
 
 if __name__ == "__main__":
     with app.app_context():
-        print(score(103))
+        print(score(135))
 
