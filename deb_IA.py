@@ -62,17 +62,18 @@ def coups_adversaires(Lcoups, pl, nb_pl_ia, m):
             if i[2][0]!=[]: #si on a des coups possibles pour ce joueurs
                 Lgrille=[]
                 for j in range (len(i[2][0])): #on récupère les coups de la forme (id_piece,color,pos_x,pos_y,rot,flip)
-                    grille2=(placer_piece_grille20x20(i[0], j[0], j[2], j[3], j[1], j[4], j[5]))
-                    coup2=i[2].copy()
-                    pieces2=i[1].copy()
-                    for k in range (4):
-                        coup2[k]=coup_enleve(grille2, coup2[k])
-                        if k==0:
-                            for m in range (len(pieces2[k])):
-                                if pieces2[k][m]==j[0]:
-                                    pieces2[k].pop(m)
-                            coup2[k]=coup_rajoute(grille2, new_move(grille2, joueurs[k], j[2], j[3]), pieces2[k], joueurs[k])
-                    Lgrille.append((grille2, pieces2, coup2))
+                    if j!=[]:
+                        grille2=(placer_piece_grille20x20(i[0], j[0], j[2], j[3], j[1], j[4], j[5]))
+                        coup2=i[2].copy()
+                        pieces2=i[1].copy()
+                        for k in range (4):
+                            coup2[k]=coup_enleve(grille2, coup2[k])
+                            if k==0:
+                                for m in range (len(pieces2[k])):
+                                    if pieces2[k][m]==j[0]:
+                                        pieces2[k].pop(m)
+                                coup2[k]=coup_rajoute(grille2, new_move(grille2, joueurs[k], j[2], j[3]), pieces2[k], joueurs[k])
+                        Lgrille.append((grille2, pieces2, coup2))
         return coups_adversaires(Lgrille, pl, nb_pl_ia, 'B')
     else:
         #on récupère l'indice du joueur qu'on va simuler
@@ -83,17 +84,18 @@ def coups_adversaires(Lcoups, pl, nb_pl_ia, m):
             if i[2][nb_pl]!=[]: #si on a des coups possibles pour ce joueurs
                 Lgrille=[]
                 for j in (i[2][nb_pl]): #on récupère les coups de la forme (id_piece,color,pos_x,pos_y,rot,flip)
-                    grille2=(placer_piece_grille20x20(i[0], j[0], j[2], j[3], j[1], j[4], j[5]))
-                    coup2=i[2].copy() # on récupère les listes de tous les coups
-                    pieces2=i[1].copy() #on récupères les listes de toutes les pièces
-                    for k in range (4):
-                        coup2[k]=coup_enleve(grille2, coup2[k])
-                        if k==nb_pl:
-                            for m in range (len(pieces2[k])):
-                                if pieces2[k][m]==j[0]:
-                                    pieces2[k].pop(m)
-                            coup2[k]=coup_rajoute(grille2, new_move(grille2, joueurs[k], j[2], j[3]), pieces2[k], joueurs[k])
-                    Lgrille.append((grille2, pieces2, coup2))
+                    if j!=[]:
+                        grille2=(placer_piece_grille20x20(i[0], j[0], j[2], j[3], j[1], j[4], j[5]))
+                        coup2=i[2].copy() # on récupère les listes de tous les coups
+                        pieces2=i[1].copy() #on récupères les listes de toutes les pièces
+                        for k in range (4):
+                            coup2[k]=coup_enleve(grille2, coup2[k])
+                            if k==nb_pl:
+                                for m in range (len(pieces2[k])):
+                                    if pieces2[k][m]==j[0]:
+                                        pieces2[k].pop(m)
+                                coup2[k]=coup_rajoute(grille2, new_move(grille2, joueurs[k], j[2], j[3]), pieces2[k], joueurs[k])
+                        Lgrille.append((grille2, pieces2, coup2))
         return coups_adversaires(Lgrille, pl, nb_pl_ia, joueurs[nb_pl])
 
 def coup_a_faire(pl, grille, n, id_game):

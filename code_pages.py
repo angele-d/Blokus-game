@@ -323,15 +323,10 @@ def submit22():
         if color == player: #verif que c'est le bon joueur qui joue
             insert_move(id_game, id_move, id_piece, color, int(carrY), int(carrX), int(rotation), flip)
             m = transcription_pieces_SQL_grille(id_game)
-            deb_A = time.time()
             ajoute_coup(id_game,color,int(carrY),int(carrX),m)
-            fin_A = time.time()
-            print("TEMPSA =", fin_A -deb_A)
-            deb_B = time.time()
+            print("DEBUG COUP_POSSIBLE",liste_coup_possible(id_game,"B"))
             supprime_coups_piece(id_game,color,id_piece)
             supprime_coups(m,int(carrY),int(carrX),id_game)
-            fin_B = time.time()
-            print("TEMPSB =", fin_B -deb_B)
             socketio.emit('update_grille', room = id_game)
             # Retourne une réponse avec un statut et les coordonnées
             player = tour(id_game)[1]
@@ -394,19 +389,12 @@ def grille(id_game):
         print(f"pas de nom pour la partie :{id_game}")
         return f"pas de nom pour la partie :{id_game}",500
     nb_j = nb_joueur(id_game)
-
-    if cherche_coups_possibles(id_game) == []:
-        conn = sqlite3.connect('Base')
-        cursor = conn.cursor()
-        query= '''INSERT INTO coups_possibles (id_game, id_piece, color, flip, rotation, position_x, position_y) 
-                VALUES (?, ?, ?, ?, ?, ?, ?)'''
-        cursor.execute(query,(id_game,"P1","B",0,0,0,0))
-        cursor.execute(query,(id_game,"P1","Y",0,0,19,19))
-        cursor.execute(query,(id_game,"P1","R",0,0,0,19))
-        cursor.execute(query,(id_game,"P1","G",0,0,19,0))
-        conn.commit()
-        conn.close()
     m = transcription_pieces_SQL_grille(id_game)
+    if cherche_coups_possibles(id_game) == []:
+        ajoute_coup(id_game,"B",0,0,m)
+        ajoute_coup(id_game,"Y",19,19,m)
+        ajoute_coup(id_game,"R",0,19,m)
+        ajoute_coup(id_game,"G",19,0,m)
     supprime_coups(m,0,0,id_game)
 
     if nb_j == 1 or session['name'][-14:] == "(joueur local)":
