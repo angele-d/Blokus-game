@@ -29,7 +29,7 @@ def arbre_de_coups(pl, nb_pl, grille, adv_Plist, n, adv_coups):
             joueurs=['B', 'Y', 'R', 'G']
             List_aPlist=adv_Plist.copy()
             List_aCoups=adv_coups.copy()
-            for k in len(joueurs):
+            for k in joueurs:
                 List_aCoups[i]=coup_enleve(grille2, List_aCoups[i])
                 if k==pl:
                     List_aPlist[i]=Plist2
@@ -82,7 +82,7 @@ def coups_adversaires(Lcoups, pl, nb_pl_ia, m):
         for i in Lcoups:
             if i[2][nb_pl]!=[]: #si on a des coups possibles pour ce joueurs
                 Lgrille=[]
-                for j in range (len(i[2][nb_pl])): #on récupère les coups de la forme (id_piece,color,pos_x,pos_y,rot,flip)
+                for j in (i[2][nb_pl]): #on récupère les coups de la forme (id_piece,color,pos_x,pos_y,rot,flip)
                     grille2=(placer_piece_grille20x20(i[0], j[0], j[2], j[3], j[1], j[4], j[5]))
                     coup2=i[2].copy()
                     pieces2=i[1].copy()

@@ -335,7 +335,7 @@ def submit22():
             if player == None:
                 socketio.emit('fin_de_partie', room = id_game)
             socketio.emit('tour_joueur', room = id_game)
-            tourDeIA(id_game,player)
+            return tourDeIA(id_game,player)
         else: 
             print("Le joueur",color,"veut jouer alors que c'est le tour de",player)
             return jsonify({"status" : "pas le bon tour"}), 200
@@ -405,10 +405,6 @@ def grille(id_game):
         conn.close()
     m = transcription_pieces_SQL_grille(id_game)
     supprime_coups(m,0,0,id_game)
-    
-    print(coup_possible(m,"P2","R",17,14,1,False))
-    print("LEBUG",piece_res(159,'R'))
-    print(qui_peut_jouer(m,1,159))
 
     if nb_j == 1 or session['name'][-14:] == "(joueur local)":
         (m,color) = tour(id_game)

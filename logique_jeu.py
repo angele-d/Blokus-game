@@ -198,6 +198,9 @@ def coup_enleve(m,Clist):
     :param Clist: Liste de coup
     :return: (lst) Liste des coups qui ne sont pas possible sur la matrice m
     '''
+    print(Clist)
+    if not Clist:
+        return []
     Clist = [(m,pi,pl,x,y,rot,isflipped) for (pi,pl,x,y,rot,isflipped) in Clist ]
     chunk_size = max(1, len(Clist) // os.cpu_count())
     chunks = chunk_list(Clist, chunk_size)
