@@ -24,7 +24,10 @@ def arbre_de_coups(pl, nb_pl, grille, adv_Plist, n, adv_coups):
         for i in range (len(c_possibles)):
             coup=c_possibles[i] #coup de la forme (pi,COLOR, x, y, rot, isflipped)
             Plist2=Plist.copy()
-            Plist2.pop(i)
+            for l in range (len(Plist2)):
+                if Plist2[l]==coup[0]:
+                    Plist2.pop(l)
+                    break
             grille2=placer_piece_grille20x20(grille, coup[0], coup[2], coup[3], pl, coup[4], coup[5]) #mise à jour la grille avec la nouvelle pièce ajoutée 
             joueurs=['B', 'Y', 'R', 'G']
             List_aPlist=adv_Plist.copy()
