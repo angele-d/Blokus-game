@@ -22,9 +22,7 @@
     <table id="tupleTable"></table>
 </div>
 <div class="lobby">
-    {%if not nom[-14:] == "(joueur local)"%}
-        <button id="IA" onclick="addIA()">AJOUTER IA</button>
-    {%endif%}
+    <button id="IA" onclick="addIA()">AJOUTER IA</button>
     <button id="Launch" onclick="sendRequest()">LANCER LA PARTIE!</button>
 </div>
 <br> <hr> <br>

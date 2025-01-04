@@ -52,6 +52,8 @@
                     couleurElement.style.color = 'white';
                     couleurElement.style.backgroundColor = 'green';
                 }
+                // Met a jour l'image
+                document.getElementById("couleur_joueur").textContent = result.joueur;
             } else {
                 alert(result.error || "Une erreur a eu lieu pour le joueur");
             }
@@ -158,8 +160,9 @@
                 }
             }
         }
-            
+        const flipSound = new Audio('/static/sounds/flip.wav');  
             function flip(e) {
+                flipSound.play();
                 var scaleX_valeur = window.getComputedStyle(e).transform;
                 if (scaleX_valeur === 'none' || scaleX_valeur === 'matrix(1, 0, 0, 1, 0, 0)' || scaleX_valeur === 'matrix(0, -1, 1, 0, 0, 0)' || scaleX_valeur === 'matrix(0, 1, -1, 0, 0, 0)' || scaleX_valeur === 'matrix(-1, 0, 0, -1, 0, 0)') {
                     e.dataset.flip = "-1";
@@ -170,8 +173,9 @@
                     e.style.transform = `scaleX(1)`;
                 }
             }
-
+        const rotsound = new Audio('/static/sounds/rot.wav');  
             function tourne(e) {
+                rotsound.play()
                 const transform = e.style.transform || '';
                 const flip = transform.includes('scaleX(-1)');
                 // Donne valeur numérique de la rotation
