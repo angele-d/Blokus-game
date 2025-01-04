@@ -288,7 +288,7 @@ def nb_coups_adv(grille, arbre, pl_nb, pls_Plist):
 
 def nb_coup_arbre(arbre, grille, pl, Plist):
     '''
-    :param arbre: arbre des coups list[(coup, [liste des coups suivants ce coup], [liste des pièces des différents joueurs au niveau de ce coup])]' #coup de la forme (pi, x, y, rot, isflipped)
+    :param arbre: arbre des coups list[(coup, [liste des coups suivants ce coup], [liste des pièces des différents joueurs au niveau de ce coup])]' #coup de la forme (pi, color, x, y, rot, isflipped)
     :param grille: matrice 20x20 de jeu
     :param pl: (str) B, Y, R, G = joueur
     :param Plist: (lst) liste des pièces restantes du joueur pl
@@ -303,8 +303,7 @@ def nb_coup_arbre(arbre, grille, pl, Plist):
                 nb_pl=i
         m=[]
         for i in range (len(arbre)):
-            print(arbre[i][0][1], arbre[i][0][2])
-            m.append(nb_coup_arbre(arbre[i][1], placer_piece_grille20x20(grille, arbre[i][0][0], arbre[i][0][1], arbre[i][0][2], pl, arbre[i][0][3], arbre[i][0][4] ), pl, arbre[i][2][nb_pl]))
+            m.append(nb_coup_arbre(arbre[i][1], placer_piece_grille20x20(grille, arbre[i][0][0], arbre[i][0][2], arbre[i][0][3], pl, arbre[i][0][4], arbre[i][0][5] ), pl, arbre[i][2][nb_pl]))
         cmin=[]
         mini=min(m)
         for i in range(len(arbre)):
