@@ -46,9 +46,7 @@ def ajoute_coup(id_game,pl,x,y,m):
     '''
     conn = sqlite3.connect('Base')
     cursor = conn.cursor()
-    query= '''SELECT color FROM coups WHERE id_game = ? AND position_x = ? AND position_y = ?'''
-    cursor.execute(query,(id_game,x,y))
-    player = cursor.fetchone()[0]
+    player = pl
     N_list = new_move(m,pl,x,y)
     Plist = piece_res(id_game,player)
     liste_coup = coup_rajoute(m,N_list,Plist,pl)
