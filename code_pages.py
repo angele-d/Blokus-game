@@ -246,13 +246,17 @@ def game(idgame):
     cursor = conn.cursor()
     query = "SELECT * FROM game WHERE id_game = ?"
     cursor.execute(query, (idgame,))  
-    rows = cursor.fetchall()  
+    rows = cursor.fetchall()
+    quest = "SELECT nom FROM nom_joueur WHERE id_game = ?"
+    cursor.execute(quest, (idgame,))
+    liste_nom = cursor.fetchall()
     conn.close()
+    print(liste_nom[0])
     if rows == []:
         return "La partie n'existe pas",404
     else:
         if session.get(f'access_admin_{idgame}'):
-            return render_template('lobby_admin.html',idgame=idgame)
+            return render_template('lobby_admin.html',idgame=idgame, nom = liste_nom[0][0])
         else:
             return render_template('lobby.html',idgame=idgame)
 
