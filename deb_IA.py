@@ -29,11 +29,11 @@ def arbre_de_coups(pl, nb_pl, grille, adv_Plist, n, adv_coups):
             joueurs=['B', 'Y', 'R', 'G']
             List_aPlist=adv_Plist.copy()
             List_aCoups=adv_coups.copy()
-            for k in joueurs:
-                List_aCoups[i]=coup_enleve(grille2, List_aCoups[i])
-                if k==pl:
-                    List_aPlist[i]=Plist2
-                    List_aCoups[i]=coup_rajoute(grille2, new_move(grille2, pl, coup[2], coup[3]), List_aPlist[i], pl)
+            for k in range(len(joueurs)):
+                List_aCoups[k]=coup_enleve(grille2, List_aCoups[k])
+                if joueurs[k]==pl:
+                    List_aPlist[k]=Plist2
+                    List_aCoups[k]=coup_rajoute(grille2, new_move(grille2, pl, coup[2], coup[3]), List_aPlist[k], pl)
             suite=coups_adversaires([(grille2, List_aPlist, List_aCoups)], pl, nb_pl, pl) #renvoie liste des coups de la forme [(liste des grilles après coups, liste des pièces rstantes des joueurs, liste des coups possibles de chaque joueurs)]
             ss_arbre=[] #construction du sous-arbre
             for j in suite:
