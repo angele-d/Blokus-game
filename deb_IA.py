@@ -56,6 +56,7 @@ def coups_adversaires(Lcoups, pl, nb_pl_ia, m):
         return Lcoups
     elif joueurs[nb_pl_ia-1]==m:
         return Lcoups
+    Lgrille=[]
     #Sinon
     if m=='G':
         for i in Lcoups:
