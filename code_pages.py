@@ -256,7 +256,35 @@ def game(idgame):
         else:
             return render_template('lobby.html',idgame=idgame)
 
-
+def tourDeIA(id_game,playerColor):
+    '''
+    Verifie si le joueur qui a la main est une IA ou pas
+    Effectue le coup de l'IA si c'est le cas
+    Ne fait rien sinon
+    :param id_game: (int)
+    :param playerColor: (str) Y,B,R,G 
+    '''
+    playerName = order_to_name(playerColor,id_game)
+    if re.match("IA\d",playerName) is not None: #c'est une IA
+        print(f"{playerColor} est une IA")
+        grille = transcription_pieces_SQL_grille(id_game)
+        nextMove = coup_a_faire(playerColor,grille,3,id_game)
+        num_piece, x, y, rot, isFlipped = nextMove
+        if coup_possible(grille,num_piece,playerColor,x,y,rot,isFlipped):
+            id_move = nb_move(id_game,playerColor)
+            insert_move(id_game, id_move, num_piece, playerColor, x, y, rot, isFlipped)
+            m = transcription_pieces_SQL_grille(id_game)
+            ajoute_coup(id_game,playerColor,x,y,m)
+            supprime_coups_piece(id_game,playerColor,num_piece)
+            supprime_coups(m,x,y,id_game)
+            socketio.emit('update_grille', room = id_game)
+            next_player = tour(id_game)[1]
+            if next_player == None:
+                socketio.emit('fin_de_partie', room = id_game)
+            socketio.emit('tour_joueur', room = id_game)
+            return jsonify({"status": "coup valide","joueur":next_player}), 200 #next_player after the IA
+    else:
+        return jsonify({"status": "coup valide","joueur":playerColor}), 200 #This player because it's not an IA
 
 @app.route('/submit22', methods=['POST'])
 def submit22():
@@ -307,8 +335,7 @@ def submit22():
             if player == None:
                 socketio.emit('fin_de_partie', room = id_game)
             socketio.emit('tour_joueur', room = id_game)
-
-            return jsonify({"status": "coup valide","joueur":player}), 200
+            tourDeIA(id_game,player)
         else: 
             print("Le joueur",color,"veut jouer alors que c'est le tour de",player)
             return jsonify({"status" : "pas le bon tour"}), 200
