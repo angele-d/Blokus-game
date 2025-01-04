@@ -43,9 +43,9 @@ def score(id_game):
     ''' 
     Calcule le score de chaque joueur dans un jeu donne
     :param Game: id_game de la base de données
-    :return: Tableau [*,*,*,*] avec le score de chaque joueur [R,B,Y,G] de la partie Game
+    :return: Tableau [*,*,*,*] avec le score de chaque joueur [B,Y,R,G] de la partie Game
     :MaxIdcoup: [[id_coup,piece_correspondante_id_coup],..] 
-                Utile uniquement pour verifier si P1 placee en dernier ou pas, selon joueur: [R,B,Y,G]
+                Utile uniquement pour verifier si P1 placee en dernier ou pas, selon joueur: [B,Y,R,G]
     '''
     conn = sqlite3.connect('Base')
     cursor = conn.cursor()
