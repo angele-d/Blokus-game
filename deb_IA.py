@@ -44,7 +44,7 @@ def arbre_de_coups(pl, nb_pl, grille, adv_Plist, n, adv_coups):
 def coups_adversaires(Lcoups, pl, nb_pl_ia, m):
     '''
     Fonction qui renvoie toutes les grilles correspondantes à tous les coups possibles des adversaires
-    :param Lcoups: liste des coups à renvoyer (liste de grilles, liste des pièces, liste des coups possibles)
+    :param Lcoups: liste des coups à renvoyer lst[(grille, lst[pièces de tous les joueurs], lst[coups de tous les joueurs])]
     :param pl: (str) B, Y, R, G = joueur simulé par IA
     :param nb_pl_ia: (int) indice du joueur ia qu'on simule
     :param m: (int) dernier joueur à avoir posé une pièce
@@ -66,7 +66,7 @@ def coups_adversaires(Lcoups, pl, nb_pl_ia, m):
                     coup2=i[2].copy()
                     pieces2=i[1].copy()
                     for k in range (4):
-                        coup2[k]=coup_enleve(grille2, coup2)
+                        coup2[k]=coup_enleve(grille2, coup2[k])
                         if k==0:
                             for m in range (len(pieces2[k])):
                                 if pieces2[k][m]==j[0]:
@@ -79,15 +79,15 @@ def coups_adversaires(Lcoups, pl, nb_pl_ia, m):
         for p in range(3):
             if joueurs[p]==m:
                 nb_pl=p+1
-        for i in Lcoups:
+        for i in Lcoups: #lst[(grille, lst[pièces de tous les joueurs], lst[coups de tous les joueurs])] les deux derniers arguments sont une liste de 4 listes
             if i[2][nb_pl]!=[]: #si on a des coups possibles pour ce joueurs
                 Lgrille=[]
                 for j in (i[2][nb_pl]): #on récupère les coups de la forme (id_piece,color,pos_x,pos_y,rot,flip)
                     grille2=(placer_piece_grille20x20(i[0], j[0], j[2], j[3], j[1], j[4], j[5]))
-                    coup2=i[2].copy()
-                    pieces2=i[1].copy()
+                    coup2=i[2].copy() # on récupère les listes de tous les coups
+                    pieces2=i[1].copy() #on récupères les listes de toutes les pièces
                     for k in range (4):
-                        coup2[k]=coup_enleve(grille2, coup2)
+                        coup2[k]=coup_enleve(grille2, coup2[k])
                         if k==nb_pl:
                             for m in range (len(pieces2[k])):
                                 if pieces2[k][m]==j[0]:
