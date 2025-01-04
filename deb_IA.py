@@ -69,11 +69,12 @@ def coups_adversaires(Lcoups, pl, nb_pl_ia, m):
                         for k in range (4):
                             coup2[k]=coup_enleve(grille2, coup2[k])
                             if k==0:
+                                pieces3=[[],[],[],[]]
                                 for m in range (len(pieces2[k])):
-                                    if pieces2[k][m]==j[0]:
-                                        pieces2[k].pop(m)
-                                coup2[k]=coup_rajoute(grille2, new_move(grille2, joueurs[k], j[2], j[3]), pieces2[k], joueurs[k])
-                        Lgrille.append((grille2, pieces2, coup2))
+                                    if pieces2[k][m]!=j[0]:
+                                        pieces3.append(pieces2[k][m])
+                                coup2[k]=coup_rajoute(grille2, new_move(grille2, joueurs[k], j[2], j[3]), pieces3[k], joueurs[k])
+                        Lgrille.append((grille2, pieces3, coup2))
         return coups_adversaires(Lgrille, pl, nb_pl_ia, 'B')
     else:
         #on récupère l'indice du joueur qu'on va simuler
@@ -91,11 +92,12 @@ def coups_adversaires(Lcoups, pl, nb_pl_ia, m):
                         for k in range (4):
                             coup2[k]=coup_enleve(grille2, coup2[k])
                             if k==nb_pl:
+                                pieces3=[[],[],[],[]]
                                 for m in range (len(pieces2[k])):
-                                    if pieces2[k][m]==j[0]:
-                                        pieces2[k].pop(m)
-                                coup2[k]=coup_rajoute(grille2, new_move(grille2, joueurs[k], j[2], j[3]), pieces2[k], joueurs[k])
-                        Lgrille.append((grille2, pieces2, coup2))
+                                    if pieces2[k][m]!=j[0]:
+                                        pieces3[k].append(pieces2[k][m])
+                                coup2[k]=coup_rajoute(grille2, new_move(grille2, joueurs[k], j[2], j[3]), pieces3[k], joueurs[k])
+                        Lgrille.append((grille2, pieces3, coup2))
         return coups_adversaires(Lgrille, pl, nb_pl_ia, joueurs[nb_pl])
 
 def coup_a_faire(pl, grille, n, id_game):
