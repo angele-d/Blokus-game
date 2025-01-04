@@ -35,9 +35,10 @@ def join():
         cursor.execute(quest, (nom_utilisateur, nom_de_partie))
         count = cursor.fetchone()[0]
         conn.close()
-
+        if nom_utilisateur[:2] == "IA" or nom_utilisateur[-14:] == "(joueur local)":
+            return "Choisissez un autre nom",500
         if count > 0:
-            return "Ce nom est déjà pris"
+            return "Ce nom est déjà pris",500
         if len(rows) != 1:
             return "Mauvais mot de passe",500
         # Pour donner les droits
@@ -115,6 +116,8 @@ def newgame():
     name_game = request.form['name_game']
     password_game = request.form['password_game']
     nb_move = -1 # Si le nb_move passe a 0 ou plus, cela veut dire que la game est lancée
+    if name[:2] == "IA" or name[-14:] == "(joueur local)":
+            return "Choisissez un autre nom",500
     try:
         insert_name(new_game,name)
         insert_game(new_game,name_game,password_game,nb_move)
@@ -247,16 +250,12 @@ def game(idgame):
     query = "SELECT * FROM game WHERE id_game = ?"
     cursor.execute(query, (idgame,))  
     rows = cursor.fetchall()
-    quest = "SELECT nom FROM nom_joueur WHERE id_game = ?"
-    cursor.execute(quest, (idgame,))
-    liste_nom = cursor.fetchall()
     conn.close()
-    print(liste_nom[0])
     if rows == []:
         return "La partie n'existe pas",404
     else:
         if session.get(f'access_admin_{idgame}'):
-            return render_template('lobby_admin.html',idgame=idgame, nom = liste_nom[0][0])
+            return render_template('lobby_admin.html',idgame=idgame)
         else:
             return render_template('lobby.html',idgame=idgame)
 
@@ -366,7 +365,7 @@ def generate():
 
 @app.route('/joueur', methods=['POST'])
 def joueur():
-    data = request.get_json() 
+    data = request.get_json()
     id_game = int(data.get('number'))
     couleur = tour(id_game)[1]
     player = order_to_name(couleur,id_game)

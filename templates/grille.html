@@ -58,7 +58,31 @@
         <span class="encadre"> Double click </span>
         Retourner/Flip
     </div>
+<<<<<<< Updated upstream
 </div>
+=======
+    <script>
+        const id_game = "{{id_game}}"
+        const color = "{{color}}"
+        const nb_joueur ="{{nb_joueur}}"
+        const socket = io();
+        socket.on('connect', () => {
+            console.log('Socket connecté');
+            socket.emit('join_room', { room: id_game })
+        });
+        socket.on('update_grille', ()=>{
+            console.log("la grille a changé")
+            updategrille();
+        })
+        socket.on('fin_de_partie', ()=>{
+            fin_de_partie();
+        })
+        socket.on('tour_joueur', ()=>{
+            tour_joueur();
+        })
+    </script>
+    <script src="../static/js/js_grille.js"></script>
+>>>>>>> Stashed changes
 
 </body>
 
