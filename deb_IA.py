@@ -1,7 +1,7 @@
 from fonc_DB import *
 import random
 
-gd_pieces=[P11,P12,P13,P14,P15,P16,P17,P18,P19,P20,P21]
+gd_pieces=['P11','P12','P13','P14','P15','P16','P17','P18','P19','P20','P21']
 
 def arbre_de_coups(pl, nb_pl, grille, adv_Plist, n, adv_coups):
     '''
@@ -16,22 +16,17 @@ def arbre_de_coups(pl, nb_pl, grille, adv_Plist, n, adv_coups):
     arbre=[]
     Plist=adv_Plist[nb_pl]
     if n==0:
-        print('cata1')
         return [] #l'arbre s'arrête là
     if Plist==[]:
-        print('cata2')
         return [] #l'arbre s'arrête là
     if adv_coups[nb_pl]==[]:
-        print('cata3')
         return [] #l'arbre s'arrête là, plus de coups possibles
     else:
         c_possibles=adv_coups[nb_pl]
         for i in range (len(c_possibles)):
             coup=c_possibles[i] #coup de la forme (pi,COLOR, x, y, rot, isflipped)
             if len(Plist)>=16:
-                print('la pièce du coup', coup[0])
                 if coup[0] in gd_pieces:
-                    print('on est pas mal du tout')
                     Plist2=Plist.copy()
                     for l in range (len(Plist2)):
                         if Plist2[l]==coup[0]:
@@ -49,7 +44,6 @@ def arbre_de_coups(pl, nb_pl, grille, adv_Plist, n, adv_coups):
                     suite=coups_adversaires([(grille2, List_aPlist, List_aCoups)], pl, nb_pl, pl) #renvoie liste des coups de la forme [(liste des grilles après coups, liste des pièces rstantes des joueurs, liste des coups possibles de chaque joueurs)]
                     ss_arbre=[] #construction du sous-arbre
                     for j in suite:
-                        print('youpi')
                         ss_arbre.append(arbre_de_coups(pl, nb_pl, j[0], j[1], n-1, j[2]))
                     arbre.append((coup, ss_arbre, List_aPlist, adv_coups))
             else:
