@@ -43,8 +43,14 @@ def arbre_de_coups(pl, nb_pl, grille, adv_Plist, n, adv_coups):
                             List_aCoups[k]=coup_rajoute(grille2, new_move(grille2, pl, coup[2], coup[3]), List_aPlist[k], pl)
                     suite=coups_adversaires([(grille2, List_aPlist, List_aCoups)], pl, nb_pl, pl) #renvoie liste des coups de la forme [(liste des grilles après coups, liste des pièces rstantes des joueurs, liste des coups possibles de chaque joueurs)]
                     ss_arbre=[] #construction du sous-arbre
-                    for j in suite:
-                        ss_arbre.append(arbre_de_coups(pl, nb_pl, j[0], j[1], n-1, j[2]))
+                    nb_grille=10
+                    if len(suite)<=nb_grille:
+                        for j in suite:
+                            ss_arbre.append(arbre_de_coups(pl, nb_pl, j[0], j[1], n-1, j[2]))
+                    else:
+                        lst_ind_grille=random.sample(range(0,len(suite)), nb_grille)
+                        for j in lst_ind_grille:
+                            ss_arbre.append(arbre_de_coups(pl, nb_pl, suite[j][0], suite[j][1], n-1, suite[j][2]))
                     arbre.append((coup, ss_arbre, List_aPlist, adv_coups))
             else:
                 print('wtf')
