@@ -129,7 +129,8 @@ def coup_a_faire(pl, grille, n, id_game):
     #------analyse de l'arbre------
     
     if len(arbre)==1:
-        return arbre[0][0]  
+        resultat=arbre[0][0] 
+        return(resultat[0], resultat[2], resultat[3], resultat[4], resultat[5])
     #on détermine si des coups ammènent à des profondeurs moins fortes
     profondeurs=[]
     for i in arbre:
@@ -141,7 +142,8 @@ def coup_a_faire(pl, grille, n, id_game):
         if profondeurs[i]==prof_max:
             arbre2.append(arbre[i])
     if len(arbre2)==1:
-        return arbre[0][0]
+        resultat=arbre[0][0]
+        return(resultat[0], resultat[2], resultat[3], resultat[4], resultat[5])
     #on cherche ensuite les coups qui utilisent les pièces les plus grandes
     tailles_pi=[]
     for i in range (len(arbre2)):
@@ -152,7 +154,8 @@ def coup_a_faire(pl, grille, n, id_game):
         if taille_max==tailles_pi[i]:
             arbre.append(arbre2[i])
     if len(arbre)==1:
-        return arbre[0][0]
+        resultat=arbre[0][0]
+        return(resultat[0], resultat[2], resultat[3], resultat[4], resultat[5])
     #on cherche maintenant à déterminer les coups qui bloquent le plus les adversaires, ie les branches où les adversaires ont le moins de coups possibles
     #ici, l'arbre a au moins 2 éléments
     arbre2=[]
@@ -209,7 +212,8 @@ def coup_a_faire(pl, grille, n, id_game):
                     if (arbre[i][0] in min_coup_adv[0][2]) or (arbre[i][0] in min_coup_adv[1][2]) or (arbre[i][0] in min_coup_adv[2][2]):
                         arbre2.append(arbre[i])
     if len(arbre2)==1:
-        return arbre2[0][0]
+        resultat=arbre2[0][0]
+        return(resultat[0], resultat[2], resultat[3], resultat[4], resultat[5])
     else:
         petit_carre=True
         for i in range (len(arbre2)):
@@ -218,7 +222,8 @@ def coup_a_faire(pl, grille, n, id_game):
                 break
         #si on ne commence que pas l'utilisation d'un petit carré
         if petit_carre:
-            return arbre2[random.randint(0, len(arbre2)-1)][0]
+            resultat=arbre2[random.randint(0, len(arbre2)-1)][0]
+            return(resultat[0], resultat[2], resultat[3], resultat[4], resultat[5])
         #sinon
         else:
             for i in range(len(arbre2)):
