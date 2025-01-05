@@ -265,6 +265,34 @@ def coup_a_faire(pl, grille, n, id_game):
         coups_poss_pl.append(liste_coup_possible(id_game, joueurs[i]))
         if joueurs[i]==pl:
             pl_nb=i
+    #on regarde si on est dans les 3 premiers coups du jeu ou non
+    if pls_Plist[pl_nb]>=19:
+        coups_poss_deb=coups_poss_pl[pl_nb]
+        coups_gd=[]
+        #on récupère tous les coups qui se font avec les grandes pièces
+        for i in coups_poss_deb:
+            if i[0] in gd_pieces:
+                coups_gd.append(i)
+        #on regarde jusqu'où au max ils vont se rapprocher du centre
+        distances=[]
+        for i in coups_gd:
+            grille2=placer_piece_grille20x20(grille, i[0], i[2], i[3], i[1], i[4], i[5])
+
+            for j in range (20):
+                for k in range(20):
+                    dist=20
+                    if grille2[j][k]==pl:
+                        if dist> abs(j-9)+abs(k-9):
+                            dist=abs(j-9)+abs(k-9)
+            distances.append(dist)
+        #et maintenant on cherche le coup qui se rapproche le plus du centre
+        mini=distances[0]
+        ind_mini=0
+        for i in range(1,len(distances)):
+            if distances[i]<mini:
+                mini=distances[i]
+                ind_mini=i
+        return coups_gd[ind_mini]
     #création des arbres de coups possibles
     arbre=arbre_de_coups(pl, pl_nb, grille, pls_Plist, n, coups_poss_pl)
     
