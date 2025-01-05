@@ -25,12 +25,11 @@ def arbre_de_coups(pl, nb_pl, grille, adv_Plist, n, adv_coups):
         print('cata3')
         return [] #l'arbre s'arrête là, plus de coups possibles
     else:
-        print('cest pas si mal')
         c_possibles=adv_coups[nb_pl]
         for i in range (len(c_possibles)):
             coup=c_possibles[i] #coup de la forme (pi,COLOR, x, y, rot, isflipped)
             if len(Plist)>=16:
-                print('c est encore mieux')
+                print('la pièce du coup', coup[0])
                 if coup[0] in gd_pieces:
                     print('on est pas mal du tout')
                     Plist2=Plist.copy()
