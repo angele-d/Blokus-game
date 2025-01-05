@@ -165,8 +165,10 @@ def coup_a_faire(pl, grille, n, id_game):
         return(resultat[0], resultat[2], resultat[3], resultat[4], resultat[5])
     #on détermine si des coups ammènent à des profondeurs moins fortes
     profondeurs=[]
+    print("arbre:",arbre)
     for i in arbre:
         profondeurs.append(profondeur_ac(i[1]))
+        print("i:",i)
         print(profondeurs)
     #ensiute on cherche à éliminer les coups avec les plus faibles profondeurs (les coups amenant à des fins de parties)
     print(profondeurs)
