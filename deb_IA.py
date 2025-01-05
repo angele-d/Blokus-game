@@ -148,6 +148,8 @@ def coup_a_faire(pl, grille, n, id_game):
         if joueurs[i]==pl:
             pl_nb=i
     #création des arbres de coups possibles
+    print('listes des pièces', pls_Plist)
+    print('listes des coups', coups_poss_pl)
     arbre=arbre_de_coups(pl, pl_nb, grille, pls_Plist, n, coups_poss_pl)
     
     #------analyse de l'arbre------
