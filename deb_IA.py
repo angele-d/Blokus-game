@@ -159,7 +159,9 @@ def coup_a_faire(pl, grille, n, id_game):
     profondeurs=[]
     for i in arbre:
         profondeurs.append(profondeur_ac(i[1]))
+        print(profondeurs)
     #ensiute on cherche à éliminer les coups avec les plus faibles profondeurs (les coups amenant à des fins de parties)
+    print(profondeurs)
     prof_max=max(profondeurs)
     arbre2=[]
     for i in range(len(profondeurs)):
@@ -263,6 +265,7 @@ def profondeur_ac(arbre):
     :return: (int) profondeur max de l'arbre
     '''
     if arbre==[]:
+        print('arbre de profondeur :', arbre)
         return 0
     else:
         m=[]
