@@ -166,20 +166,19 @@ def arbre_de_coups(pl, nb_pl, grille, adv_Plist, n, adv_coups):
                         List_aCoups[k]=coup_enleve_no_parral(grille2, List_aCoups[k])
                         if joueurs[k]==pl:
                             List_aPlist[k]=Plist2
-<<<<<<< HEAD
                             List_aCoups[k]=coup_rajoute(grille2, new_move(grille2, pl, coup[2], coup[3]), List_aPlist[k], pl)
                     # Renvoie la liste des coups de la forme [(liste des grilles après coups, liste des pièces rstantes des joueurs, liste des coups possibles de chaque joueurs)]
                     suite=coups_adversaires([(grille2, List_aPlist, List_aCoups)], pl, nb_pl, pl) 
                     ss_arbre=[] # Construction du sous-arbre
-=======
-                            List_aCoups[k]=coup_rajoute_no_parral(grille2, new_move(grille2, pl, coup[2], coup[3]), List_aPlist[k], pl)
-                    suite=coups_adversaires([(grille2, List_aPlist, List_aCoups)], pl, nb_pl, pl) #renvoie liste des coups de la forme [(liste des grilles après coups, liste des pièces rstantes des joueurs, liste des coups possibles de chaque joueurs)]
-                    ss_arbre=[] #construction du sous-arbre
+                    List_aCoups[k]=coup_rajoute_no_parral(grille2, new_move(grille2, pl, coup[2], coup[3]), List_aPlist[k], pl)
+                    # Renvoie liste des coups de la forme [(liste des grilles après coups, liste des pièces rstantes des joueurs, liste des coups possibles de chaque joueurs)]
+                    suite=coups_adversaires([(grille2, List_aPlist, List_aCoups)], pl, nb_pl, pl) 
+                    ss_arbre=[] # Construction du sous-arbre
                     for j in suite:
                         ss_arbre.append(arbre_de_coups(pl, nb_pl, j[0], j[1], n-1, j[2]))
                     arbre.append((coup, ss_arbre, List_aPlist, adv_coups))
         for i in range (len(c_possibles)):
-            coup=c_possibles[i] #coup de la forme (pi,COLOR, x, y, rot, isflipped)
+            coup=c_possibles[i] # Coup de la forme (pi,COLOR, x, y, rot, isflipped)
             if len(Plist)>=16:
                 if coup[0] in gd_pieces:
                     Plist2=Plist.copy()
@@ -198,7 +197,6 @@ def arbre_de_coups(pl, nb_pl, grille, adv_Plist, n, adv_coups):
                             List_aCoups[k]=coup_rajoute_no_parral(grille2, new_move(grille2, pl, coup[2], coup[3]), List_aPlist[k], pl)
                     suite=coups_adversaires([(grille2, List_aPlist, List_aCoups)], pl, nb_pl, pl) #renvoie liste des coups de la forme [(liste des grilles après coups, liste des pièces rstantes des joueurs, liste des coups possibles de chaque joueurs)]
                     ss_arbre=[] #construction du sous-arbre
->>>>>>> f55a97d9ca04448915900ba9d854a34ef2cecce2
                     nb_grille=10
                     if len(suite)<=nb_grille:
                         for j in suite:
@@ -223,16 +221,13 @@ def arbre_de_coups(pl, nb_pl, grille, adv_Plist, n, adv_coups):
                     List_aCoups[k]=coup_enleve_no_parral(grille2, List_aCoups[k])
                     if joueurs[k]==pl:
                         List_aPlist[k]=Plist2
-<<<<<<< HEAD
                         List_aCoups[k]=coup_rajoute(grille2, new_move(grille2, pl, coup[2], coup[3]), List_aPlist[k], pl)
                 # Renvoie la liste des coups de la forme [(liste des grilles après coups, liste des pièces rstantes des joueurs, liste des coups possibles de chaque joueurs)]
                 suite=coups_adversaires([(grille2, List_aPlist, List_aCoups)], pl, nb_pl, pl) 
                 ss_arbre=[] # Construction du sous-arbre
-=======
                         List_aCoups[k]=coup_rajoute_no_parral(grille2, new_move(grille2, pl, coup[2], coup[3]), List_aPlist[k], pl)
                 suite=coups_adversaires([(grille2, List_aPlist, List_aCoups)], pl, nb_pl, pl) #renvoie liste des coups de la forme [(liste des grilles après coups, liste des pièces rstantes des joueurs, liste des coups possibles de chaque joueurs)]
-                ss_arbre=[] #construction du sous-arbre
->>>>>>> f55a97d9ca04448915900ba9d854a34ef2cecce2
+                ss_arbre=[] # Construction du sous-arbre
                 for j in suite:
                     ss_arbre.append(arbre_de_coups(pl, nb_pl, j[0], j[1], n-1, j[2]))
                 arbre.append((coup, ss_arbre, List_aPlist, adv_coups))
@@ -388,14 +383,9 @@ def coup_a_faire(pl, grille, n, id_game):
     joueurs=['B', 'Y', 'R', 'G']
     pls_Plist=[]
     coups_poss_pl=[]
-<<<<<<< HEAD
     # Récupération listes des pièces restantes de chaque joueur + indice correspondant au joueur IA
     # Récupération listes de coups possibles de chaque joueurs
-=======
-    #récupération listes des pièces restantes de chaque joueur + indice correspondant au joueur IA
-    #récupération listes de coups possibles de chaque joueurs
-    deb1 = time.time()
->>>>>>> f55a97d9ca04448915900ba9d854a34ef2cecce2
+
     for i in range(len(joueurs)):
         pls_Plist.append(piece_res(id_game, joueurs[i]))
         coups_poss_pl.append(liste_coup_possible(id_game, joueurs[i]))
@@ -429,18 +419,15 @@ def coup_a_faire(pl, grille, n, id_game):
                 mini=distances[i]
                 ind_mini=i
         return coups_gd[ind_mini]
-<<<<<<< HEAD
     # Création des arbres de coups possibles
     arbre=arbre_de_coups(pl, pl_nb, grille, pls_Plist, n, coups_poss_pl)
     
-=======
     #création des arbres de coups possibles
 
     deb2 = time.time()
     arbre=arbre_de_coups_start(pl, pl_nb, grille, pls_Plist, n, coups_poss_pl)
     fin2 = time.time()
     print("temps de création de l'arbre des coups", deb2 -fin2)
->>>>>>> f55a97d9ca04448915900ba9d854a34ef2cecce2
     #------analyse de l'arbre------
     
 
@@ -451,14 +438,11 @@ def coup_a_faire(pl, grille, n, id_game):
     profondeurs=[]
     for i in arbre:
         profondeurs.append(profondeur_ac(i[1]))
-<<<<<<< HEAD
         print("i:",i)
         print(profondeurs)
     # Cherche à éliminer les coups avec les plus faibles profondeurs (les coups amenant à des fins de parties)
     print(profondeurs)
-=======
-    #ensiute on cherche à éliminer les coups avec les plus faibles profondeurs (les coups amenant à des fins de parties)
->>>>>>> f55a97d9ca04448915900ba9d854a34ef2cecce2
+    #Cherche à éliminer les coups avec les plus faibles profondeurs (les coups amenant à des fins de parties)
     prof_max=max(profondeurs)
     arbre2=[]
     for i in range(len(profondeurs)):
