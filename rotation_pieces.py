@@ -2,9 +2,7 @@ from pieces import P1,P2,P3,P4,P5,P6,P7,P8,P9,P10,P11,P12,P13,P14,P15,P16,P17,P1
 
 def transformation(piece, isflipped,rotation):
     '''
-    Le fait de retourner une pièce et de la tourner ne commute pas
-    il faut donc se décider sur une convention qui est appliquée par cette fonction
-    ainsi, merci de n'utiliser que cette dernière pour que tout soit compatible
+    Le fait de retourner une pièce et de la tourner ne commute pas (choix fait)
     :param piece: matrice 5x5 de la piece originale
     :param isflipped: (bool) vrai si piece retournee, faux sinon
     :param rotation: (int) correspondant au nombre de rotations effectuees par le joueur
@@ -18,7 +16,7 @@ def transformation(piece, isflipped,rotation):
 
 def rotationx1(piece):
     '''
-    Effectue 1 rotation d'une piece
+    Effectue une rotation d'une piece
     :param piece: matrice 5x5 de la piece originale
     :return: matrice 5x5 du resultat de la rotation
     SENS ANTIHORAIRE
