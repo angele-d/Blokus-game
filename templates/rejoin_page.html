@@ -47,11 +47,10 @@
 </script>
 <script>
     const son = new Audio('{{ url_for("static", filename="sounds/blipSelect1.wav") }}');
-    
+    // Produit un son lorsqu'on clique sur un bouton
     document.addEventListener("DOMContentLoaded",()=>{
         document.querySelectorAll('button').forEach(button =>{
             button.addEventListener('click',() =>{
-                console.log("son")
                 son.play();
             });
         });

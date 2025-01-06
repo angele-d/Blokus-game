@@ -47,22 +47,27 @@
 <script>
     const idgame = "{{ idgame }}"
     function fetchData() {
-        fetch(`/getdatagame/${idgame}`) //envoie une requête pour avoir le json
-            .then(response => response.json()) // transforme pour pouvoir traiter la requête
+        // Envoie une requête pour avoir le json
+        fetch(`/getdatagame/${idgame}`)
+        // Transforme pour pouvoir traiter la requête
+            .then(response => response.json())
             .then(data => {
-                const table = document.getElementById('tupleTable'); //on va chercher ici la table html
+                // Cherche la table html
+                const table = document.getElementById('tupleTable');
                 table.innerHTML = `
                     <tr>
                         <th class="tableTitle"> Liste des joueurs </th>
                     </tr>
-                `; // L'intérieur de la table c'est maintenant ce que précède
+                `; // L'intérieur de la table, c'est ce que précède
                 data.forEach(([name]) => {
-                    const row = document.createElement('tr'); // on a une nouvelle ligne
+                    // Donne une nouvelle ligne
+                    const row = document.createElement('tr');
                     row.innerHTML = `<td class="tablePlayers"> ${name} </td>`;
-                    table.appendChild(row); // on rajoute la nouvelle ligne
+                    // Rajoute dans la table la nouvelle ligne
+                    table.appendChild(row); 
                 });
             })
-            .catch(error => console.error('Error fetching data:', error)); // envoie une erreur si le programme explose
+            .catch(error => console.error('Error fetching data:', error));
     }
 
     function launch(){
@@ -70,10 +75,9 @@
             .then(response =>response.json())
             .then(data =>{
         if (typeof data === 'undefined' || data === null) {
-            return; // ON FAIT EXPLOSER
+            return;
         }
         if (data !== -1) {
-            // si c'est different de -1
             window.location.href = `/grille/${idgame}`;
         }}
     )
@@ -83,27 +87,24 @@
 
     }
     const socket = io();
-
+    // Les appels socket pour le lobby sont ici
     socket.on('connect', () => {
         console.log('Socket connecté');
         socket.emit('join_room', { room: idgame })
     });
 
     socket.on('new_player', (data) =>{
-            const son = new Audio('{{ url_for("static", filename="sounds/blipW.wav") }}');    
-            console.log("son")
+            const son = new Audio('{{ url_for("static", filename="sounds/blipW.wav") }}');
             son.play();
-            console.log("new player in lobby")
             fetchData();
         })
     fetchData()
     socket.on('launch',(data) =>{
-        console.log("launching the game")
         launch();
     })
         
     function addIA(){
-        //envoie une requête pour rajouter une IA à la partie
+        // Envoie une requête pour rajouter une IA à la partie
         fetch(`/addIA/${idgame}`,{
             method : 'POST'
         })
@@ -120,11 +121,10 @@
 </script>
 <script>
     const son = new Audio('{{ url_for("static", filename="sounds/blipSelect1.wav") }}');
-    
+    // Produit un son lorsqu'on clique sur un bouton
     document.addEventListener("DOMContentLoaded",()=>{
         document.querySelectorAll('button').forEach(button =>{
             button.addEventListener('click',() =>{
-                console.log("son")
                 son.play();
             });
         });
