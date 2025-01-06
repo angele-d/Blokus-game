@@ -34,7 +34,6 @@ def nb_move(id_game,color):
     conn.close()
     return nb_move
 
-#FONCTION APPELLEE DANS SUBMIT22
 def ajoute_coup(id_game,pl,x,y,m):
     '''
     Ajoute les coups possibles dans la BD
@@ -52,17 +51,13 @@ def ajoute_coup(id_game,pl,x,y,m):
     liste_coup = coup_rajoute(m,N_list,Plist,pl)
     quest= '''INSERT INTO coups_possibles (id_game, id_piece, color, flip, rotation, position_x, position_y) 
                VALUES (?, ?, ?, ?, ?, ?, ?)'''
-    deb =time.time()
     cursor.executemany(quest, [
         (id_game, coup[0], coup[1], coup[5], coup[4], coup[2], coup[3]) 
         for coup in liste_coup
     ])
     conn.commit()
-    fin = time.time()
-    print("temps d'exécution",fin-deb)
     conn.close()
 
-#FONCTION APPELLEE DANS SUBMIT22
 def supprime_coups(m,x,y,id_game):
     '''
     Trouve et supprime les coups de la nouvelle matrice m  de la partie id_game ou on a joué un coup en x,y
@@ -71,26 +66,16 @@ def supprime_coups(m,x,y,id_game):
     :param y: position y du nouveau coup
     :id_game: id de la game
     '''
-    deb =time.time()
     conn = sqlite3.connect('Base')
     cursor = conn.cursor()
     query = '''
         SELECT id_piece, color, position_x, position_y, rotation, flip FROM coups_possibles WHERE id_game = ? '''
-    fin = time.time()
     cursor.execute(query, (id_game,))
     coup= cursor.fetchall()
     conn.close()
-    print("Temps de requête 1 :", fin -deb)
-    deb = time.time()
     a_del = coup_enleve(m,coup)
-    fin = time.time()
-    print("Temps de traitement de donnée :", fin - deb)
-    deb = time.time()
     a_del = list(set(tuple(coup) for coup in a_del))
     supprime_coups_liste(id_game,a_del)
-    fin = time.time()
-    print("nb de valeur a supprimer",len(a_del))
-    print("Temps de requête n°2:", fin-deb)
 
 # Va chercher les coups possibles dans la BD
 def cherche_coups_possibles(id_game):
@@ -183,7 +168,6 @@ def qui_peut_jouer(nb_joueur,id_game):
         l = liste_coup_possible(id_game,'G')
         if l != []:
             couleur += ['G']
-    print("joueurs",couleur)
     return couleur
 
 # Donne les pièces restantes d'un joueur sous forme ['P1','P2',...]
@@ -238,7 +222,6 @@ def tour(id_game):
         min_l.append(coup_G)
     conn.close()
     # Analyse qui peut encore jouer
-    print("onenestla")
     for i in range(4):
         if not 'B' in qpj:
             min_l[0]=100

@@ -33,6 +33,7 @@ def malus(Pliste):
                     malus -= 1
     return malus
 
+# Traduit une liste de nombre en pièce (matrice cf pieces.py)
 def enleve(liste,restante):
     for i in restante:
         liste = liste[:i-1] + liste[i:]
@@ -60,7 +61,7 @@ def score(id_game):
     Piece_restante_Y = piece_restante(id_game,'R')
     if nbr != 3:
         Piece_restante_G = piece_restante(id_game,'G')
-        # Dans l'ordre du dessus le score attribué a chaque couleur
+        # Dans l'ordre du dessus le score attribué à chaque couleur
         score =[0,0,0,0]
     else:
         score =[0,0,0]

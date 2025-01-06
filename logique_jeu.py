@@ -32,9 +32,10 @@ def matrice_possible(m,pl):
     vu = False
     for i in range(len(m)):
         for j in range(len(m)):
-            if matrix[i][j] == pl: #correspond au bon joueur
+            # Vérifie si cela correspond au bon joueur
+            if matrix[i][j] == pl: 
                 vu = True
-                #verifie les coins: si vide -> mettre un P = on peut placer une piece
+                # Vérifie les coins: si vide -> mettre un P = on peut placer une pièce
                 if inside(i+1,j+1):
                     if matrix[i+1][j+1] == 'V':
                         matrix[i+1][j+1] = 'P'
@@ -49,8 +50,9 @@ def matrice_possible(m,pl):
                         matrix[i-1][j-1] = 'P'
     for i in range(len(m)):
         for j in range(len(m)):
-            if m[i][j] == pl: # Vérifie si cela correspond au bon joueur
-                # Vérifie les contours: si vide ou P -> mettre un I = on peut pas placer une piece
+            # Vérifie si cela correspond au bon joueur
+            if m[i][j] == pl: 
+                # Vérifie les contours: si vide ou P -> mettre un I = on peut pas placer de pièce
                 if inside(i+1,j):
                     if matrix[i+1][j] in ['V','P']:
                         matrix[i+1][j] = 'I'
@@ -63,7 +65,8 @@ def matrice_possible(m,pl):
                 if inside(i,j-1):
                     if matrix[i][j-1] in ['V','P']:
                         matrix[i][j-1] = 'I'
-    if not vu: #Si on est au tout debut / joueur a pas encore joue
+    # Si on est au tout début et que le joueur n'a pas encore joué
+    if not vu: 
         return(matrice_possible_start(pl))
     return matrix
                 
@@ -73,7 +76,7 @@ def matrice_possible_start(pl):
     Renvoie une matrice avec l'emplacement de départ pour le joueur correspondant,
     à utiliser comme matrice pour les 4 premiers tours
     :param pl: (string) B,Y,R,G = joueur
-    :return: matrice 20x20 avec P a l'endroit ou le joueur peut commencer a jouer
+    :return: matrice 20x20 avec P à l'endroit où le joueur peut commencer à jouer
     '''
     m = []
     for i in range(20):
@@ -98,7 +101,6 @@ def new_move(m,pl,x,y):
     :param y: Position en y de la nouvelle pièce
     :return: (lst) liste des positions autour desquelles on peut faire des nouveaux coups
     '''
-    deb =time.time()
     N_list =[]
     MP=matrice_possible(m, pl)
     for k in range(-3,4):
@@ -108,7 +110,6 @@ def new_move(m,pl,x,y):
             if inside(new_x,new_y):
                 if MP[new_x][new_y] == 'P':
                     N_list.append((new_x,new_y))
-    fin = time.time()
     return N_list
 
 
@@ -124,17 +125,18 @@ def parall(chunk):
     """
     results = []
     for params in chunk:
-        if coup_possible(*params):
+        if coup_possible(params):
             (m,id_piece,c,c1,c2,c3,c4) = params
             results.append((id_piece,c,c1,c2,c3,c4))
     return results
 
 def parallsupp(chunk):
-    """Fonction utilisée en parallèle pour déterminer les coups non possibles
+    """
+    Fonction utilisée en parallèle pour déterminer les coups non possibles
     """
     results = []
     for params in chunk:
-        if not coup_possible(*params):
+        if not coup_possible(params):
             (m,id_piece,c,c1,c2,c3,c4) = params
             results.append((id_piece,c,c1,c2,c3,c4))
     return results
@@ -148,11 +150,8 @@ def coup_rajoute(m,N_List,Plist,pl):
     :pl: joueur actuel
     :return: (lst) Liste des nouveaux coups
     '''
-    start = time.time()
     to_check = []
-    deb = time.time()
     MP=matrice_possible(m, pl)
-
     check_unique = set()
     for (new_x, new_y) in N_List:
         for i in range(2):
@@ -171,21 +170,16 @@ def coup_rajoute(m,N_List,Plist,pl):
                                 if not entry in check_unique:
                                     check_unique.add(entry)
                                     to_check.append((m,pi,pl,ajout_x,ajout_y,rot,isflipped))
-    fin = time.time()
     coups = []
 
     chunk_size = max(1, len(to_check) // os.cpu_count())
     chunks = chunk_list(to_check, chunk_size)
-
-    deb = time.time()
     with concurrent.futures.ProcessPoolExecutor() as executor:
         futures = [executor.submit(parall, chunk) for chunk in chunks]
         for future in concurrent.futures.as_completed(futures):
             result = future.result()
             if result:
                 coups.extend(result)
-    fin = time.time()
-
     return coups
 
 def coup_rajoute_no_parral(m,N_list,Plist,pl):
@@ -223,7 +217,7 @@ def coup_rajoute_no_parral(m,N_list,Plist,pl):
 
 def coup_enleve(m,Clist):
     '''
-    Fonction qui calcule quel coup ne sont plus possible
+    Fonction qui calcule quel coup n'est plus possible
     :param m: Matrice de la partie
     :param Clist: Liste de coup
     :return: (lst) Liste des coups qui ne sont pas possible sur la matrice m
@@ -271,7 +265,6 @@ def coups_possibles_force_brute(m,pl,Plist):
     :param Plist: liste de pieces
     :return: (lst) liste des coups possibles, sous la forme [(pi, x, y, rot, isflipped)]
     '''
-    start = time.time()
     coups=[]
     MP=matrice_possible(m, pl)
     for i in range(2):
@@ -287,9 +280,8 @@ def coups_possibles_force_brute(m,pl,Plist):
                             for k in range(-2,3):
                                 for l in range(-2,3):
                                     if inside(x+k,y+l) and (MP[x+k][y+l] in ['P','V']):
-                                        if coup_possible(m,pi,pl,x,y,rot,isflipped): #Each should be on it's own thread
+                                        if coup_possible(m,pi,pl,x,y,rot,isflipped):
                                             coups.append((pi, x, y, rot, isflipped))
-    end = time.time()
     return coups
 
 
@@ -317,10 +309,25 @@ def coup_possible(m,pi,pl,x,y,rot,isflipped):
         for j in range (len(pi)):
             if pi[i][j]:
                 if x+i-2<0 or y+j-2<0:
-                    #print("le coup a une coord négative")
                     return False
                 if x+i-2>=20 or y+j-2>=20:
-                    #print("le coup sort de la grille")
+                    return False
+                if mat_pos[x+i-2][y+j-2] not in ['V','P']:
+                    return False
+                elif mat_pos[x+i-2][y+j-2] == 'P':
+                    touche = True
+    return touche
+
+def coup_possible_memo(mat_pos,pi,pl,x,y,rot,isflipped):
+    pi = globals()[pi]
+    pi = transformation(pi,isflipped,rot)
+    touche = False
+    for i in range(len(pi)):
+        for j in range (len(pi)):
+            if pi[i][j]:
+                if x+i-2<0 or y+j-2<0:
+                    return False
+                if x+i-2>=20 or y+j-2>=20:
                     return False
                 if mat_pos[x+i-2][y+j-2] not in ['V','P']:
                     return False
