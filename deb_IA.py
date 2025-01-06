@@ -366,7 +366,7 @@ def coup_a_faire(pl, grille, n, id_game):
         if joueurs[i]==pl:
             pl_nb=i
     #on regarde si on est dans les 3 premiers coups du jeu ou non
-    if pls_Plist[pl_nb]>=19:
+    if len(pls_Plist[pl_nb])>=19:
         coups_poss_deb=coups_poss_pl[pl_nb]
         coups_gd=[]
         #on récupère tous les coups qui se font avec les grandes pièces
@@ -392,7 +392,8 @@ def coup_a_faire(pl, grille, n, id_game):
             if distances[i]<mini:
                 mini=distances[i]
                 ind_mini=i
-        return coups_gd[ind_mini]
+        (pi,c,x,y,rot,flip) = coups_gd[ind_mini]
+        return (pi,x,y,rot,flip)
     #création des arbres de coups possibles
 
     deb2 = time.time()

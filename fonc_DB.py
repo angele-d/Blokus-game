@@ -48,7 +48,7 @@ def ajoute_coup(id_game,pl,x,y,m):
     player = pl
     N_list = new_move(m,pl,x,y)
     Plist = piece_res(id_game,player)
-    liste_coup = coup_rajoute(m,N_list,Plist,pl)
+    liste_coup = coup_rajoute_no_parral(m,N_list,Plist,pl)
     quest= '''INSERT INTO coups_possibles (id_game, id_piece, color, flip, rotation, position_x, position_y) 
                VALUES (?, ?, ?, ?, ?, ?, ?)'''
     cursor.executemany(quest, [
@@ -73,7 +73,7 @@ def supprime_coups(m,x,y,id_game):
     cursor.execute(query, (id_game,))
     coup= cursor.fetchall()
     conn.close()
-    a_del = coup_enleve(m,coup)
+    a_del = coup_enleve_no_parral(m,coup)
     a_del = list(set(tuple(coup) for coup in a_del))
     supprime_coups_liste(id_game,a_del)
 
