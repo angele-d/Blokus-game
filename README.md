@@ -25,19 +25,17 @@ Bienvenue dans le projet **PPII - Semestre S5**. Ce projet est réalisé dans le
 
 ## Description du projet
 
-Ajoutez ici une description du projet, ses objectifs, et toute autre information pertinente :
-
 - **Sujet :** Développement d'une application web pour un jeu de société avec intelligence artificielle
-- **Objectifs :** Recréer le jeu de société dit du "Blokus" avec toutes ses règles et spécificités, jouable à 4 joueurs avec participation possible d'IA performantes
-- **Technologies utilisées :** Algorithme de Monte-Carlo ...
+- **Objectifs :** Recréer le jeu de société dit du "Blokus" avec toutes ses règles et spécificités, jouable de 1 à 4 joueurs avec participation possible d'IA performantes.
+- **Technologies utilisées :** Algorithme de Monte-Carlo, JavaScript, CSS, SocketIO, Python 
 
 
 ## Prérequis
 
-Listez les prérequis nécessaires pour utiliser ce projet (langages, dépendances, etc.) :
+Prérequis nécessaires pour utiliser ce projet :
 
-- **Langage(s) :** Ex. Python 3.10, HTML, JavaScript, CSS, SQLite3
-- **Frameworks :** Ex. Flask 3.1.0, Flask-SocketIO 5.5.0, Django, etc.
+- **Langage(s) :** Python 3.10, HTML, JavaScript, CSS, SQLite3
+- **Frameworks :** Flask 3.1.0, Flask-SocketIO 5.5.0, Django
 - **Dépendances :** Voir le fichier `requirements.txt`
 
 
@@ -53,22 +51,24 @@ Comment installer le projet sur une machine locale:
    cd grp6
    ```
 
-2. Installez les dépendances:
+2. Créez un environnement python:
+    ```bash
+    python3 -m venv venv
+    ```
+
+3. Lancez cet environnement: 
+(NB: après exécution, vérifiez la présence de l'intituté "(venv)" en amont du chemin du répertoire dans lequel vous vous trouvez)
+    ```bash
+    source venv/bin/activate
+    ```
+
+4. Installez les dépendances:
     ```bash
     pip install -r requirements.txt
     ```
 
-3. Spécifiez le nom du fichier à exécuter en flask: _//Possiblement à retirer_
-    ```bash
-    export FLASK_APP=code_pages.py
-    ```
-
-4. Autres étapes spécifiques à votre projet.
-
 
 ## Exécution
-
-Expliquez comment exécuter le projet.
 
 1. Lancer l'application :
 
@@ -76,12 +76,5 @@ Expliquez comment exécuter le projet.
     python code_pages.py
     ```
 
-2. Lancer la page web: _//Possiblement à retirer_
+2. Naviguer dans la page web selon les désirs.
 
-    ```bash
-    flask run
-    ```
-
-3. Naviguer dans la page web selon les désirs.
-
-4. Autres instructions spécifiques à votre projet.
