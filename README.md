@@ -70,11 +70,18 @@ Comment installer le projet sur une machine locale:
 
 ## Exécution
 
-1. Lancer l'application :
+
+1. Verifiez que l'environnement python est bien lancé. Sinon, écrivez l'instruction suivante: 
+(En supposant le processus d'installation effectué)
+    ```bash
+    source venv/bin/activate
+    ```
+
+2. Lancer l'application :
 
     ```bash
     python code_pages.py
     ```
 
-2. Naviguer dans la page web selon les désirs.
+3. Naviguer dans la page web selon les désirs.
 
