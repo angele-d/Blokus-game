@@ -1,6 +1,14 @@
 from pieces import P1,P2,P3,P4,P5,P6,P7,P8,P9,P10,P11,P12,P13,P14,P15,P16,P17,P18,P19,P20,P21 #pieces.py
+from functools import lru_cache
 
 def transformation(piece, isflipped,rotation):
+    return transformation_cache(tuple(tuple(row) for row in piece),isflipped,rotation)
+
+@lru_cache(maxsize=10000)
+def transformation_cache(piece,isflipped,rotation):
+    return transformation_finale([list(row) for row in piece],isflipped,rotation)
+
+def transformation_finale(piece, isflipped,rotation):
     '''
     Le fait de retourner une pièce et de la tourner ne commute pas (choix fait)
     :param piece: matrice 5x5 de la piece originale

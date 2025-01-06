@@ -4,6 +4,9 @@ from fonc_DB import *
 from deb_IA import *
 import sqlite3
 import re
+import cProfile
+import pstats
+import io
 
 app = Flask(__name__)
 app.secret_key = "swV#]S)p;ArRak`*chzd3FC6BZG$j<95HU:/ga3{26mLf:r'eFHMSU5$!E]X&TAp=<kg;%Run`Q}CdvZS93gp6;eKjxH'$?}cFfuJ<D2`Nsh)(7_4~nXX-g2qb!7rGZ4BPAw]u6`/;a,=CmF3M.pVz#*_<DwtN3zuS;!J4F:.7Rqj?5Zgp}L)v^9G<y&AaB`d"
@@ -274,9 +277,24 @@ def tourDeIA(id_game,playerColor):
     playerName = order_to_name(playerColor,id_game)
     if re.match("IA\d",playerName) is not None: # c'est une IA
         grille = transcription_pieces_SQL_grille(id_game)
-        nextMove = coup_a_faire(playerColor,grille,3,id_game)
+        
+        pr = cProfile.Profile()
+        pr.enable()
+        nextMove = coup_a_faire(playerColor,grille,1,id_game)
+
+        pr.disable()  # Stop profiling
+
+        # Print the profiling results
+        s = io.StringIO()
+        sortby = pstats.SortKey.CUMULATIVE
+        ps = pstats.Stats(pr, stream=s).sort_stats(sortby)
+        ps.print_stats()
+        print(s.getvalue())
+        
         num_piece, x, y, rot, isFlipped = nextMove
+        grille = transcription_pieces_SQL_grille(id_game)
         if coup_possible(grille,num_piece,playerColor,x,y,rot,isFlipped):
+            print("coupdel'IA",num_piece,playerColor,x,y,rot,isFlipped)
             id_move = nb_move(id_game,playerColor)
             insert_move(id_game, id_move, num_piece, playerColor, x, y, rot, isFlipped)
             m = transcription_pieces_SQL_grille(id_game)
@@ -288,8 +306,11 @@ def tourDeIA(id_game,playerColor):
             if next_player == None:
                 socketio.emit('fin_de_partie', room = id_game)
             socketio.emit('tour_joueur', room = id_game)
-            # next_player après l'IA
-            return jsonify({"status": "coup valide","joueur":next_player}), 200 
+            return jsonify({"status": "coup valide","joueur":next_player}), 200 #next_player after the IA
+        else:
+            print_jeu(grille)
+            print("coupdel'IA",num_piece,playerColor,x,y,rot,isFlipped)
+            return "ON EST DANS LA MERDE", 404
     else:
         # Ce joueur parce que ce n'est pas une IA
         return jsonify({"status": "coup valide","joueur":playerColor}), 200 
@@ -376,6 +397,7 @@ def fin_de_partie(id_game):
 @app.route('/grille/<id_game>')
 # Appelée après avoir valider un coup
 def grille(id_game):
+
     if not session.get(f'access_{id_game}'):
         return "Vous n'avez pas accès à la partie", 505
     try :
@@ -457,5 +479,6 @@ def historique(id_game,boo):
         return f"An error occurred while retrieving the data: {e}", 500
 
 
+#FAIT AVEC DES PIECES JOUEES
 if __name__ == '__main__':
     socketio.run(app, debug=True)
