@@ -2,6 +2,7 @@ from rotation_pieces import *
 import time
 import concurrent.futures
 import os
+
 def print_jeu(m):
     '''
     Fonction auxiliaire faite pour le debugging
@@ -27,43 +28,44 @@ def matrice_possible(m,pl):
     :param pl: (string) R,B,Y ou G = joueur
     :return: matrice 20x20 avec des P et I selon ou on peut poser la pièce suivante
     '''
+    matrix = [[element for element in row] for row in m]
     vu = False
     for i in range(len(m)):
         for j in range(len(m)):
-            if m[i][j] == pl: #correspond au bon joueur
+            if matrix[i][j] == pl: #correspond au bon joueur
                 vu = True
                 #verifie les coins: si vide -> mettre un P = on peut placer une piece
                 if inside(i+1,j+1):
-                    if m[i+1][j+1] == 'V':
-                        m[i+1][j+1] = 'P'
+                    if matrix[i+1][j+1] == 'V':
+                        matrix[i+1][j+1] = 'P'
                 if inside(i-1,j+1):
-                    if m[i-1][j+1] == 'V':
-                        m[i-1][j+1] = 'P'
+                    if matrix[i-1][j+1] == 'V':
+                        matrix[i-1][j+1] = 'P'
                 if inside(i+1,j-1):
-                    if m[i+1][j-1] == 'V':
-                        m[i+1][j-1] = 'P'
+                    if matrix[i+1][j-1] == 'V':
+                        matrix[i+1][j-1] = 'P'
                 if inside(i-1,j-1):
-                    if m[i-1][j-1] == 'V':
-                        m[i-1][j-1] = 'P'
+                    if matrix[i-1][j-1] == 'V':
+                        matrix[i-1][j-1] = 'P'
     for i in range(len(m)):
         for j in range(len(m)):
             if m[i][j] == pl: # Vérifie si cela correspond au bon joueur
                 # Vérifie les contours: si vide ou P -> mettre un I = on peut pas placer une piece
                 if inside(i+1,j):
-                    if m[i+1][j] in ['V','P']:
-                        m[i+1][j] = 'I'
+                    if matrix[i+1][j] in ['V','P']:
+                        matrix[i+1][j] = 'I'
                 if inside(i-1,j):
-                    if m[i-1][j] in ['V','P']:
-                        m[i-1][j] = 'I'
+                    if matrix[i-1][j] in ['V','P']:
+                        matrix[i-1][j] = 'I'
                 if inside(i,j+1):
-                    if m[i][j+1] in ['V','P']:
-                        m[i][j+1] = 'I'
+                    if matrix[i][j+1] in ['V','P']:
+                        matrix[i][j+1] = 'I'
                 if inside(i,j-1):
-                    if m[i][j-1] in ['V','P']:
-                        m[i][j-1] = 'I'
+                    if matrix[i][j-1] in ['V','P']:
+                        matrix[i][j-1] = 'I'
     if not vu: #Si on est au tout debut / joueur a pas encore joue
         return(matrice_possible_start(pl))
-    return m
+    return matrix
                 
 
 def matrice_possible_start(pl):
@@ -107,7 +109,6 @@ def new_move(m,pl,x,y):
                 if MP[new_x][new_y] == 'P':
                     N_list.append((new_x,new_y))
     fin = time.time()
-    print("temps New_move",fin-deb)
     return N_list
 
 
@@ -171,8 +172,6 @@ def coup_rajoute(m,N_List,Plist,pl):
                                     check_unique.add(entry)
                                     to_check.append((m,pi,pl,ajout_x,ajout_y,rot,isflipped))
     fin = time.time()
-    print("Temps de recherche:",fin-deb)
-    print("Nombre de call a coup possible : ", len(to_check))
     coups = []
 
     chunk_size = max(1, len(to_check) // os.cpu_count())
@@ -186,10 +185,41 @@ def coup_rajoute(m,N_List,Plist,pl):
             if result:
                 coups.extend(result)
     fin = time.time()
-    print("temps de parall: ", fin -deb )
-    print("Nb de nouvelle entrée", len(coups))
 
     return coups
+
+def coup_rajoute_no_parral(m,N_list,Plist,pl):
+    start = time.time()
+    to_check = []
+    deb = time.time()
+    MP=matrice_possible(m, pl)
+
+    check_unique = set()
+    for (new_x, new_y) in N_list:
+        for i in range(2):
+            if i == 1:
+                isflipped = True
+            else:
+                isflipped = False
+            for pi in Plist:
+                for rot in range(1,5):
+                    for k2 in range (-2,3):
+                        for l2 in range (-2,3):
+                            ajout_x= new_x+k2
+                            ajout_y = new_y+l2
+                            if inside(ajout_x,ajout_y) and (MP[ajout_x][ajout_y] in ['P','V']):
+                                entry = (tuple(map(tuple, m)), pi, pl, ajout_x, ajout_y, rot, isflipped)
+                                if not entry in check_unique:
+                                    check_unique.add(entry)
+                                    to_check.append((MP,pi,pl,ajout_x,ajout_y,rot,isflipped))
+    fin = time.time()
+    coups = []
+    for entry in to_check:
+        if coup_possible_memo(*entry):
+            (m,id_piece,c,c1,c2,c3,c4) = entry
+            coups.append((id_piece,c,c1,c2,c3,c4))
+    return coups
+
 
 def coup_enleve(m,Clist):
     '''
@@ -198,7 +228,6 @@ def coup_enleve(m,Clist):
     :param Clist: Liste de coup
     :return: (lst) Liste des coups qui ne sont pas possible sur la matrice m
     '''
-    print("Clist:",Clist)
     if not Clist:
         return []
     Clist = [(m,pi,pl,x,y,rot,isflipped) for (pi,pl,x,y,rot,isflipped) in Clist ]
@@ -212,6 +241,26 @@ def coup_enleve(m,Clist):
             if result:
                 enleve.extend(result)
     return enleve
+
+def coup_enleve_no_parral(m,Clist):
+    '''
+    Fonction qui calcule quel coup ne sont plus possible
+    :param m: Matrice de la partie
+    :param Clist: Liste de coup
+    :return: (lst) Liste des coups qui ne sont pas possible sur la matrice m
+    '''
+    if not Clist:
+        return []
+    Clist = [(m,pi,pl,x,y,rot,isflipped) for (pi,pl,x,y,rot,isflipped) in Clist ]
+    chunk_size = max(1, len(Clist) // os.cpu_count())
+    chunks = chunk_list(Clist, chunk_size)
+    enleve =[]
+    for entry in enleve:
+        if not coup_possible(*entry):
+            (m,id_piece,c,c1,c2,c3,c4) = entry
+            enleve.append((id_piece,c,c1,c2,c3,c4))
+    return enleve
+
 
 
 def coups_possibles_force_brute(m,pl,Plist):
@@ -241,7 +290,6 @@ def coups_possibles_force_brute(m,pl,Plist):
                                         if coup_possible(m,pi,pl,x,y,rot,isflipped): #Each should be on it's own thread
                                             coups.append((pi, x, y, rot, isflipped))
     end = time.time()
-    print("temps-d'exec =", end - start)
     return coups
 
 
@@ -264,6 +312,25 @@ def coup_possible(m,pi,pl,x,y,rot,isflipped):
     pi = globals()[pi]
     pi = transformation(pi,isflipped,rot)
     mat_pos = matrice_possible(m,pl)
+    touche = False
+    for i in range(len(pi)):
+        for j in range (len(pi)):
+            if pi[i][j]:
+                if x+i-2<0 or y+j-2<0:
+                    #print("le coup a une coord négative")
+                    return False
+                if x+i-2>=20 or y+j-2>=20:
+                    #print("le coup sort de la grille")
+                    return False
+                if mat_pos[x+i-2][y+j-2] not in ['V','P']:
+                    return False
+                elif mat_pos[x+i-2][y+j-2] == 'P':
+                    touche = True
+    return touche
+
+def coup_possible_memo(mat_pos,pi,pl,x,y,rot,isflipped):
+    pi = globals()[pi]
+    pi = transformation(pi,isflipped,rot)
     touche = False
     for i in range(len(pi)):
         for j in range (len(pi)):
