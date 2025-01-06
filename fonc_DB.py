@@ -318,3 +318,7 @@ def order_to_name(couleur,id_game):
         return rows[2][0]
     if couleur == 'G':
         return rows[3][0]
+
+if __name__ == "__main__":
+    with app.app_context():
+        print(tour(135))
