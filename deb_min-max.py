@@ -7,7 +7,7 @@ def min_max(pl, grille, id_game):
     :param id_game: id de la game
     :return: coup à faire selon l'algo de min_max, de la forme (num_piece, x, y, rot, isFlipped)
     '''
-    #on cherche le nombre de pièce qu'il reste au joueur, pour déterminer le nombre maximal de coups que l'on peut encore jouer
+    # Cherche le nombre de pièce qu'il reste au joueur, pour déterminer le nombre maximal de coups que l'on peut encore jouer
     joueurs=['B', 'Y', 'R', 'G']
     pls_Plist=[]
     coups_poss_pl=[]
@@ -16,13 +16,13 @@ def min_max(pl, grille, id_game):
         coups_poss_pl.append(liste_coup_possible(id_game, joueurs[i]))
         if joueurs[i]==pl:
             pl_nb=i
-    #création arbre des coups possibles par le même algo que monte carlo
+    # Création de l'arbre des coups possibles par le même algorithme que monte carlo
     arbre=arbre_de_coups(pl, pl_nb, grille, pls_Plist, len(pls_Plist[pl_nb]), coups_poss_pl)
     #-----analyse de l'arbre-----
     score=score_max(arbre, pl)
     smax=score[i]
     imax=[0]
-    #on récupère ls indices des branches qui mènent au score le plus élevé
+    # Récupère les indices des branches qui mènent au score le plus élevé
     for i in range(1, len(score)):
         if score[i]>smax:
             smax=score[i]
@@ -32,7 +32,7 @@ def min_max(pl, grille, id_game):
     if len(imax)==1:
         return arbre[imax[0]][0]
     else:
-        #si des parties différentes renvoies au même score le plus élevé, on cherche la partie, parmi elles, qui renvoie les scores les moins élevés pour les adversaires
+        # Si des parties différentes renvoient au même score le plus élevé, on cherche la partie, parmis elles, qui renvoie les scores les moins élevés pour les adversaires
         adv_imin=[]
         for i in range(len(imax)):
             jmin=[]
