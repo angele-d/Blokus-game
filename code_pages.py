@@ -286,12 +286,14 @@ def tourDeIA(id_game,playerColor):
         else:
             n = 1
         
-        nextMove = coup_a_faire(playerColor,grille,n,id_game)
-
-
-        # Print the profiling results
-        num_piece, x, y, rot, isFlipped = nextMove
+        MoveL = coup_a_faire(playerColor,grille,n,id_game)
+        print(MoveL)
+        Next = random.choice(MoveL)
+        num_piece, x, y, rot, isFlipped = Next
         grille = transcription_pieces_SQL_grille(id_game)
+        while not coup_possible(grille,num_piece,playerColor,x,y,rot,isFlipped):
+            Next = random.choice(MoveL)
+            num_piece, x, y, rot, isFlipped = Next
         if coup_possible(grille,num_piece,playerColor,x,y,rot,isFlipped):
             print("coupdel'IA",num_piece,playerColor,x,y,rot,isFlipped)
             id_move = nb_move(id_game,playerColor)
