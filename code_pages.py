@@ -1,7 +1,7 @@
 from flask import Flask, request, redirect, url_for, render_template, jsonify, session
 from flask_socketio import SocketIO, join_room, emit
 from fonc_DB import *
-from deb_IA import *
+from IA import *
 import sqlite3
 import re
 import cProfile
