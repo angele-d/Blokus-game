@@ -530,7 +530,6 @@ def coup_a_faire(pl, grille, n, id_game):
         mini=distances[0]
         ind_mini=0
         sortie =[]
-        print(coups_gd)
         for i in range(1,len(distances)):
             if distances[i]==mini:
                 ind_mini=i
@@ -551,7 +550,6 @@ def coup_a_faire(pl, grille, n, id_game):
     deb2 = time.time()
     arbre=arbre_de_coups_start(pl, pl_nb, grille, pls_Plist, n, coups_poss_pl)
     fin2 = time.time()
-    print("temps de création de l'arbre des coups", deb2 -fin2)
     #------analyse de l'arbre------
     
 
@@ -562,10 +560,7 @@ def coup_a_faire(pl, grille, n, id_game):
     profondeurs=[]
     for i in arbre:
         profondeurs.append(profondeur_ac(i[1]))
-        print("i:",i)
-        print(profondeurs)
     # Cherche à éliminer les coups avec les plus faibles profondeurs (les coups amenant à des fins de parties)
-    print(profondeurs)
     #Cherche à éliminer les coups avec les plus faibles profondeurs (les coups amenant à des fins de parties)
     prof_max=max(profondeurs)
     arbre2=[]

@@ -190,7 +190,7 @@ def coup_enleve_no_parral(m,Clist):
     chunk_size = max(1, len(Clist) // os.cpu_count())
     chunks = chunk_list(Clist, chunk_size)
     enleve =[]
-    for entry in enleve:
+    for entry in Clist:
         if not coup_possible(*entry):
             (m,id_piece,c,c1,c2,c3,c4) = entry
             enleve.append((id_piece,c,c1,c2,c3,c4))
