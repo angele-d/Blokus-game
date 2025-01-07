@@ -95,8 +95,6 @@ def supprime_coups_liste(id_game,liste):
     :param liste: elle contient [[id_piece, color, position_x, position_y, rotation, flip],...]
     '''
     conn = sqlite3.connect('Base')
-    conn.execute('PRAGMA journal_mode=WAL')
-    conn.execute('PRAGMA synchronous=OFF')
     cursor = conn.cursor()
     query= '''
     DELETE FROM coups_possibles

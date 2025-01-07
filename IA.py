@@ -197,7 +197,14 @@ def arbre_de_coups(pl, nb_pl, grille, adv_Plist, n, adv_coups):
                             List_aCoups[k]=coup_rajoute_no_parral(grille2, new_move(grille2, pl, coup[2], coup[3]), List_aPlist[k], pl)
                     suite=coups_adversaires([(grille2, List_aPlist, List_aCoups)], pl, nb_pl, pl) #renvoie liste des coups de la forme [(liste des grilles après coups, liste des pièces rstantes des joueurs, liste des coups possibles de chaque joueurs)]
                     ss_arbre=[] #construction du sous-arbre
-                    nb_grille=10
+                    if len(Plist) >=14:
+                        nb_grille=3
+                    if len(Plist) >=11:                        
+                        nb_grille=5
+                    elif len(Plist) >=9:
+                        nb_grille=10
+                    else:
+                        nb_grille=20
                     if len(suite)<=nb_grille:
                         for j in suite:
                             ss_arbre.append(arbre_de_coups(pl, nb_pl, j[0], j[1], n-1, j[2]))
@@ -393,7 +400,14 @@ def parall_arbre(chunk,pl,nb_pl,grille,adv_Plist,n,adv_coups):
                             List_aCoups[k]=coup_rajoute_no_parral(grille2, new_move(grille2, pl, coup[2], coup[3]), List_aPlist[k], pl)
                     suite=coups_adversaires([(grille2, List_aPlist, List_aCoups)], pl, nb_pl, pl) #renvoie liste des coups de la forme [(liste des grilles après coups, liste des pièces rstantes des joueurs, liste des coups possibles de chaque joueurs)]
                     ss_arbre=[] #construction du sous-arbre
-                    nb_grille=10
+                    if len(Plist) >=14:
+                        nb_grille=3
+                    if len(Plist) >=11:                        
+                        nb_grille=5
+                    elif len(Plist) >=9:
+                        nb_grille=10
+                    else:
+                        nb_grille=20
                     if len(suite)<=nb_grille:
                         for j in suite:
                             ss_arbre.append(arbre_de_coups(pl, nb_pl, j[0], j[1], n-1, j[2]))
