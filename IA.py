@@ -520,8 +520,8 @@ def coup_a_faire(pl, grille, n, id_game):
         coups_poss_pl.append(liste_coup_possible(id_game, joueurs[i]))
         if joueurs[i]==pl:
             pl_nb=i
-    #on regarde si on est dans les 3 premiers coups du jeu ou non
-    if len(pls_Plist[pl_nb])>=19:
+    #on regarde si on est dans les 8 premiers coups du jeu ou non
+    if len(pls_Plist[pl_nb])>=15:
         coups_poss_deb=coups_poss_pl[pl_nb]
         coups_gd=[]
         # Récupère tous les coups qui se font avec les grandes pièces
