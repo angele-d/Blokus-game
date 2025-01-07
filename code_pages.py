@@ -287,6 +287,7 @@ def tourDeIA(id_game,playerColor):
             n = 1
         
         MoveL = coup_a_faire(playerColor,grille,n,id_game)
+        print(MoveL[0])
         Next = random.choice(MoveL)
         num_piece, x, y, rot, isFlipped = Next
         grille = transcription_pieces_SQL_grille(id_game)
@@ -307,10 +308,6 @@ def tourDeIA(id_game,playerColor):
                 return None
             socketio.emit('tour_joueur', room = id_game)
             return jsonify({"status": "coup valide","joueur":next_player}), 200 # Prochain joueur après l'IA
-        else:
-            print_jeu(grille)
-            print("coupdel'IA",num_piece,playerColor,x,y,rot,isFlipped)
-            return "ON EST DANS LA MERDE", 404
     else:
         # Ce joueur parce que ce n'est pas une IA
         return jsonify({"status": "coup valide","joueur":playerColor}), 200 
