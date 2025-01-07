@@ -18,7 +18,7 @@ body {
     width: 100%;
     box-shadow: 0px 2px 8px 2px #3498db;
 }
-.bandeau_inner{margin-top: 0.4em;}
+.bandeau_inner{margin-top: 1px;}
 .bandeau_titre .bandeau_retourArriere {
     display: inline-block;
     vertical-align: top;
@@ -26,10 +26,15 @@ body {
 }
 .bandeau_titre {
     color: white;
-    text-decoration: overline underline;
     font-size: 24px;
+    text-decoration: none;
     font-weight: bold;
-    padding: 0px 20px;
+    border-color: white;
+    border-radius: 3px;
+    border-style:outset;
+    padding: 0px 8px;
+    text-transform: uppercase;
+    margin-left: 10px;
 }
 .bandeau_retourArriere {
     font-size: 20px;
