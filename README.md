@@ -27,7 +27,7 @@ Bienvenue dans le projet **PPII - Semestre S5**. Ce projet est réalisé dans le
 
 - **Sujet :** Développement d'une application web pour un jeu de société avec intelligence artificielle
 - **Objectifs :** Recréer le jeu de société dit du "Blokus" avec toutes ses règles et spécificités, jouable de 1 à 4 joueurs avec participation possible d'IA performantes.
-- **Technologies utilisées :** Algorithme de Monte-Carlo, JavaScript, CSS, SocketIO, Python 
+- **Technologies utilisées :** Algorithme de Monte-Carlo, Algorithme du min-max, HTML, JavaScript, CSS, SocketIO, Python 
 
 
 ## Prérequis
@@ -69,6 +69,9 @@ Comment installer le projet sur une machine locale:
 
 
 ## Exécution
+
+Avant exécution, soyez informé que cette implémentation nécessite un minimum de performances de la part de votre machine. Ainsi, un processus un minima performant est vivement conseillé pour la meilleure expérience de jeu possible. 
+Autrement, le jeu tournera tout de même, seulement le temps de calcul de l'IA sera plus lente, malgré l'optimisation effectuée sur celle-ci.
 
 
 1. Verifiez que l'environnement python est bien lancé. Sinon, écrivez l'instruction suivante: 
