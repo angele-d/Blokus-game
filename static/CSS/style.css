@@ -157,11 +157,12 @@ body {
     text-align: center;
 }
 .tableTitle, .lobby thead{
-    background-color: rgb(145, 209, 247);
+    background-color: #1C6043;
     font-size: 25px;
+    color:white;
 }
 .tablePlayers, .lobby tbody{
-    background-color: rgb(149, 218, 238);
+    background-color: #A5DCD7;
     font-size: 20px;
 }
 .lobby button{
@@ -213,12 +214,13 @@ body {
     text-align: center;
 }
 .infosFinPartie thead{
-    background-color: rgb(87, 204, 243);
+    background-color: #1C6043;
     font-size: 25px;
     font-weight: bold;
+    color: white;
 }
 .infosFinPartie tbody{
-    background-color: rgb(149, 228, 238);
+    background-color: #A5DCD7;
     font-size: 20px;
 }
 .resultEncadre{
