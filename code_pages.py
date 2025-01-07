@@ -302,6 +302,7 @@ def tourDeIA(id_game,playerColor):
             next_player = tour(id_game)[1]
             if next_player == None:
                 socketio.emit('fin_de_partie', room = id_game)
+                return None
             socketio.emit('tour_joueur', room = id_game)
             return jsonify({"status": "coup valide","joueur":next_player}), 200 # Prochain joueur après l'IA
         else:
@@ -353,6 +354,7 @@ def submit22():
             player = tour(id_game)[1]
             if player == None:
                 socketio.emit('fin_de_partie', room = id_game)
+                return None
             socketio.emit('tour_joueur', room = id_game)
             return tourDeIA(id_game,player)
         else: 
@@ -409,7 +411,6 @@ def grille(id_game):
         ajoute_coup(id_game,"R",0,19,m)
         ajoute_coup(id_game,"G",19,0,m)
     supprime_coups(m,0,0,id_game)
-
     if nb_j == 1 or session['name'][-14:] == "(joueur local)":
         (m,color) = tour(id_game)
     if nb_j == 2:
@@ -419,8 +420,10 @@ def grille(id_game):
                 color = 'R'
         else :
             if j_actuel == 'R' or j_actuel == 'G':
-                color = 'G'            
-            
+                color = 'G'
+        if color == None:
+            socketio.emit('fin_de_partie', room = id_game)
+            return None
     liste_piece = piece_restante(id_game,color)
     coords = []
     for i in range(7):

@@ -155,10 +155,13 @@ def qui_peut_jouer(nb_joueur,id_game):
     :param id_game: int
     '''
     couleur = []
+    m=transcription_pieces_SQL_grille(179)
+    supprime_coups(m,0,0,id_game)
     l = liste_coup_possible(id_game,'B')
     if l != []:
         couleur += ['B']
     l = liste_coup_possible(id_game,'Y')
+    print(len(l))
     if l != []:
         couleur += ['Y']
     l = liste_coup_possible(id_game,'R')
@@ -318,7 +321,3 @@ def order_to_name(couleur,id_game):
         return rows[2][0]
     if couleur == 'G':
         return rows[3][0]
-
-if __name__ == "__main__":
-    with app.app_context():
-        print(tour(135))
