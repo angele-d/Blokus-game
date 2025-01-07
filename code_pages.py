@@ -307,7 +307,7 @@ def tourDeIA(id_game,playerColor):
             if next_player == None:
                 socketio.emit('fin_de_partie', room = id_game)
             socketio.emit('tour_joueur', room = id_game)
-            return jsonify({"status": "coup valide","joueur":next_player}), 200 #next_player after the IA
+            return jsonify({"status": "coup valide","joueur":next_player}), 200 # Prochain joueur après l'IA
         else:
             print_jeu(grille)
             print("coupdel'IA",num_piece,playerColor,x,y,rot,isFlipped)
