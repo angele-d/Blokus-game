@@ -27,6 +27,7 @@ def malus(Pliste):
     '''
     malus = 0
     for i in Pliste:
+        print(i)
         for j in range(len(i)):
             for k in range(len(i)):
                 if i[j][k]:
@@ -35,8 +36,9 @@ def malus(Pliste):
 
 # Traduit une liste de nombre en pièce (matrice cf pieces.py)
 def enleve(liste,restante):
-    for i in restante:
-        liste = liste[:i-1] + liste[i:]
+    for i in range(len(liste)):
+        if not i+1 in restante:
+            liste = liste[:i] + liste[i+1:]
     return liste
 
 
@@ -55,7 +57,6 @@ def score(id_game):
     cursor.execute('''SELECT id_piece,color FROM coups WHERE id_game = ? GROUP BY color ORDER BY id_move DESC LIMIT 4''',(id_game,))
     derniere= cursor.fetchall()
     conn.close()
-    print(nbr)
     Piece_restante_R = piece_restante(id_game,'B')
     Piece_restante_B = piece_restante(id_game,'Y')
     Piece_restante_Y = piece_restante(id_game,'R')
