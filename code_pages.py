@@ -278,19 +278,11 @@ def tourDeIA(id_game,playerColor):
     if re.match("IA\d",playerName) is not None: # c'est une IA
         grille = transcription_pieces_SQL_grille(id_game)
         
-        pr = cProfile.Profile()
-        pr.enable()
+
         nextMove = coup_a_faire(playerColor,grille,1,id_game)
 
-        pr.disable()  # Stop profiling
 
         # Print the profiling results
-        s = io.StringIO()
-        sortby = pstats.SortKey.CUMULATIVE
-        ps = pstats.Stats(pr, stream=s).sort_stats(sortby)
-        ps.print_stats()
-        print(s.getvalue())
-        
         num_piece, x, y, rot, isFlipped = nextMove
         grille = transcription_pieces_SQL_grille(id_game)
         if coup_possible(grille,num_piece,playerColor,x,y,rot,isFlipped):

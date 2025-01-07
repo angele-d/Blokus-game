@@ -92,7 +92,7 @@ hr {
     width: 49%;
     margin: 5px;
     padding: 10px 35px;
-    background-color: rgb(133, 217, 245);
+    background-color: rgba(133, 217, 245, .1);
     border: none; 
     border-radius: 5px; 
     font-size: 16px;
