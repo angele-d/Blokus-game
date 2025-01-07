@@ -569,7 +569,7 @@ def coup_a_faire(pl, grille, n, id_game):
 
     if len(arbre)==1:
         resultat=arbre[0][0] 
-        return(resultat[0], resultat[2], resultat[3], resultat[4], resultat[5])
+        return [(resultat[0], resultat[2], resultat[3], resultat[4], resultat[5])]
     # Détermine si des coups ammènent à des profondeurs moins fortes
     profondeurs=[]
     for i in arbre:
@@ -583,7 +583,7 @@ def coup_a_faire(pl, grille, n, id_game):
             arbre2.append(arbre[i])
     if len(arbre2)==1:
         resultat=arbre[0][0]
-        return(resultat[0], resultat[2], resultat[3], resultat[4], resultat[5])
+        return [(resultat[0], resultat[2], resultat[3], resultat[4], resultat[5])]
     # Cherche les coups qui utilisent les pièces les plus grandes
     tailles_pi=[]
     for i in range (len(arbre2)):
@@ -595,7 +595,7 @@ def coup_a_faire(pl, grille, n, id_game):
             arbre.append(arbre2[i])
     if len(arbre)==1:
         resultat=arbre[0][0]
-        return(resultat[0], resultat[2], resultat[3], resultat[4], resultat[5])
+        return [(resultat[0], resultat[2], resultat[3], resultat[4], resultat[5])]
     # Cherche à déterminer les coups qui bloquent le plus les adversaires, ie les branches où les adversaires ont le moins de coups possibles
     # L'arbre a au moins 2 éléments
     arbre2=[]
@@ -653,7 +653,7 @@ def coup_a_faire(pl, grille, n, id_game):
                         arbre2.append(arbre[i])
     if len(arbre2)==1:
         resultat=arbre2[0][0]
-        return(resultat[0], resultat[2], resultat[3], resultat[4], resultat[5])
+        return[(resultat[0], resultat[2], resultat[3], resultat[4], resultat[5])]
     else:
         petit_carre=True
         for i in range (len(arbre2)):
@@ -662,15 +662,19 @@ def coup_a_faire(pl, grille, n, id_game):
                 break
         # Si on ne commence que pas l'utilisation d'un petit carré
         if petit_carre:
-            resultat=arbre2[random.randint(0, len(arbre2)-1)][0]
-            return(resultat[0], resultat[2], resultat[3], resultat[4], resultat[5])
+            coup_a_renvoyer=[]
+            for i in range(len(arbre2)):
+                coup_a_renvoyer.append((arbre2[i][0][0], arbre2[i][0][2], arbre2[i][0][3], arbre2[i][0][4], arbre2[i][0][5]))
+            return coup_a_renvoyer
         # Sinon
         else:
             for i in range(len(arbre2)):
                 if arbre2[i][0][0]==P1:
                     arbre2.pop(i)
-            resultat=arbre2[random.randint(0, len(arbre2)-1)][0]
-            return(resultat[0], resultat[2], resultat[3], resultat[4], resultat[5])
+            coup_a_renvoyer=[]
+            for i in range(len(arbre2)):
+                coup_a_renvoyer.append((arbre2[i][0][0], arbre2[i][0][2], arbre2[i][0][3], arbre2[i][0][4], arbre2[i][0][5]))
+            return coup_a_renvoyer
                     
 
 def profondeur_ac(arbre):
