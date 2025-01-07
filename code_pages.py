@@ -212,9 +212,7 @@ def addIA(idgame):
     conn.close()
     if nb_joueur < 4:
         insert_name(idgame,f"IA{nb_IA + 1}")
-        print("addingIA")
         socketio.emit('new_player', room=idgame)
-        print("IAadded")
         return "IA ADDED",200
     return "TOO MUCH PLAYER", 200
  

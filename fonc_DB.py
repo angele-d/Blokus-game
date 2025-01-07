@@ -157,7 +157,6 @@ def qui_peut_jouer(nb_joueur,id_game):
     if l != []:
         couleur += ['B']
     l = liste_coup_possible(id_game,'Y')
-    print(len(l))
     if l != []:
         couleur += ['Y']
     l = liste_coup_possible(id_game,'R')
@@ -320,4 +319,4 @@ def order_to_name(couleur,id_game):
 
 if __name__ == "__main__":
     with app.app_context():
-        print(ajoute_coup(192,'G',18,5,transcription_pieces_SQL_grille(192)))
+        pass

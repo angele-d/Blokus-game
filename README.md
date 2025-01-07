@@ -70,8 +70,9 @@ Comment installer le projet sur une machine locale:
 
 ## Exécution
 
-Avant exécution, soyez informé que cette implémentation nécessite un minimum de performances de la part de votre machine. Ainsi, un processus un minima performant est vivement conseillé pour la meilleure expérience de jeu possible. 
+Avant exécution, soyez informé que cette implémentation nécessite un minimum de performances de la part de votre machine, plus précisement, il prend en compte os.cpu_count. Ainsi, avoir quelques processeurs est vivement conseillé pour la meilleure expérience de jeu possible. 
 Autrement, le jeu tournera tout de même, seulement le temps de calcul de l'IA sera plus lente, malgré l'optimisation effectuée sur celle-ci.
+De plus soyez informé que l'IA prend déjà beaucoup de temps, il n'est donc pas conseillé de faire une partie entière contre cette dernière.
 
 
 1. Verifiez que l'environnement python est bien lancé. Sinon, écrivez l'instruction suivante: 
