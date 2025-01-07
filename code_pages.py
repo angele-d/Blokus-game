@@ -278,8 +278,15 @@ def tourDeIA(id_game,playerColor):
     if re.match("IA\d",playerName) is not None: # c'est une IA
         grille = transcription_pieces_SQL_grille(id_game)
         
-
-        nextMove = coup_a_faire(playerColor,grille,1,id_game)
+        t = len(piece_res(id_game,playerColor))
+        if t <=6:
+            n = 3
+        elif t <=10:
+            n = 2
+        else:
+            n = 1
+        
+        nextMove = coup_a_faire(playerColor,grille,n,id_game)
 
 
         # Print the profiling results
