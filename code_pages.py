@@ -287,7 +287,6 @@ def tourDeIA(id_game,playerColor):
             n = 1
         
         MoveL = coup_a_faire(playerColor,grille,n,id_game)
-        print(MoveL)
         Next = random.choice(MoveL)
         num_piece, x, y, rot, isFlipped = Next
         grille = transcription_pieces_SQL_grille(id_game)
@@ -295,7 +294,6 @@ def tourDeIA(id_game,playerColor):
             Next = random.choice(MoveL)
             num_piece, x, y, rot, isFlipped = Next
         if coup_possible(grille,num_piece,playerColor,x,y,rot,isFlipped):
-            print("coupdel'IA",num_piece,playerColor,x,y,rot,isFlipped)
             id_move = nb_move(id_game,playerColor)
             insert_move(id_game, id_move, num_piece, playerColor, x, y, rot, isFlipped)
             m = transcription_pieces_SQL_grille(id_game)
