@@ -503,7 +503,7 @@ def coup_a_faire(pl, grille, n, id_game):
     :param grille: matrice 20*20
     :param n: (int) profondeur d'arbre à simuler / Compris entre 1 et 21
     :param id_game: id_game
-    :return: le coup à faire de la forme (num_piece,color, x, y, rot, isFlipped)
+    :return: la liste des coups possibles (num_piece,color, x, y, rot, isFlipped)
     '''
     joueurs=['B', 'Y', 'R', 'G']
     pls_Plist=[]
@@ -544,7 +544,7 @@ def coup_a_faire(pl, grille, n, id_game):
                 mini=distances[i]
                 ind_mini=i
         (pi,c,x,y,rot,flip) = coups_gd[ind_mini]
-        return (pi,x,y,rot,flip)
+        return [(pi,x,y,rot,flip)]
     # Création des arbres de coups possibles
     arbre=arbre_de_coups(pl, pl_nb, grille, pls_Plist, n, coups_poss_pl)
     
@@ -557,7 +557,7 @@ def coup_a_faire(pl, grille, n, id_game):
 
     if len(arbre)==1:
         resultat=arbre[0][0] 
-        return(resultat[0], resultat[2], resultat[3], resultat[4], resultat[5])
+        return[(resultat[0], resultat[2], resultat[3], resultat[4], resultat[5])]
     # Détermine si des coups ammènent à des profondeurs moins fortes
     profondeurs=[]
     for i in arbre:
@@ -571,7 +571,7 @@ def coup_a_faire(pl, grille, n, id_game):
             arbre2.append(arbre[i])
     if len(arbre2)==1:
         resultat=arbre[0][0]
-        return(resultat[0], resultat[2], resultat[3], resultat[4], resultat[5])
+        return[(resultat[0], resultat[2], resultat[3], resultat[4], resultat[5])]
     # Cherche les coups qui utilisent les pièces les plus grandes
     tailles_pi=[]
     for i in range (len(arbre2)):
@@ -583,7 +583,7 @@ def coup_a_faire(pl, grille, n, id_game):
             arbre.append(arbre2[i])
     if len(arbre)==1:
         resultat=arbre[0][0]
-        return(resultat[0], resultat[2], resultat[3], resultat[4], resultat[5])
+        return[(resultat[0], resultat[2], resultat[3], resultat[4], resultat[5])]
     # Cherche à déterminer les coups qui bloquent le plus les adversaires, ie les branches où les adversaires ont le moins de coups possibles
     # L'arbre a au moins 2 éléments
     arbre2=[]
@@ -641,7 +641,7 @@ def coup_a_faire(pl, grille, n, id_game):
                         arbre2.append(arbre[i])
     if len(arbre2)==1:
         resultat=arbre2[0][0]
-        return(resultat[0], resultat[2], resultat[3], resultat[4], resultat[5])
+        return[(resultat[0], resultat[2], resultat[3], resultat[4], resultat[5])]
     else:
         petit_carre=True
         for i in range (len(arbre2)):
@@ -650,15 +650,20 @@ def coup_a_faire(pl, grille, n, id_game):
                 break
         # Si on ne commence que pas l'utilisation d'un petit carré
         if petit_carre:
-            resultat=arbre2[random.randint(0, len(arbre2)-1)][0]
-            return(resultat[0], resultat[2], resultat[3], resultat[4], resultat[5])
+            for i in range(len(arbre2)):
+                resultat=arbre2[i]
+                liste_a_return.append((resultat[0], resultat[2], resultat[3], resultat[4], resultat[5]))
+            return liste_a_return
         # Sinon
         else:
             for i in range(len(arbre2)):
                 if arbre2[i][0][0]==P1:
                     arbre2.pop(i)
-            resultat=arbre2[random.randint(0, len(arbre2)-1)][0]
-            return(resultat[0], resultat[2], resultat[3], resultat[4], resultat[5])
+            liste_a_return=[]
+            for i in range(len(arbre2)):
+                resultat=arbre2[i]
+                liste_a_return.append((resultat[0], resultat[2], resultat[3], resultat[4], resultat[5]))
+            return liste_a_return
                     
 
 def profondeur_ac(arbre):
