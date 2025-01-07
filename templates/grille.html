@@ -81,11 +81,9 @@
     const nb_joueur ="{{nb_joueur}}"
     const socket = io();
     socket.on('connect', () => {
-        console.log('Socket connecté');
         socket.emit('join_room', { room: id_game })
     });
     socket.on('update_grille', ()=>{
-        console.log("la grille a changé")
         updategrille();
     })
     socket.on('fin_de_partie', ()=>{
@@ -101,7 +99,6 @@
     document.addEventListener("DOMContentLoaded",()=>{
         document.querySelectorAll('button').forEach(button =>{
             button.addEventListener('click',() =>{
-                console.log("son")
                 son.play();
             });
         });
