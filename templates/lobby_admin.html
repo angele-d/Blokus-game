@@ -89,7 +89,6 @@
     const socket = io();
     // Les appels socket pour le lobby sont ici
     socket.on('connect', () => {
-        console.log('Socket connecté');
         socket.emit('join_room', { room: idgame })
     });
 
