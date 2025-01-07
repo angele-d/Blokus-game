@@ -12,19 +12,19 @@ body {
     position: fixed;
     top: 0;
     left: 0;
-    background-color: rgb(73, 97, 235);
+    background-color: #3498db;
     padding: 10px 0;
     width: 100%;
-    box-shadow: 0px 2px 8px 2px rgb(0, 225, 255);
+    box-shadow: 0px 2px 8px 2px #3498db;
     z-index: 20;
 }
 .footerGrille {
     position: fixed;
     bottom: 0;
     left: 0;
-    background-color: rgb(73, 97, 235);
+    background-color: #3498db;
     width: 100%;
-    box-shadow: 0px 2px 8px 2px rgb(0, 225, 255);
+    box-shadow: 0px 2px 8px 2px #3498db;
     color: white;
     font-size: 12px;
     padding: 10px 20px;
@@ -92,7 +92,7 @@ button{
     padding: 5px 8px;
 }
 button:hover{
-    background-color: hsl(61, 100%, 50%); 
+    background-color: #B3B3B3; 
     transform: scale(1.05);
     border-radius: 5px;
     padding: 5px 10px;
@@ -109,9 +109,9 @@ button:hover{
     position: fixed;
     right: 5px;
     width: 15%;
-    color: rgb(73, 97, 235);
+    color: #B3B3B3;
     height: 5px;
-    background-color: rgb(73, 97, 235);
+    background-color: #B3B3B3;
     border:none;
 }
 .VerticalLineGrille {
@@ -120,14 +120,14 @@ button:hover{
     top: 0;
     width: 5px;
     height: 500vh;
-    background-color: rgb(73, 97, 235);
+    background-color: #B3B3B3;
     transform: translateX(-50%);
 }
 .infosGrille{
     position: fixed;
     left: 85%;
     top: 0;
-    background-color: rgb(153, 204, 245);
+    background-color: #e2e0e0;
     width: 500px;
     height: 500vh;
 }
@@ -136,7 +136,7 @@ button:hover{
     display: inline-block;  /* Change le comportement pour qu'il soit en bloc mais en ligne */
     padding: 5px 5px;      /* Ajoute de l'espace autour du texte */
     border: 2px solid rgb(0, 27, 31); /* Crée un cadre autour du texte */
-    background-color:rgb(60, 58, 177);
+    background-color:#237fbd;
     color: white;
     cursor:default;
 }
