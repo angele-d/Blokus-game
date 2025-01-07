@@ -95,8 +95,6 @@ def supprime_coups_liste(id_game,liste):
     :param liste: elle contient [[id_piece, color, position_x, position_y, rotation, flip],...]
     '''
     conn = sqlite3.connect('Base')
-    conn.execute('PRAGMA journal_mode=WAL')
-    conn.execute('PRAGMA synchronous=OFF')
     cursor = conn.cursor()
     query= '''
     DELETE FROM coups_possibles
@@ -155,8 +153,6 @@ def qui_peut_jouer(nb_joueur,id_game):
     :param id_game: int
     '''
     couleur = []
-    m=transcription_pieces_SQL_grille(179)
-    supprime_coups(m,0,0,id_game)
     l = liste_coup_possible(id_game,'B')
     if l != []:
         couleur += ['B']
@@ -321,3 +317,7 @@ def order_to_name(couleur,id_game):
         return rows[2][0]
     if couleur == 'G':
         return rows[3][0]
+
+if __name__ == "__main__":
+    with app.app_context():
+        print(ajoute_coup(192,'G',18,5,transcription_pieces_SQL_grille(192)))
