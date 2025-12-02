@@ -1,5 +1,7 @@
 # Projet PPII - Semestre S5
 
+[Wiki of this project](#https://github.com/angele-d/Blokus-game.wiki.git)
+
 ## Table des matières
 1. [Introduction](#introduction)
 2. [Membres du groupe](#membres-du-groupe)
